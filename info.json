@@ -1,0 +1,14 @@
+{
+    "name": "TLBE",
+    "version": "0.1.0",
+    "title": "Timelapse Base Edition",
+    "author": "veger",
+    "contact": "",
+    "homepage": "",
+    "license": "MIT https://opensource.org/licenses/MIT",
+    "factorio_version": "0.18",
+    "dependencies": [
+        "base >= 0.18"
+    ],
+    "description": "Takes screenshots of your base at specified intervals"
+}
