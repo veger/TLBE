@@ -10,8 +10,18 @@ function tlbe.reload_settings(event)
     if settings.enabled then
         settings.noticesEnabled = playerSettings["tlbe-notices-enabled"].value;
         settings.saveFolder = playerSettings["tlbe-save-folder"].value
-        settings.screenshotInterval = playerSettings["tlbe-screenshot-interval"]
-                                          .value
+        settings.screenshotInterval = (60 *
+                                          playerSettings["tlbe-speed-increase"]
+                                              .value) /
+                                          playerSettings["tlbe-frame-rate"]
+                                              .value
+        if settings.screenshotInterval < 1 then
+            settings = {enabled = false}
+            playerSettings["tlbe-enabled"] = {value = false}
+
+            tlbe.log({"tlbe-disabled"});
+            tlbe.log({"err_interval"});
+        end
     end
 
     global.playerSettings[event.player_index] = settings

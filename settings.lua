@@ -18,11 +18,18 @@ data:extend({
         default_value = "timelapse",
         order = "3"
     }, {
-        type = "int-setting",
-        name = "tlbe-screenshot-interval",
+        type = "double-setting",
+        name = "tlbe-frame-rate",
         setting_type = "runtime-per-user",
-        minimum_value = 10,
-        default_value = 300,
+        minimum_value = 1,
+        default_value = 25.0,
         order = "4"
+    }, {
+        type = "double-setting",
+        name = "tlbe-speed-increase",
+        setting_type = "runtime-per-user",
+        minimum_value = 1,
+        default_value = 10.0,
+        order = "5"
     }
 })
