@@ -4,7 +4,7 @@ function tlbe.reload_settings(event)
     local player = game.players[event.player_index]
     local playerSettings = settings.get_player_settings(player)
 
-    local settings = {}
+    local settings = global.playerSettings[event.player_index] or {}
     settings.enabled = playerSettings["tlbe-enabled"].value;
 
     if settings.enabled then
@@ -20,7 +20,7 @@ function tlbe.reload_settings(event)
         settings.height = playerSettings["tlbe-resolution-y"].value;
 
         if settings.screenshotInterval < 1 then
-            settings = {enabled = false}
+            settings.enabled = false
             playerSettings["tlbe-enabled"] = {value = false}
 
             tlbe.log({"tlbe-disabled"});
