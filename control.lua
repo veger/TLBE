@@ -2,13 +2,7 @@ require("scripts.main")
 require("scripts.utils")
 require("scripts.settings")
 
-script.on_init(function(event)
-    global.minPos = {x = 0, y = 0}
-    global.maxPos = {x = 0, y = 0}
-    global.factorySize = {x = 1, y = 1}
-    global.centerPos = {x = 0, y = 0}
-    global.playerSettings = {}
-end)
+script.on_init(function(event) global.playerSettings = {} end)
 
 script.on_event(defines.events.on_runtime_mod_setting_changed,
                 tlbe.reload_settings)

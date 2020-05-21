@@ -10,6 +10,7 @@ function tlbe.reload_settings(event)
     if settings.enabled then
         settings.noticesEnabled = playerSettings["tlbe-notices-enabled"].value;
         settings.saveFolder = playerSettings["tlbe-save-folder"].value
+        settings.followPlayer = playerSettings["tlbe-follow-player"].value
         settings.screenshotInterval = (60 *
                                           playerSettings["tlbe-speed-increase"]
                                               .value) /
