@@ -3,10 +3,9 @@ require("scripts.utils")
 require("scripts.settings")
 
 script.on_init(function(event)
-    global.resolution = {w = 1980, h = 1080} -- your target resolution
-    global.zoom = 4
     global.minPos = {x = 0, y = 0}
     global.maxPos = {x = 0, y = 0}
+    global.factorySize = {x = 1, y = 1}
     global.centerPos = {x = 0, y = 0}
     global.playerSettings = {}
 end)

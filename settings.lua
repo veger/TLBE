@@ -31,5 +31,19 @@ data:extend({
         minimum_value = 1,
         default_value = 10.0,
         order = "5"
+    }, {
+        type = "int-setting",
+        name = "tlbe-resolution-x",
+        setting_type = "runtime-per-user",
+        minimum_value = 320,
+        default_value = 1920,
+        order = "6"
+    }, {
+        type = "int-setting",
+        name = "tlbe-resolution-y",
+        setting_type = "runtime-per-user",
+        minimum_value = 240,
+        default_value = 1080,
+        order = "7"
     }
 })

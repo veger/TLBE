@@ -15,6 +15,9 @@ function tlbe.reload_settings(event)
                                               .value) /
                                           playerSettings["tlbe-frame-rate"]
                                               .value
+        settings.width = playerSettings["tlbe-resolution-x"].value;
+        settings.height = playerSettings["tlbe-resolution-y"].value;
+
         if settings.screenshotInterval < 1 then
             settings = {enabled = false}
             playerSettings["tlbe-enabled"] = {value = false}
