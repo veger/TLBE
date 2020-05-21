@@ -34,7 +34,10 @@ function tlbe.tick(event)
                 allow_in_replay = true,
                 daytime = 0 -- take screenshot at full light
             }
-            tlbe.log({"err_generic", "tick", "Screenshot taken!"});
+
+            if playerSettings.noticesEnabled then
+                tlbe.log({"err_generic", "tick", "Screenshot taken!"});
+            end
         end
     end
 end
