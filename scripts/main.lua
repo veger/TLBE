@@ -90,17 +90,25 @@ end
 
 function tlbe.follow_base(playerSettings)
     local xDiff = math.abs(global.centerPos.x - playerSettings.centerPos.x)
-    if xDiff ~= 0 then
-        -- Gradually move to new center of the base
-        local yDiff = math.abs(global.centerPos.y - playerSettings.centerPos.y)
+    local yDiff = math.abs(global.centerPos.y - playerSettings.centerPos.y)
 
-        local speedRatio;
-        if xDiff < yDiff then
+    if xDiff ~= 0 or yDiff ~= 0 then
+        local speedRatio, ticksToZoom;
+        if xDiff == 0 then
+            speedRatio = 1 / yDiff
+            ticksToZoom = centerSpeed
+        elseif yDiff == 0 then
+            speedRatio = xDiff
+            ticksToZoom = centerSpeed
+        elseif xDiff < yDiff then
             speedRatio = (yDiff / xDiff)
+            ticksToZoom = xDiff / (centerSpeed * speedRatio)
         else
             speedRatio = (xDiff / yDiff)
+            ticksToZoom = xDiff / (centerSpeed * speedRatio)
         end
 
+        -- Gradually move to new center of the base
         if global.centerPos.x < playerSettings.centerPos.x then
             playerSettings.centerPos.x =
                 math.max(playerSettings.centerPos.x - centerSpeed * speedRatio,
@@ -127,7 +135,6 @@ function tlbe.follow_base(playerSettings)
         local zoom = math.min(zoomX, zoomY, maxZoom)
 
         -- Gradually zoom out with same duration as centering
-        local ticksToZoom = xDiff / (centerSpeed * speedRatio)
         playerSettings.zoom =
             playerSettings.zoom - (playerSettings.zoom - zoom) / ticksToZoom
     end
