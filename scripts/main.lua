@@ -3,6 +3,7 @@ if not tlbe then tlbe = {} end
 tileSize = 32
 boundarySize = 3
 maxZoom = 1
+minZoom = 0.031250
 centerSpeed = 0.25 -- tiles / interval
 
 function tlbe.tick(event)
@@ -19,7 +20,7 @@ function tlbe.tick(event)
                     return
                 end
             else
-                tlbe.follow_base(playerSettings)
+                tlbe.follow_base(playerSettings, player)
             end
 
             game.take_screenshot {
@@ -88,7 +89,7 @@ function tlbe.follow_player(playerSettings, player)
     playerSettings.zoom = maxZoom
 end
 
-function tlbe.follow_base(playerSettings)
+function tlbe.follow_base(playerSettings, player)
     local xDiff = math.abs(global.centerPos.x - playerSettings.centerPos.x)
     local yDiff = math.abs(global.centerPos.y - playerSettings.centerPos.y)
 
@@ -137,5 +138,18 @@ function tlbe.follow_base(playerSettings)
         -- Gradually zoom out with same duration as centering
         playerSettings.zoom =
             playerSettings.zoom - (playerSettings.zoom - zoom) / ticksToZoom
+
+        if playerSettings.zoom < minZoom then
+            if playerSettings.noticeMaxZoom == nil then
+                player.print({"max-zoom"}, {r = 1})
+                player.print({"msg-once"})
+                playerSettings.noticeMaxZoom = true
+            end
+
+            playerSettings.zoom = minZoom
+        else
+            -- Max (min atually) zoom is not reached (anymore)
+            playerSettings.noticeMaxZoom = nil
+        end
     end
 end
