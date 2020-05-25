@@ -12,91 +12,28 @@ function tlbe.tick(event)
         if playerSettings.enabled and game.tick %
             playerSettings.screenshotInterval == 0 then
             if global.factorySize == nil then
-                -- Follow player (update begin position)
-                playerSettings.centerPos = player.position
-                playerSettings.zoom = maxZoom
+                tlbe.follow_player(playerSettings, player)
 
                 if playerSettings.followPlayer == false then
                     -- Do not take screenshots yet
                     return
                 end
-
-                game.take_screenshot {
-                    by_player = player,
-                    surface = game.surfaces[1],
-                    position = playerSettings.centerPos,
-                    resolution = {playerSettings.width, playerSettings.height},
-                    zoom = playerSettings.zoom,
-                    path = playerSettings.saveFolder .. "/" ..
-                        string.format("%08d", game.tick) .. ".png",
-                    show_entity_info = false,
-                    allow_in_replay = true,
-                    daytime = 0 -- take screenshot at full light
-                }
             else
-                local xDiff = math.abs(global.centerPos.x -
-                                           playerSettings.centerPos.x)
-                if xDiff ~= 0 then
-                    -- Gradually move to new center of the base
-                    local yDiff = math.abs(
-                                      global.centerPos.y -
-                                          playerSettings.centerPos.y)
-
-                    local speedRatio;
-                    if xDiff < yDiff then
-                        speedRatio = (yDiff / xDiff)
-                    else
-                        speedRatio = (xDiff / yDiff)
-                    end
-
-                    if global.centerPos.x < playerSettings.centerPos.x then
-                        playerSettings.centerPos.x =
-                            math.max(playerSettings.centerPos.x - centerSpeed *
-                                         speedRatio, global.centerPos.x)
-                    else
-                        playerSettings.centerPos.x =
-                            math.min(playerSettings.centerPos.x + centerSpeed *
-                                         speedRatio, global.centerPos.x)
-                    end
-                    if global.centerPos.y < playerSettings.centerPos.y then
-                        playerSettings.centerPos.y =
-                            math.max(playerSettings.centerPos.y - centerSpeed /
-                                         speedRatio, global.centerPos.y)
-                    else
-                        playerSettings.centerPos.y =
-                            math.min(playerSettings.centerPos.y + centerSpeed /
-                                         speedRatio, global.centerPos.y)
-                    end
-
-                    -- Calculate desired zoom
-                    local zoomX = playerSettings.width /
-                                      (tileSize * global.factorySize.x)
-                    local zoomY = playerSettings.height /
-                                      (tileSize * global.factorySize.y)
-
-                    local zoom = math.min(zoomX, zoomY, maxZoom)
-
-                    -- Gradually zoom out with same duration as centering
-                    local ticksToZoom = xDiff / (centerSpeed * speedRatio)
-                    playerSettings.zoom =
-                        playerSettings.zoom - (playerSettings.zoom - zoom) /
-                            ticksToZoom
-                end
-
-                game.take_screenshot {
-                    by_player = player,
-                    surface = game.surfaces[1],
-                    position = playerSettings.centerPos,
-                    resolution = {playerSettings.width, playerSettings.height},
-                    zoom = playerSettings.zoom,
-                    path = playerSettings.saveFolder .. "/" ..
-                        string.format("%08d", game.tick) .. ".png",
-                    show_entity_info = false,
-                    allow_in_replay = true,
-                    daytime = 0 -- take screenshot at full light
-                }
-
+                tlbe.follow_base(playerSettings)
             end
+
+            game.take_screenshot {
+                by_player = player,
+                surface = game.surfaces[1],
+                position = playerSettings.centerPos,
+                resolution = {playerSettings.width, playerSettings.height},
+                zoom = playerSettings.zoom,
+                path = string.format("%s/%08d.png", playerSettings.saveFolder,
+                                     game.tick),
+                show_entity_info = false,
+                allow_in_replay = true,
+                daytime = 0 -- take screenshot at full light
+            }
 
             if playerSettings.noticesEnabled then
                 tlbe.log({"err_generic", "tick", "Screenshot taken!"});
@@ -143,4 +80,55 @@ function tlbe.entity_built(event)
         x = global.minPos.x + math.floor(global.factorySize.x / 2),
         y = global.minPos.y + math.floor(global.factorySize.y / 2)
     }
+end
+
+function tlbe.follow_player(playerSettings, player)
+    -- Follow player (update begin position)
+    playerSettings.centerPos = player.position
+    playerSettings.zoom = maxZoom
+end
+
+function tlbe.follow_base(playerSettings)
+    local xDiff = math.abs(global.centerPos.x - playerSettings.centerPos.x)
+    if xDiff ~= 0 then
+        -- Gradually move to new center of the base
+        local yDiff = math.abs(global.centerPos.y - playerSettings.centerPos.y)
+
+        local speedRatio;
+        if xDiff < yDiff then
+            speedRatio = (yDiff / xDiff)
+        else
+            speedRatio = (xDiff / yDiff)
+        end
+
+        if global.centerPos.x < playerSettings.centerPos.x then
+            playerSettings.centerPos.x =
+                math.max(playerSettings.centerPos.x - centerSpeed * speedRatio,
+                         global.centerPos.x)
+        else
+            playerSettings.centerPos.x =
+                math.min(playerSettings.centerPos.x + centerSpeed * speedRatio,
+                         global.centerPos.x)
+        end
+        if global.centerPos.y < playerSettings.centerPos.y then
+            playerSettings.centerPos.y =
+                math.max(playerSettings.centerPos.y - centerSpeed / speedRatio,
+                         global.centerPos.y)
+        else
+            playerSettings.centerPos.y =
+                math.min(playerSettings.centerPos.y + centerSpeed / speedRatio,
+                         global.centerPos.y)
+        end
+
+        -- Calculate desired zoom
+        local zoomX = playerSettings.width / (tileSize * global.factorySize.x)
+        local zoomY = playerSettings.height / (tileSize * global.factorySize.y)
+
+        local zoom = math.min(zoomX, zoomY, maxZoom)
+
+        -- Gradually zoom out with same duration as centering
+        local ticksToZoom = xDiff / (centerSpeed * speedRatio)
+        playerSettings.zoom =
+            playerSettings.zoom - (playerSettings.zoom - zoom) / ticksToZoom
+    end
 end
