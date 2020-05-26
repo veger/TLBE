@@ -1,7 +1,7 @@
 if not tlbe then tlbe = {} end
 
 tileSize = 32
-boundarySize = 3
+boundarySize = 2
 maxZoom = 1
 minZoom = 0.031250
 centerSpeed = 0.25 -- tiles / interval
@@ -44,30 +44,31 @@ function tlbe.tick(event)
 end
 
 function tlbe.entity_built(event)
-    local newEntityPos = event.created_entity.position
+    -- top/bottom seems to be swapped, so use this table to reduce confusion of rest of the code
+    local newEntityBBox = {
+        left = event.created_entity.bounding_box.left_top.x - boundarySize,
+        bottom = event.created_entity.bounding_box.left_top.y - boundarySize,
+        right = event.created_entity.bounding_box.right_bottom.x + boundarySize,
+        top = event.created_entity.bounding_box.right_bottom.y + boundarySize
+    }
+
     if global.factorySize == nil then
         -- Set start point of base
-        global.minPos = {
-            x = newEntityPos.x - boundarySize,
-            y = newEntityPos.y - boundarySize
-        }
-        global.maxPos = {
-            x = newEntityPos.x + boundarySize,
-            y = newEntityPos.y + boundarySize
-        }
+        global.minPos = {x = newEntityBBox.left, y = newEntityBBox.bottom}
+        global.maxPos = {x = newEntityBBox.right, y = newEntityBBox.top}
     else
         -- Recalculate base boundary
-        if (newEntityPos.x - boundarySize < global.minPos.x) then
-            global.minPos.x = newEntityPos.x - boundarySize
+        if (newEntityBBox.left < global.minPos.x) then
+            global.minPos.x = newEntityBBox.left
         end
-        if (newEntityPos.y - boundarySize < global.minPos.y) then
-            global.minPos.y = newEntityPos.y - boundarySize
+        if (newEntityBBox.bottom < global.minPos.y) then
+            global.minPos.y = newEntityBBox.bottom
         end
-        if (newEntityPos.x + boundarySize > global.maxPos.x) then
-            global.maxPos.x = newEntityPos.x + boundarySize
+        if (newEntityBBox.right > global.maxPos.x) then
+            global.maxPos.x = newEntityBBox.right
         end
-        if (newEntityPos.y + boundarySize > global.maxPos.y) then
-            global.maxPos.y = newEntityPos.y + boundarySize
+        if (newEntityBBox.top > global.maxPos.y) then
+            global.maxPos.y = newEntityBBox.top
         end
     end
 
