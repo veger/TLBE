@@ -1,27 +1,25 @@
-if not tlbe then
-    tlbe = {}
-end
+local Main = {}
 
-tileSize = 32
-boundarySize = 2
-maxZoom = 1
-minZoom = 0.031250
-centerSpeed = 0.25 -- tiles / interval
+local tileSize = 32
+local boundarySize = 2
+local maxZoom = 1
+local minZoom = 0.031250
+local centerSpeed = 0.25 -- tiles / interval
 
-function tlbe.tick(event)
+function Main.tick()
     for index, player in pairs(game.players) do
         local playerSettings = global.playerSettings[player.index]
 
         if playerSettings.enabled and game.tick % playerSettings.screenshotInterval == 0 then
             if global.factorySize == nil then
-                tlbe.follow_player(playerSettings, player)
+                Main.follow_player(playerSettings, player)
 
                 if playerSettings.followPlayer == false then
                     -- Do not take screenshots yet
                     return
                 end
             else
-                tlbe.follow_base(playerSettings, player)
+                Main.follow_base(playerSettings, player)
             end
 
             game.take_screenshot {
@@ -37,13 +35,13 @@ function tlbe.tick(event)
             }
 
             if playerSettings.noticesEnabled then
-                tlbe.log({"err_generic", "tick", "Screenshot taken!"})
+                player.print({"screenshot-taken"})
             end
         end
     end
 end
 
-function tlbe.entity_built(event)
+function Main.entity_built(event)
     -- top/bottom seems to be swapped, so use this table to reduce confusion of rest of the code
     local newEntityBBox = {
         left = event.created_entity.bounding_box.left_top.x - boundarySize,
@@ -84,13 +82,13 @@ function tlbe.entity_built(event)
     }
 end
 
-function tlbe.follow_player(playerSettings, player)
+function Main.follow_player(playerSettings, player)
     -- Follow player (update begin position)
     playerSettings.centerPos = player.position
     playerSettings.zoom = maxZoom
 end
 
-function tlbe.follow_base(playerSettings, player)
+function Main.follow_base(playerSettings, player)
     local xDiff = math.abs(global.centerPos.x - playerSettings.centerPos.x)
     local yDiff = math.abs(global.centerPos.y - playerSettings.centerPos.y)
 
@@ -149,3 +147,5 @@ function tlbe.follow_base(playerSettings, player)
         end
     end
 end
+
+return Main

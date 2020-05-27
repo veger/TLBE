@@ -1,8 +1,8 @@
-if not tlbe then
-    tlbe = {}
-end
+local Config = {}
 
-function tlbe.reload_settings(event)
+--- (re)loads the mod settings
+-- @return true when player just (re)enabled TLBE
+function Config.reload(event)
     local player = game.players[event.player_index]
     local guiSettings = settings.get_player_settings(player)
 
@@ -22,17 +22,14 @@ function tlbe.reload_settings(event)
             playerSettings.enabled = false
             guiSettings["tlbe-enabled"] = {value = false}
 
-            tlbe.log({"tlbe-disabled"})
-            tlbe.log({"err_interval"})
+            player.print({"err_interval"}, {r = 1})
+            player.print({"tlbe-disabled"})
         end
     end
 
     global.playerSettings[event.player_index] = playerSettings
 
-    if playerSettings.enabled and playerSettings.centerPos == nil then
-        -- initialize player settings if not yet done to prevent issues later
-        tlbe.follow_player(playerSettings, player)
-    end
-
-    tlbe.log({"err_generic", "reload_settings", "Settings loaded"})
+    return playerSettings.enabled and playerSettings.centerPos == nil
 end
+
+return Config

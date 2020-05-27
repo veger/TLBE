@@ -1,12 +1,13 @@
+package.path = package.path .. ";../?.lua"
+local TLBE = {Main = require("scripts.main")}
+
 local lu = require("luaunit")
 
-TestFollowPlayer = {}
-
-function TestFollowPlayer:TestSimple()
+function TestSimple()
     local player = {position = {x = 12, y = 21}}
     local playerSettings = {}
 
-    tlbe.follow_player(playerSettings, player)
+    TLBE.Main.follow_player(playerSettings, player)
 
     lu.assertEquals(playerSettings.centerPos, player.position)
     lu.assertNotIsNil(playerSettings.zoom)

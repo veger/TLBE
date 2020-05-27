@@ -1,9 +1,12 @@
+package.path = package.path .. ";../?.lua"
+local TLBE = {Main = require("scripts.main")}
+
 local lu = require("luaunit")
 
-MAX_TICKS = 100
+local MAX_TICKS = 100
 
 --- @return number @ticks
-function ConvergenceTester(playerSettings, player)
+local function ConvergenceTester(playerSettings, player)
     local ticks = 0
     local currentX = playerSettings.centerPos.x
     local currentY = playerSettings.centerPos.y
@@ -15,7 +18,7 @@ function ConvergenceTester(playerSettings, player)
         local lastY = currentY
         local lastZoom = currentZoom
 
-        tlbe.follow_base(playerSettings, player)
+        TLBE.Main.follow_base(playerSettings, player)
 
         currentX = playerSettings.centerPos.x
         currentY = playerSettings.centerPos.y
@@ -47,7 +50,7 @@ function TestFollowBaseSingleEntity:SetUp()
 end
 
 function TestFollowBaseSingleEntity:TestInitialUpRight()
-    tlbe.entity_built(
+    TLBE.Main.entity_built(
         {
             created_entity = {
                 bounding_box = {
@@ -58,7 +61,7 @@ function TestFollowBaseSingleEntity:TestInitialUpRight()
         }
     )
 
-    tlbe.follow_base(self.playerSettings, self.player)
+    TLBE.Main.follow_base(self.playerSettings, self.player)
 
     lu.assertIsTrue(self.playerSettings.centerPos.x > 0, "expected that centerPos.x moved right")
     lu.assertIsTrue(self.playerSettings.centerPos.y > 0, "expected that centerPos.y moved up")
@@ -69,7 +72,7 @@ function TestFollowBaseSingleEntity:TestInitialUpRight()
 end
 
 function TestFollowBaseSingleEntity:TestInitialBottomLeft()
-    tlbe.entity_built(
+    TLBE.Main.entity_built(
         {
             created_entity = {
                 bounding_box = {
@@ -80,7 +83,7 @@ function TestFollowBaseSingleEntity:TestInitialBottomLeft()
         }
     )
 
-    tlbe.follow_base(self.playerSettings, self.player)
+    TLBE.Main.follow_base(self.playerSettings, self.player)
 
     lu.assertIsTrue(self.playerSettings.centerPos.x < 0, "expected that centerPos.x moved left")
     lu.assertIsTrue(self.playerSettings.centerPos.y < 0, "expected that centerPos.y moved down")
@@ -91,7 +94,7 @@ function TestFollowBaseSingleEntity:TestInitialBottomLeft()
 end
 
 function TestFollowBaseSingleEntity:TestConvergence()
-    tlbe.entity_built(
+    TLBE.Main.entity_built(
         {
             created_entity = {
                 bounding_box = {
@@ -101,7 +104,7 @@ function TestFollowBaseSingleEntity:TestConvergence()
             }
         }
     )
-    tlbe.follow_base(self.playerSettings, self.player)
+    TLBE.Main.follow_base(self.playerSettings, self.player)
 
     local ticks = ConvergenceTester(self.playerSettings, self.player)
 
@@ -129,7 +132,7 @@ function TestFollowBase:SetUp()
         zoom = 1
     }
 
-    tlbe.entity_built(
+    TLBE.Main.entity_built(
         {
             created_entity = {
                 bounding_box = {
@@ -142,7 +145,7 @@ function TestFollowBase:SetUp()
 end
 
 function TestFollowBase:TestConvergenceDiagonal()
-    tlbe.entity_built(
+    TLBE.Main.entity_built(
         {
             created_entity = {
                 bounding_box = {
@@ -165,7 +168,7 @@ function TestFollowBase:TestConvergenceDiagonal()
 end
 
 function TestFollowBase:TestConvergenceHorizontal()
-    tlbe.entity_built(
+    TLBE.Main.entity_built(
         {
             created_entity = {
                 bounding_box = {
@@ -188,7 +191,7 @@ function TestFollowBase:TestConvergenceHorizontal()
 end
 
 function TestFollowBase:TestConvergenceHorizontal()
-    tlbe.entity_built(
+    TLBE.Main.entity_built(
         {
             created_entity = {
                 bounding_box = {

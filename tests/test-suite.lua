@@ -2,11 +2,7 @@
 
 local lu = require("luaunit")
 
-package.path = package.path .. ";../?.lua"
-require("scripts.main")
-
 require("follow-player")
 require("follow-base")
 
-local runner = lu.LuaUnit.new()
-os.exit(runner:runSuite())
+os.exit(lu.LuaUnit:run())
