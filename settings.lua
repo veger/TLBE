@@ -45,6 +45,14 @@ data:extend(
             order = "31"
         },
         {
+            type = "double-setting",
+            name = "tlbe-zoom-period",
+            setting_type = "runtime-per-user",
+            minimum_value = 1,
+            default_value = 1.5,
+            order = "32"
+        },
+        {
             type = "int-setting",
             name = "tlbe-resolution-x",
             setting_type = "runtime-per-user",

@@ -1,6 +1,6 @@
 local Config = {}
 
-local zoomPeriod = 1.5 -- time it should take to recenter on the base (seconds)
+local ticks_per_second = 60
 
 --- (re)loads the mod settings
 -- @return true when player just (re)enabled TLBE
@@ -16,8 +16,13 @@ function Config.reload(event)
         playerSettings.saveFolder = guiSettings["tlbe-save-folder"].value
         playerSettings.followPlayer = guiSettings["tlbe-follow-player"].value
         playerSettings.screenshotInterval =
-            math.floor((60 * guiSettings["tlbe-speed-increase"].value) / guiSettings["tlbe-frame-rate"].value)
-        playerSettings.zoomTicks = math.floor(60 * zoomPeriod * guiSettings["tlbe-speed-increase"].value)
+            math.floor(
+            (ticks_per_second * guiSettings["tlbe-speed-increase"].value) / guiSettings["tlbe-frame-rate"].value
+        )
+        playerSettings.zoomTicks =
+            math.floor(
+            ticks_per_second * guiSettings["tlbe-zoom-period"].value * guiSettings["tlbe-speed-increase"].value
+        )
         playerSettings.width = guiSettings["tlbe-resolution-x"].value
         playerSettings.height = guiSettings["tlbe-resolution-y"].value
 

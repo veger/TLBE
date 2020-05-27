@@ -5,7 +5,7 @@ Mod for [Factorio](http://www.factorio.com) that takes screenshots of your base 
 Features:
 * Customizable resolution, frame rate and speed factor
 * Optionally follow player until the first enitity is built
-* Gradually recenter and zoom out
+* Gradually (configurable period) recenter and zoom out
 * All screenshots are taken with full daylight
 * Configurable screenshot folder (e.g. to support multiple save files that are played in parallel)
 

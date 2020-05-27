@@ -49,7 +49,7 @@ function TestFollowBaseSingleEntity:SetUp()
         centerPos = {x = 0, y = 0},
         screenshotInterval = 1,
         zoom = 1,
-        zoomTicks = 10
+        zoomTicks = 15
     }
 end
 
@@ -112,7 +112,7 @@ function TestFollowBaseSingleEntity:TestConvergence()
 
     local ticks = ConvergenceTester(self.playerSettings, self.player)
 
-    lu.assertIsTrue(ticks < MAX_TICKS, "couldn't converge in 100 ticks")
+    lu.assertEquals(ticks, 15, "couldn't converge in expected 15 ticks")
 
     lu.assertIsTrue(self.playerSettings.centerPos.x == 1.5, "expected to center in middle of entity")
     lu.assertIsTrue(self.playerSettings.centerPos.y == 1.5, "expected to center in middle of entity")
@@ -165,7 +165,7 @@ function TestFollowBase:TestConvergenceDiagonal()
 
     local ticks = ConvergenceTester(self.playerSettings, self.player)
 
-    lu.assertIsTrue(ticks < 100, "couldn't converge in 100 ticks")
+    lu.assertEquals(ticks, 10, "couldn't converge in expected 10 ticks")
 
     lu.assertIsTrue(
         math.abs(self.playerSettings.centerPos.x - 6) < 0.01,
@@ -191,7 +191,7 @@ function TestFollowBase:TestConvergenceHorizontal()
 
     local ticks = ConvergenceTester(self.playerSettings, self.player)
 
-    lu.assertIsTrue(ticks < 100, "couldn't converge in 100 ticks")
+    lu.assertEquals(ticks, 10, "couldn't converge in expected 10 ticks")
 
     lu.assertIsTrue(
         math.abs(self.playerSettings.centerPos.x - 6) < 0.01,
@@ -217,7 +217,7 @@ function TestFollowBase:TestConvergenceHorizontalBigJump()
 
     local ticks = ConvergenceTester(self.playerSettings, self.player)
 
-    lu.assertIsTrue(ticks < 100, "couldn't converge in 100 ticks")
+    lu.assertEquals(ticks, 10, "couldn't converge in expected 10 ticks")
 
     lu.assertIsTrue(
         math.abs(self.playerSettings.centerPos.x - 26) < 0.01,
@@ -243,7 +243,7 @@ function TestFollowBase:TestConvergenceVertical()
 
     local ticks = ConvergenceTester(self.playerSettings, self.player)
 
-    lu.assertIsTrue(ticks < 100, "couldn't converge in 100 ticks")
+    lu.assertEquals(ticks, 10, "couldn't converge in expected 10 ticks")
 
     lu.assertIsTrue(
         math.abs(self.playerSettings.centerPos.x - 1.5) < 0.01,
@@ -269,7 +269,7 @@ function TestFollowBase:TestConvergenceVerticalBigJump()
 
     local ticks = ConvergenceTester(self.playerSettings, self.player)
 
-    lu.assertIsTrue(ticks < 100, "couldn't converge in 100 ticks")
+    lu.assertEquals(ticks, 10, "couldn't converge in expected 10 ticks")
 
     lu.assertIsTrue(
         math.abs(self.playerSettings.centerPos.x - 1.5) < 0.01,
