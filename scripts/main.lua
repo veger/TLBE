@@ -4,7 +4,6 @@ local tileSize = 32
 local boundarySize = 2
 local maxZoom = 1
 local minZoom = 0.031250
-local centerSpeed = 0.25 -- tiles / interval
 
 function Main.tick()
     for index, player in pairs(game.players) do
@@ -70,6 +69,7 @@ function Main.entity_built(event)
         end
     end
 
+    global.lastChange = game.tick
     global.factorySize = {
         x = global.maxPos.x - global.minPos.x,
         y = global.maxPos.y - global.minPos.y
@@ -89,49 +89,24 @@ function Main.follow_player(playerSettings, player)
 end
 
 function Main.follow_base(playerSettings, player)
-    local xDiff = math.abs(global.centerPos.x - playerSettings.centerPos.x)
-    local yDiff = math.abs(global.centerPos.y - playerSettings.centerPos.y)
+    local ticksLeft = global.lastChange + playerSettings.zoomTicks - game.tick
 
-    if xDiff ~= 0 or yDiff ~= 0 then
-        local speedRatio, ticksToZoom
-        if xDiff == 0 then
-            speedRatio = 1 / yDiff
-            ticksToZoom = centerSpeed
-        elseif yDiff == 0 then
-            speedRatio = xDiff
-            ticksToZoom = centerSpeed
-        elseif xDiff < yDiff then
-            speedRatio = (yDiff / xDiff)
-            ticksToZoom = xDiff / (centerSpeed * speedRatio)
-        else
-            speedRatio = (xDiff / yDiff)
-            ticksToZoom = xDiff / (centerSpeed * speedRatio)
-        end
+    if ticksLeft > 0 then
+        local stepsLeft = ticksLeft / playerSettings.screenshotInterval
 
         -- Gradually move to new center of the base
-        if global.centerPos.x < playerSettings.centerPos.x then
-            playerSettings.centerPos.x =
-                math.max(playerSettings.centerPos.x - centerSpeed * speedRatio, global.centerPos.x)
-        else
-            playerSettings.centerPos.x =
-                math.min(playerSettings.centerPos.x + centerSpeed * speedRatio, global.centerPos.x)
-        end
-        if global.centerPos.y < playerSettings.centerPos.y then
-            playerSettings.centerPos.y =
-                math.max(playerSettings.centerPos.y - centerSpeed / speedRatio, global.centerPos.y)
-        else
-            playerSettings.centerPos.y =
-                math.min(playerSettings.centerPos.y + centerSpeed / speedRatio, global.centerPos.y)
-        end
+        local xDiff = global.centerPos.x - playerSettings.centerPos.x
+        local yDiff = global.centerPos.y - playerSettings.centerPos.y
+        playerSettings.centerPos.x = playerSettings.centerPos.x + xDiff / stepsLeft
+        playerSettings.centerPos.y = playerSettings.centerPos.y + yDiff / stepsLeft
 
         -- Calculate desired zoom
         local zoomX = playerSettings.width / (tileSize * global.factorySize.x)
         local zoomY = playerSettings.height / (tileSize * global.factorySize.y)
-
         local zoom = math.min(zoomX, zoomY, maxZoom)
 
         -- Gradually zoom out with same duration as centering
-        playerSettings.zoom = playerSettings.zoom - (playerSettings.zoom - zoom) / ticksToZoom
+        playerSettings.zoom = playerSettings.zoom - (playerSettings.zoom - zoom) / stepsLeft
 
         if playerSettings.zoom < minZoom then
             if playerSettings.noticeMaxZoom == nil then

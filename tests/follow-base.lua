@@ -14,6 +14,7 @@ local function ConvergenceTester(playerSettings, player)
 
     repeat
         ticks = ticks + 1
+        game.tick = game.tick + 1
         local lastX = currentX
         local lastY = currentY
         local lastZoom = currentZoom
@@ -35,6 +36,7 @@ TestFollowBaseSingleEntity = {}
 function TestFollowBaseSingleEntity:SetUp()
     -- mock Factorio provided globals
     global = {}
+    game = {tick = 0}
 
     -- mock TLBE tables
     self.player = {
@@ -45,7 +47,9 @@ function TestFollowBaseSingleEntity:SetUp()
         width = 640,
         height = 480,
         centerPos = {x = 0, y = 0},
-        zoom = 1
+        screenshotInterval = 1,
+        zoom = 1,
+        zoomTicks = 10
     }
 end
 
@@ -119,6 +123,7 @@ TestFollowBase = {}
 function TestFollowBase:SetUp()
     -- mock Factorio provided globals
     global = {}
+    game = {tick = 0}
 
     -- mock TLBE tables
     self.player = {
@@ -129,7 +134,9 @@ function TestFollowBase:SetUp()
         width = 640,
         height = 480,
         centerPos = {x = 1.5, y = 1.5}, -- center of existing entity
-        zoom = 1
+        screenshotInterval = 1,
+        zoom = 1,
+        zoomTicks = 10
     }
 
     TLBE.Main.entity_built(
@@ -164,7 +171,10 @@ function TestFollowBase:TestConvergenceDiagonal()
         math.abs(self.playerSettings.centerPos.x - 6) < 0.01,
         "expected to center in middle of both entities"
     )
-    lu.assertIsTrue(math.abs(self.playerSettings.centerPos.y - 4) < 0.01, "expected to center in middle of entity")
+    lu.assertIsTrue(
+        math.abs(self.playerSettings.centerPos.y - 4) < 0.01,
+        "expected to center in middle  of both entities"
+    )
 end
 
 function TestFollowBase:TestConvergenceHorizontal()
@@ -187,10 +197,39 @@ function TestFollowBase:TestConvergenceHorizontal()
         math.abs(self.playerSettings.centerPos.x - 6) < 0.01,
         "expected to center in middle of both entities"
     )
-    lu.assertIsTrue(math.abs(self.playerSettings.centerPos.y - 1) < 0.01, "expected to center in middle of entity")
+    lu.assertIsTrue(
+        math.abs(self.playerSettings.centerPos.y - 1.5) < 0.01,
+        "expected to center in middle  of both entities"
+    )
 end
 
-function TestFollowBase:TestConvergenceHorizontal()
+function TestFollowBase:TestConvergenceHorizontalBigJump()
+    TLBE.Main.entity_built(
+        {
+            created_entity = {
+                bounding_box = {
+                    left_top = {x = 50, y = 6},
+                    right_bottom = {x = 51, y = 7}
+                }
+            }
+        }
+    )
+
+    local ticks = ConvergenceTester(self.playerSettings, self.player)
+
+    lu.assertIsTrue(ticks < 100, "couldn't converge in 100 ticks")
+
+    lu.assertIsTrue(
+        math.abs(self.playerSettings.centerPos.x - 26) < 0.01,
+        "expected to center in middle of both entities"
+    )
+    lu.assertIsTrue(
+        math.abs(self.playerSettings.centerPos.y - 4) < 0.01,
+        "expected to center in middle  of both entities"
+    )
+end
+
+function TestFollowBase:TestConvergenceVertical()
     TLBE.Main.entity_built(
         {
             created_entity = {
@@ -210,5 +249,34 @@ function TestFollowBase:TestConvergenceHorizontal()
         math.abs(self.playerSettings.centerPos.x - 1.5) < 0.01,
         "expected to center in middle of both entities"
     )
-    lu.assertIsTrue(math.abs(self.playerSettings.centerPos.y - 4) < 0.01, "expected to center in middle of entity")
+    lu.assertIsTrue(
+        math.abs(self.playerSettings.centerPos.y - 4) < 0.01,
+        "expected to center in middle of both entities"
+    )
+end
+
+function TestFollowBase:TestConvergenceVerticalBigJump()
+    TLBE.Main.entity_built(
+        {
+            created_entity = {
+                bounding_box = {
+                    left_top = {x = 1, y = 50},
+                    right_bottom = {x = 2, y = 51}
+                }
+            }
+        }
+    )
+
+    local ticks = ConvergenceTester(self.playerSettings, self.player)
+
+    lu.assertIsTrue(ticks < 100, "couldn't converge in 100 ticks")
+
+    lu.assertIsTrue(
+        math.abs(self.playerSettings.centerPos.x - 1.5) < 0.01,
+        "expected to center in middle of both entities"
+    )
+    lu.assertIsTrue(
+        math.abs(self.playerSettings.centerPos.y - 26) < 0.01,
+        "expected to center in middle  of both entities"
+    )
 end
