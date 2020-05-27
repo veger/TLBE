@@ -7,11 +7,19 @@ on:
     branches: [ master ]
 
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+
+    - name: Install lua5.2
+      run: sudo apt-get install lua5.2
+
     - name: lint
       uses: Roang-zero1/factorio-mod-luacheck@v1.1.0
       with:
           luacheckrc_url: https://raw.githubusercontent.com/veger/Factorio-luacheckrc/ignore-tests/.luacheckrc
+    
+    - name: unit test
+      run: lua test-suite.lua -v
+      working-directory: tests
