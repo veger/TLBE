@@ -77,8 +77,8 @@ function Main.entity_built(event)
 
     -- Update center position
     global.centerPos = {
-        x = global.minPos.x + math.floor(global.factorySize.x / 2),
-        y = global.minPos.y + math.floor(global.factorySize.y / 2)
+        x = global.minPos.x + global.factorySize.x / 2,
+        y = global.minPos.y + global.factorySize.y / 2
     }
 end
 

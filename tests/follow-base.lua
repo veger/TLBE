@@ -110,8 +110,8 @@ function TestFollowBaseSingleEntity:TestConvergence()
 
     lu.assertIsTrue(ticks < MAX_TICKS, "couldn't converge in 100 ticks")
 
-    lu.assertIsTrue(self.playerSettings.centerPos.x == 1, "expected to center in middle of entity")
-    lu.assertIsTrue(self.playerSettings.centerPos.y == 1, "expected to center in middle of entity")
+    lu.assertIsTrue(self.playerSettings.centerPos.x == 1.5, "expected to center in middle of entity")
+    lu.assertIsTrue(self.playerSettings.centerPos.y == 1.5, "expected to center in middle of entity")
 end
 
 TestFollowBase = {}
@@ -207,7 +207,7 @@ function TestFollowBase:TestConvergenceHorizontal()
     lu.assertIsTrue(ticks < 100, "couldn't converge in 100 ticks")
 
     lu.assertIsTrue(
-        math.abs(self.playerSettings.centerPos.x - 1) < 0.01,
+        math.abs(self.playerSettings.centerPos.x - 1.5) < 0.01,
         "expected to center in middle of both entities"
     )
     lu.assertIsTrue(math.abs(self.playerSettings.centerPos.y - 4) < 0.01, "expected to center in middle of entity")
