@@ -14,7 +14,7 @@ function Config.reload(event)
         playerSettings.saveFolder = guiSettings["tlbe-save-folder"].value
         playerSettings.followPlayer = guiSettings["tlbe-follow-player"].value
         playerSettings.screenshotInterval =
-            (60 * guiSettings["tlbe-speed-increase"].value) / guiSettings["tlbe-frame-rate"].value
+            math.floor((60 * guiSettings["tlbe-speed-increase"].value) / guiSettings["tlbe-frame-rate"].value)
         playerSettings.width = guiSettings["tlbe-resolution-x"].value
         playerSettings.height = guiSettings["tlbe-resolution-y"].value
 
