@@ -1,4 +1,6 @@
-if not tlbe then tlbe = {} end
+if not tlbe then
+    tlbe = {}
+end
 
 tileSize = 32
 boundarySize = 2
@@ -8,10 +10,9 @@ centerSpeed = 0.25 -- tiles / interval
 
 function tlbe.tick(event)
     for index, player in pairs(game.players) do
-        local playerSettings = global.playerSettings[player.index];
+        local playerSettings = global.playerSettings[player.index]
 
-        if playerSettings.enabled and game.tick %
-            playerSettings.screenshotInterval == 0 then
+        if playerSettings.enabled and game.tick % playerSettings.screenshotInterval == 0 then
             if global.factorySize == nil then
                 tlbe.follow_player(playerSettings, player)
 
@@ -29,15 +30,14 @@ function tlbe.tick(event)
                 position = playerSettings.centerPos,
                 resolution = {playerSettings.width, playerSettings.height},
                 zoom = playerSettings.zoom,
-                path = string.format("%s/%08d.png", playerSettings.saveFolder,
-                                     game.tick),
+                path = string.format("%s/%08d.png", playerSettings.saveFolder, game.tick),
                 show_entity_info = false,
                 allow_in_replay = true,
                 daytime = 0 -- take screenshot at full light
             }
 
             if playerSettings.noticesEnabled then
-                tlbe.log({"err_generic", "tick", "Screenshot taken!"});
+                tlbe.log({"err_generic", "tick", "Screenshot taken!"})
             end
         end
     end
@@ -95,7 +95,7 @@ function tlbe.follow_base(playerSettings, player)
     local yDiff = math.abs(global.centerPos.y - playerSettings.centerPos.y)
 
     if xDiff ~= 0 or yDiff ~= 0 then
-        local speedRatio, ticksToZoom;
+        local speedRatio, ticksToZoom
         if xDiff == 0 then
             speedRatio = 1 / yDiff
             ticksToZoom = centerSpeed
@@ -113,21 +113,17 @@ function tlbe.follow_base(playerSettings, player)
         -- Gradually move to new center of the base
         if global.centerPos.x < playerSettings.centerPos.x then
             playerSettings.centerPos.x =
-                math.max(playerSettings.centerPos.x - centerSpeed * speedRatio,
-                         global.centerPos.x)
+                math.max(playerSettings.centerPos.x - centerSpeed * speedRatio, global.centerPos.x)
         else
             playerSettings.centerPos.x =
-                math.min(playerSettings.centerPos.x + centerSpeed * speedRatio,
-                         global.centerPos.x)
+                math.min(playerSettings.centerPos.x + centerSpeed * speedRatio, global.centerPos.x)
         end
         if global.centerPos.y < playerSettings.centerPos.y then
             playerSettings.centerPos.y =
-                math.max(playerSettings.centerPos.y - centerSpeed / speedRatio,
-                         global.centerPos.y)
+                math.max(playerSettings.centerPos.y - centerSpeed / speedRatio, global.centerPos.y)
         else
             playerSettings.centerPos.y =
-                math.min(playerSettings.centerPos.y + centerSpeed / speedRatio,
-                         global.centerPos.y)
+                math.min(playerSettings.centerPos.y + centerSpeed / speedRatio, global.centerPos.y)
         end
 
         -- Calculate desired zoom
@@ -137,8 +133,7 @@ function tlbe.follow_base(playerSettings, player)
         local zoom = math.min(zoomX, zoomY, maxZoom)
 
         -- Gradually zoom out with same duration as centering
-        playerSettings.zoom =
-            playerSettings.zoom - (playerSettings.zoom - zoom) / ticksToZoom
+        playerSettings.zoom = playerSettings.zoom - (playerSettings.zoom - zoom) / ticksToZoom
 
         if playerSettings.zoom < minZoom then
             if playerSettings.noticeMaxZoom == nil then
