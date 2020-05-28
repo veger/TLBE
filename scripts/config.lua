@@ -12,6 +12,7 @@ function Config.reload(event)
     playerSettings.enabled = guiSettings["tlbe-enabled"].value
 
     if playerSettings.enabled then
+        local needRescale = false
         playerSettings.noticesEnabled = guiSettings["tlbe-notices-enabled"].value
         playerSettings.saveFolder = guiSettings["tlbe-save-folder"].value
         playerSettings.followPlayer = guiSettings["tlbe-follow-player"].value
@@ -23,8 +24,18 @@ function Config.reload(event)
             math.floor(
             ticks_per_second * guiSettings["tlbe-zoom-period"].value * guiSettings["tlbe-speed-increase"].value
         )
-        playerSettings.width = guiSettings["tlbe-resolution-x"].value
-        playerSettings.height = guiSettings["tlbe-resolution-y"].value
+
+        local width = guiSettings["tlbe-resolution-x"].value
+        if width ~= playerSettings.width and playerSettings.width ~= nil then
+            needRescale = true
+        end
+        playerSettings.width = width
+
+        local height = guiSettings["tlbe-resolution-y"].value
+        if height ~= playerSettings.heigth and playerSettings.heigth ~= nil then
+            needRescale = true
+        end
+        playerSettings.height = height
 
         if playerSettings.screenshotInterval < 1 then
             playerSettings.enabled = false
@@ -32,6 +43,10 @@ function Config.reload(event)
 
             player.print({"err_interval"}, {r = 1})
             player.print({"tlbe-disabled"})
+        end
+
+        if needRescale then
+            global.lastChange = game.tick
         end
     end
 
