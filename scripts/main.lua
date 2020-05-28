@@ -17,8 +17,17 @@ function Main.tick()
                     -- Do not take screenshots yet
                     return
                 end
+            elseif global.rocketLaunching ~= nil then
+                -- Focus on launch
+                Main.follow_center_pos(
+                    playerSettings,
+                    player,
+                    global.rocketLaunching.centerPos,
+                    global.rocketLaunching.size
+                )
             else
-                Main.follow_base(playerSettings, player)
+                -- Focus on base
+                Main.follow_center_pos(playerSettings, player, global.centerPos, global.factorySize)
             end
 
             game.take_screenshot {
@@ -82,27 +91,46 @@ function Main.entity_built(event)
     }
 end
 
+function Main.rocket_launch(event)
+    if global.rocketLaunching ~= nil then
+        -- already following a launch, ignore
+        return
+    end
+
+    global.lastChange = game.tick
+    global.rocketLaunching = {
+        centerPos = event.rocket_silo.position,
+        size = {x = 1, y = 1} -- don't care about size, it will fit with maxZoom
+    }
+end
+
+function Main.rocket_launched()
+    -- Done, recenter on base and allow tracking next launch
+    global.lastChange = game.tick
+    global.rocketLaunching = nil
+end
+
 function Main.follow_player(playerSettings, player)
     -- Follow player (update begin position)
     playerSettings.centerPos = player.position
     playerSettings.zoom = maxZoom
 end
 
-function Main.follow_base(playerSettings, player)
+function Main.follow_center_pos(playerSettings, player, centerPos, centerSize)
     local ticksLeft = global.lastChange + playerSettings.zoomTicks - game.tick
 
     if ticksLeft > 0 then
         local stepsLeft = ticksLeft / playerSettings.screenshotInterval
 
         -- Gradually move to new center of the base
-        local xDiff = global.centerPos.x - playerSettings.centerPos.x
-        local yDiff = global.centerPos.y - playerSettings.centerPos.y
+        local xDiff = centerPos.x - playerSettings.centerPos.x
+        local yDiff = centerPos.y - playerSettings.centerPos.y
         playerSettings.centerPos.x = playerSettings.centerPos.x + xDiff / stepsLeft
         playerSettings.centerPos.y = playerSettings.centerPos.y + yDiff / stepsLeft
 
         -- Calculate desired zoom
-        local zoomX = playerSettings.width / (tileSize * global.factorySize.x)
-        local zoomY = playerSettings.height / (tileSize * global.factorySize.y)
+        local zoomX = playerSettings.width / (tileSize * centerSize.x)
+        local zoomY = playerSettings.height / (tileSize * centerSize.y)
         local zoom = math.min(zoomX, zoomY, maxZoom)
 
         -- Gradually zoom out with same duration as centering

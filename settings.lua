@@ -29,6 +29,13 @@ data:extend(
             order = "10"
         },
         {
+            type = "bool-setting",
+            name = "tlbe-follow-launch",
+            setting_type = "runtime-per-user",
+            default_value = true,
+            order = "11"
+        },
+        {
             type = "double-setting",
             name = "tlbe-frame-rate",
             setting_type = "runtime-per-user",

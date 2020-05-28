@@ -1,35 +1,8 @@
 package.path = package.path .. ";../?.lua"
 local TLBE = {Main = require("scripts.main")}
+local Util = require("util")
 
 local lu = require("luaunit")
-
-local MAX_TICKS = 100
-
---- @return number @ticks
-local function ConvergenceTester(playerSettings, player)
-    local ticks = 0
-    local currentX = playerSettings.centerPos.x
-    local currentY = playerSettings.centerPos.y
-    local currentZoom = playerSettings.zoom
-
-    repeat
-        ticks = ticks + 1
-        game.tick = game.tick + 1
-        local lastX = currentX
-        local lastY = currentY
-        local lastZoom = currentZoom
-
-        TLBE.Main.follow_base(playerSettings, player)
-
-        currentX = playerSettings.centerPos.x
-        currentY = playerSettings.centerPos.y
-        currentZoom = playerSettings.zoom
-    until ticks == MAX_TICKS or
-        (math.abs(lastX - currentX) < 0.0001 and math.abs(lastY - currentY) < 0.0001 and
-            math.abs(lastZoom - currentZoom) < 0.0001)
-
-    return ticks
-end
 
 TestFollowBaseSingleEntity = {}
 
@@ -65,7 +38,7 @@ function TestFollowBaseSingleEntity:TestInitialUpRight()
         }
     )
 
-    TLBE.Main.follow_base(self.playerSettings, self.player)
+    TLBE.Main.follow_center_pos(self.playerSettings, self.player, global.centerPos, global.factorySize)
 
     lu.assertIsTrue(self.playerSettings.centerPos.x > 0, "expected that centerPos.x moved right")
     lu.assertIsTrue(self.playerSettings.centerPos.y > 0, "expected that centerPos.y moved up")
@@ -87,7 +60,7 @@ function TestFollowBaseSingleEntity:TestInitialBottomLeft()
         }
     )
 
-    TLBE.Main.follow_base(self.playerSettings, self.player)
+    TLBE.Main.follow_center_pos(self.playerSettings, self.player, global.centerPos, global.factorySize)
 
     lu.assertIsTrue(self.playerSettings.centerPos.x < 0, "expected that centerPos.x moved left")
     lu.assertIsTrue(self.playerSettings.centerPos.y < 0, "expected that centerPos.y moved down")
@@ -108,9 +81,9 @@ function TestFollowBaseSingleEntity:TestConvergence()
             }
         }
     )
-    TLBE.Main.follow_base(self.playerSettings, self.player)
+    TLBE.Main.follow_center_pos(self.playerSettings, self.player, global.centerPos, global.factorySize)
 
-    local ticks = ConvergenceTester(self.playerSettings, self.player)
+    local ticks = Util.ConvergenceTester(self.playerSettings, self.player, global.centerPos, global.factorySize)
 
     lu.assertEquals(ticks, 15, "couldn't converge in expected 15 ticks")
 
@@ -163,7 +136,7 @@ function TestFollowBase:TestConvergenceDiagonal()
         }
     )
 
-    local ticks = ConvergenceTester(self.playerSettings, self.player)
+    local ticks = Util.ConvergenceTester(self.playerSettings, self.player, global.centerPos, global.factorySize)
 
     lu.assertEquals(ticks, 10, "couldn't converge in expected 10 ticks")
 
@@ -173,7 +146,7 @@ function TestFollowBase:TestConvergenceDiagonal()
     )
     lu.assertIsTrue(
         math.abs(self.playerSettings.centerPos.y - 4) < 0.01,
-        "expected to center in middle  of both entities"
+        "expected to center in middle of both entities"
     )
 end
 
@@ -189,7 +162,7 @@ function TestFollowBase:TestConvergenceHorizontal()
         }
     )
 
-    local ticks = ConvergenceTester(self.playerSettings, self.player)
+    local ticks = Util.ConvergenceTester(self.playerSettings, self.player, global.centerPos, global.factorySize)
 
     lu.assertEquals(ticks, 10, "couldn't converge in expected 10 ticks")
 
@@ -199,7 +172,7 @@ function TestFollowBase:TestConvergenceHorizontal()
     )
     lu.assertIsTrue(
         math.abs(self.playerSettings.centerPos.y - 1.5) < 0.01,
-        "expected to center in middle  of both entities"
+        "expected to center in middle of both entities"
     )
 end
 
@@ -215,7 +188,7 @@ function TestFollowBase:TestConvergenceHorizontalBigJump()
         }
     )
 
-    local ticks = ConvergenceTester(self.playerSettings, self.player)
+    local ticks = Util.ConvergenceTester(self.playerSettings, self.player, global.centerPos, global.factorySize)
 
     lu.assertEquals(ticks, 10, "couldn't converge in expected 10 ticks")
 
@@ -225,7 +198,7 @@ function TestFollowBase:TestConvergenceHorizontalBigJump()
     )
     lu.assertIsTrue(
         math.abs(self.playerSettings.centerPos.y - 4) < 0.01,
-        "expected to center in middle  of both entities"
+        "expected to center in middle of both entities"
     )
 end
 
@@ -241,7 +214,7 @@ function TestFollowBase:TestConvergenceVertical()
         }
     )
 
-    local ticks = ConvergenceTester(self.playerSettings, self.player)
+    local ticks = Util.ConvergenceTester(self.playerSettings, self.player, global.centerPos, global.factorySize)
 
     lu.assertEquals(ticks, 10, "couldn't converge in expected 10 ticks")
 
@@ -267,7 +240,7 @@ function TestFollowBase:TestConvergenceVerticalBigJump()
         }
     )
 
-    local ticks = ConvergenceTester(self.playerSettings, self.player)
+    local ticks = Util.ConvergenceTester(self.playerSettings, self.player, global.centerPos, global.factorySize)
 
     lu.assertEquals(ticks, 10, "couldn't converge in expected 10 ticks")
 
@@ -277,6 +250,6 @@ function TestFollowBase:TestConvergenceVerticalBigJump()
     )
     lu.assertIsTrue(
         math.abs(self.playerSettings.centerPos.y - 26) < 0.01,
-        "expected to center in middle  of both entities"
+        "expected to center in middle of both entities"
     )
 end

@@ -26,5 +26,7 @@ script.on_event(
 script.on_event(defines.events.on_player_created, TLBE.Config.reload)
 
 script.on_event(defines.events.on_built_entity, TLBE.Main.entity_built)
+script.on_event(defines.events.on_rocket_launch_ordered, TLBE.Main.rocket_launch)
+script.on_event(defines.events.on_rocket_launched, TLBE.Main.rocket_launched)
 
 script.on_event(defines.events.on_tick, TLBE.Main.tick)
