@@ -16,13 +16,20 @@ function TestFollowRocket:SetUp()
         print = function()
         end
     }
-    self.playerSettings = {
-        width = 640,
-        height = 480,
-        centerPos = {x = 1.5, y = 1.5}, -- center of existing entity
-        screenshotInterval = 1,
-        zoom = 1,
-        zoomTicks = 10
+    global.playerSettings = {
+        {
+            cameras = {
+                {
+                    width = 640,
+                    height = 480,
+                    centerPos = {x = 1.5, y = 1.5}, -- center of existing entity
+                    screenshotInterval = 1,
+                    zoom = 1,
+                    zoomTicks = 10,
+                    lastChange = 1
+                }
+            }
+        }
     }
 
     TLBE.Main.entity_built(
@@ -47,15 +54,17 @@ function TestFollowRocket:SetUp()
     )
 
     -- Stablize on current base
-    Util.ConvergenceTester(self.playerSettings, self.player, global.centerPos, global.factorySize)
+    local mainCamera = global.playerSettings[1].cameras[1]
+    Util.ConvergenceTester(global.playerSettings[1], self.player, mainCamera.centerPos, mainCamera.factorySize)
 end
 
 function TestFollowRocket:TestRocketLaunch()
     TLBE.Main.rocket_launch({rocket_silo = {position = {x = 10, y = 10}}})
 
+    local mainCamera = global.playerSettings[1].cameras[1]
     local ticks =
         Util.ConvergenceTester(
-        self.playerSettings,
+        global.playerSettings[1],
         self.player,
         global.rocketLaunching.centerPos,
         global.rocketLaunching.size
@@ -63,13 +72,7 @@ function TestFollowRocket:TestRocketLaunch()
 
     lu.assertEquals(ticks, 10, "couldn't converge in expected 10 ticks")
 
-    lu.assertIsTrue(
-        math.abs(self.playerSettings.centerPos.x - 10) < 0.01,
-        "expected to center in middle of both entities"
-    )
-    lu.assertIsTrue(
-        math.abs(self.playerSettings.centerPos.y - 10) < 0.01,
-        "expected to center in middle of both entities"
-    )
-    lu.assertIsTrue(math.abs(self.playerSettings.zoom - 1) < 0.01, "expected to zoomed in maximally")
+    lu.assertIsTrue(math.abs(mainCamera.centerPos.x - 10) < 0.01, "expected to center in middle of both entities")
+    lu.assertIsTrue(math.abs(mainCamera.centerPos.y - 10) < 0.01, "expected to center in middle of both entities")
+    lu.assertIsTrue(math.abs(mainCamera.zoom - 1) < 0.01, "expected to zoomed in maximally")
 end

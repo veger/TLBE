@@ -16,13 +16,20 @@ function TestFollowBaseSingleEntity:SetUp()
         print = function()
         end
     }
-    self.playerSettings = {
-        width = 640,
-        height = 480,
-        centerPos = {x = 0, y = 0},
-        screenshotInterval = 1,
-        zoom = 1,
-        zoomTicks = 15
+    global.playerSettings = {
+        {
+            cameras = {
+                {
+                    width = 640,
+                    height = 480,
+                    centerPos = {x = 0, y = 0},
+                    screenshotInterval = 1,
+                    zoom = 1,
+                    zoomTicks = 15,
+                    lastChange = 1
+                }
+            }
+        }
     }
 end
 
@@ -38,14 +45,18 @@ function TestFollowBaseSingleEntity:TestInitialUpRight()
         }
     )
 
-    TLBE.Main.follow_center_pos(self.playerSettings, self.player, global.centerPos, global.factorySize)
-
-    lu.assertIsTrue(self.playerSettings.centerPos.x > 0, "expected that centerPos.x moved right")
-    lu.assertIsTrue(self.playerSettings.centerPos.y > 0, "expected that centerPos.y moved up")
-    lu.assertIsTrue(
-        self.playerSettings.zoom == 1,
-        "expected that zoom did not change, as a 1x1 entity should fit the resolutin"
+    local mainCamera = global.playerSettings[1].cameras[1]
+    TLBE.Main.follow_center_pos(
+        global.playerSettings[1],
+        self.player,
+        mainCamera,
+        mainCamera.baseCenterPos,
+        mainCamera.factorySize
     )
+
+    lu.assertIsTrue(mainCamera.centerPos.x > 0, "expected that centerPos.x moved right")
+    lu.assertIsTrue(mainCamera.centerPos.y > 0, "expected that centerPos.y moved up")
+    lu.assertIsTrue(mainCamera.zoom == 1, "expected that zoom did not change, as a 1x1 entity should fit the resolutin")
 end
 
 function TestFollowBaseSingleEntity:TestInitialBottomLeft()
@@ -60,14 +71,18 @@ function TestFollowBaseSingleEntity:TestInitialBottomLeft()
         }
     )
 
-    TLBE.Main.follow_center_pos(self.playerSettings, self.player, global.centerPos, global.factorySize)
-
-    lu.assertIsTrue(self.playerSettings.centerPos.x < 0, "expected that centerPos.x moved left")
-    lu.assertIsTrue(self.playerSettings.centerPos.y < 0, "expected that centerPos.y moved down")
-    lu.assertIsTrue(
-        self.playerSettings.zoom == 1,
-        "expected that zoom did not change, as a 1x1 entity should fit the resolutin"
+    local mainCamera = global.playerSettings[1].cameras[1]
+    TLBE.Main.follow_center_pos(
+        global.playerSettings[1],
+        self.player,
+        mainCamera,
+        mainCamera.baseCenterPos,
+        mainCamera.factorySize
     )
+
+    lu.assertIsTrue(mainCamera.centerPos.x < 0, "expected that centerPos.x moved left")
+    lu.assertIsTrue(mainCamera.centerPos.y < 0, "expected that centerPos.y moved down")
+    lu.assertIsTrue(mainCamera.zoom == 1, "expected that zoom did not change, as a 1x1 entity should fit the resolutin")
 end
 
 function TestFollowBaseSingleEntity:TestConvergence()
@@ -81,14 +96,22 @@ function TestFollowBaseSingleEntity:TestConvergence()
             }
         }
     )
-    TLBE.Main.follow_center_pos(self.playerSettings, self.player, global.centerPos, global.factorySize)
+    local mainCamera = global.playerSettings[1].cameras[1]
+    TLBE.Main.follow_center_pos(
+        global.playerSettings[1],
+        self.player,
+        mainCamera,
+        mainCamera.centerPos,
+        mainCamera.factorySize
+    )
 
-    local ticks = Util.ConvergenceTester(self.playerSettings, self.player, global.centerPos, global.factorySize)
+    local ticks =
+        Util.ConvergenceTester(global.playerSettings[1], self.player, mainCamera.baseCenterPos, mainCamera.factorySize)
 
     lu.assertEquals(ticks, 15, "couldn't converge in expected 15 ticks")
 
-    lu.assertIsTrue(self.playerSettings.centerPos.x == 1.5, "expected to center in middle of entity")
-    lu.assertIsTrue(self.playerSettings.centerPos.y == 1.5, "expected to center in middle of entity")
+    lu.assertIsTrue(mainCamera.centerPos.x == 1.5, "expected to center in middle of entity")
+    lu.assertIsTrue(mainCamera.centerPos.y == 1.5, "expected to center in middle of entity")
 end
 
 TestFollowBase = {}
@@ -103,13 +126,20 @@ function TestFollowBase:SetUp()
         print = function()
         end
     }
-    self.playerSettings = {
-        width = 640,
-        height = 480,
-        centerPos = {x = 1.5, y = 1.5}, -- center of existing entity
-        screenshotInterval = 1,
-        zoom = 1,
-        zoomTicks = 10
+    global.playerSettings = {
+        {
+            cameras = {
+                {
+                    width = 640,
+                    height = 480,
+                    centerPos = {x = 1.5, y = 1.5}, -- center of existing entity
+                    screenshotInterval = 1,
+                    zoom = 1,
+                    zoomTicks = 10,
+                    lastChange = 1
+                }
+            }
+        }
     }
 
     TLBE.Main.entity_built(
@@ -125,6 +155,7 @@ function TestFollowBase:SetUp()
 end
 
 function TestFollowBase:TestConvergenceDiagonal()
+    local mainCamera = global.playerSettings[1].cameras[1]
     TLBE.Main.entity_built(
         {
             created_entity = {
@@ -136,18 +167,13 @@ function TestFollowBase:TestConvergenceDiagonal()
         }
     )
 
-    local ticks = Util.ConvergenceTester(self.playerSettings, self.player, global.centerPos, global.factorySize)
+    local ticks =
+        Util.ConvergenceTester(global.playerSettings[1], self.player, mainCamera.baseCenterPos, mainCamera.factorySize)
 
     lu.assertEquals(ticks, 10, "couldn't converge in expected 10 ticks")
 
-    lu.assertIsTrue(
-        math.abs(self.playerSettings.centerPos.x - 6) < 0.01,
-        "expected to center in middle of both entities"
-    )
-    lu.assertIsTrue(
-        math.abs(self.playerSettings.centerPos.y - 4) < 0.01,
-        "expected to center in middle of both entities"
-    )
+    lu.assertIsTrue(math.abs(mainCamera.centerPos.x - 6) < 0.01, "expected to center in middle of both entities")
+    lu.assertIsTrue(math.abs(mainCamera.centerPos.y - 4) < 0.01, "expected to center in middle of both entities")
 end
 
 function TestFollowBase:TestConvergenceHorizontal()
@@ -162,18 +188,14 @@ function TestFollowBase:TestConvergenceHorizontal()
         }
     )
 
-    local ticks = Util.ConvergenceTester(self.playerSettings, self.player, global.centerPos, global.factorySize)
+    local mainCamera = global.playerSettings[1].cameras[1]
+    local ticks =
+        Util.ConvergenceTester(global.playerSettings[1], self.player, mainCamera.baseCenterPos, mainCamera.factorySize)
 
     lu.assertEquals(ticks, 10, "couldn't converge in expected 10 ticks")
 
-    lu.assertIsTrue(
-        math.abs(self.playerSettings.centerPos.x - 6) < 0.01,
-        "expected to center in middle of both entities"
-    )
-    lu.assertIsTrue(
-        math.abs(self.playerSettings.centerPos.y - 1.5) < 0.01,
-        "expected to center in middle of both entities"
-    )
+    lu.assertIsTrue(math.abs(mainCamera.centerPos.x - 6) < 0.01, "expected to center in middle of both entities")
+    lu.assertIsTrue(math.abs(mainCamera.centerPos.y - 1.5) < 0.01, "expected to center in middle of both entities")
 end
 
 function TestFollowBase:TestConvergenceHorizontalBigJump()
@@ -188,18 +210,14 @@ function TestFollowBase:TestConvergenceHorizontalBigJump()
         }
     )
 
-    local ticks = Util.ConvergenceTester(self.playerSettings, self.player, global.centerPos, global.factorySize)
+    local mainCamera = global.playerSettings[1].cameras[1]
+    local ticks =
+        Util.ConvergenceTester(global.playerSettings[1], self.player, mainCamera.baseCenterPos, mainCamera.factorySize)
 
     lu.assertEquals(ticks, 10, "couldn't converge in expected 10 ticks")
 
-    lu.assertIsTrue(
-        math.abs(self.playerSettings.centerPos.x - 26) < 0.01,
-        "expected to center in middle of both entities"
-    )
-    lu.assertIsTrue(
-        math.abs(self.playerSettings.centerPos.y - 4) < 0.01,
-        "expected to center in middle of both entities"
-    )
+    lu.assertIsTrue(math.abs(mainCamera.centerPos.x - 26) < 0.01, "expected to center in middle of both entities")
+    lu.assertIsTrue(math.abs(mainCamera.centerPos.y - 4) < 0.01, "expected to center in middle of both entities")
 end
 
 function TestFollowBase:TestConvergenceVertical()
@@ -214,18 +232,14 @@ function TestFollowBase:TestConvergenceVertical()
         }
     )
 
-    local ticks = Util.ConvergenceTester(self.playerSettings, self.player, global.centerPos, global.factorySize)
+    local mainCamera = global.playerSettings[1].cameras[1]
+    local ticks =
+        Util.ConvergenceTester(global.playerSettings[1], self.player, mainCamera.baseCenterPos, mainCamera.factorySize)
 
     lu.assertEquals(ticks, 10, "couldn't converge in expected 10 ticks")
 
-    lu.assertIsTrue(
-        math.abs(self.playerSettings.centerPos.x - 1.5) < 0.01,
-        "expected to center in middle of both entities"
-    )
-    lu.assertIsTrue(
-        math.abs(self.playerSettings.centerPos.y - 4) < 0.01,
-        "expected to center in middle of both entities"
-    )
+    lu.assertIsTrue(math.abs(mainCamera.centerPos.x - 1.5) < 0.01, "expected to center in middle of both entities")
+    lu.assertIsTrue(math.abs(mainCamera.centerPos.y - 4) < 0.01, "expected to center in middle of both entities")
 end
 
 function TestFollowBase:TestConvergenceVerticalBigJump()
@@ -240,16 +254,12 @@ function TestFollowBase:TestConvergenceVerticalBigJump()
         }
     )
 
-    local ticks = Util.ConvergenceTester(self.playerSettings, self.player, global.centerPos, global.factorySize)
+    local mainCamera = global.playerSettings[1].cameras[1]
+    local ticks =
+        Util.ConvergenceTester(global.playerSettings[1], self.player, mainCamera.baseCenterPos, mainCamera.factorySize)
 
     lu.assertEquals(ticks, 10, "couldn't converge in expected 10 ticks")
 
-    lu.assertIsTrue(
-        math.abs(self.playerSettings.centerPos.x - 1.5) < 0.01,
-        "expected to center in middle of both entities"
-    )
-    lu.assertIsTrue(
-        math.abs(self.playerSettings.centerPos.y - 26) < 0.01,
-        "expected to center in middle of both entities"
-    )
+    lu.assertIsTrue(math.abs(mainCamera.centerPos.x - 1.5) < 0.01, "expected to center in middle of both entities")
+    lu.assertIsTrue(math.abs(mainCamera.centerPos.y - 26) < 0.01, "expected to center in middle of both entities")
 end

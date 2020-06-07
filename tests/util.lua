@@ -5,10 +5,11 @@ local MAX_TICKS = 100
 
 --- @return number @ticks
 function Util.ConvergenceTester(playerSettings, player, targetCenterPos, targetSize)
+    local mainCamera = playerSettings.cameras[1]
     local ticks = 0
-    local currentX = playerSettings.centerPos.x
-    local currentY = playerSettings.centerPos.y
-    local currentZoom = playerSettings.zoom
+    local currentX = mainCamera.centerPos.x
+    local currentY = mainCamera.centerPos.y
+    local currentZoom = mainCamera.zoom
 
     repeat
         ticks = ticks + 1
@@ -17,11 +18,11 @@ function Util.ConvergenceTester(playerSettings, player, targetCenterPos, targetS
         local lastY = currentY
         local lastZoom = currentZoom
 
-        TLBE.Main.follow_center_pos(playerSettings, player, targetCenterPos, targetSize)
+        TLBE.Main.follow_center_pos(playerSettings, player, mainCamera, targetCenterPos, targetSize)
 
-        currentX = playerSettings.centerPos.x
-        currentY = playerSettings.centerPos.y
-        currentZoom = playerSettings.zoom
+        currentX = mainCamera.centerPos.x
+        currentY = mainCamera.centerPos.y
+        currentZoom = mainCamera.zoom
     until ticks == MAX_TICKS or
         (math.abs(lastX - currentX) < 0.0001 and math.abs(lastY - currentY) < 0.0001 and
             math.abs(lastZoom - currentZoom) < 0.0001)

@@ -8,7 +8,13 @@ function Config.reload(event)
     local player = game.players[event.player_index]
     local guiSettings = settings.get_player_settings(player)
 
-    local playerSettings = global.playerSettings[event.player_index] or {}
+    local playerSettings =
+        global.playerSettings[event.player_index] or
+        {
+            -- Setup a default camera for the player
+            cameras = {{name = "main"}}
+        }
+    local mainCamera = playerSettings.cameras[1]
     playerSettings.enabled = guiSettings["tlbe-enabled"].value
 
     if playerSettings.enabled then
@@ -16,28 +22,28 @@ function Config.reload(event)
         playerSettings.noticesEnabled = guiSettings["tlbe-notices-enabled"].value
         playerSettings.saveFolder = guiSettings["tlbe-save-folder"].value
         playerSettings.followPlayer = guiSettings["tlbe-follow-player"].value
-        playerSettings.screenshotInterval =
+        mainCamera.screenshotInterval =
             math.floor(
             (ticks_per_second * guiSettings["tlbe-speed-increase"].value) / guiSettings["tlbe-frame-rate"].value
         )
-        playerSettings.zoomTicks =
+        mainCamera.zoomTicks =
             math.floor(
             ticks_per_second * guiSettings["tlbe-zoom-period"].value * guiSettings["tlbe-speed-increase"].value
         )
 
         local width = guiSettings["tlbe-resolution-x"].value
-        if width ~= playerSettings.width and playerSettings.width ~= nil then
+        if width ~= mainCamera.width and mainCamera.width ~= nil then
             needRescale = true
         end
-        playerSettings.width = width
+        mainCamera.width = width
 
         local height = guiSettings["tlbe-resolution-y"].value
-        if height ~= playerSettings.heigth and playerSettings.heigth ~= nil then
+        if height ~= mainCamera.heigth and mainCamera.heigth ~= nil then
             needRescale = true
         end
-        playerSettings.height = height
+        mainCamera.height = height
 
-        if playerSettings.screenshotInterval < 1 then
+        if mainCamera.screenshotInterval < 1 then
             playerSettings.enabled = false
             guiSettings["tlbe-enabled"] = {value = false}
 
@@ -46,13 +52,14 @@ function Config.reload(event)
         end
 
         if needRescale then
-            global.lastChange = game.tick
+            mainCamera.lastChange = game.tick
         end
     end
 
+    playerSettings.cameras[1] = mainCamera
     global.playerSettings[event.player_index] = playerSettings
 
-    return playerSettings.enabled and playerSettings.centerPos == nil
+    return playerSettings.enabled and mainCamera.centerPos == nil
 end
 
 return Config
