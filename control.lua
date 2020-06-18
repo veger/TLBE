@@ -16,7 +16,7 @@ script.on_event(
         if justEnabled then
             -- initialize player settings if not yet done to prevent issues later
             local player = game.players[event.player_index]
-            local playerSettings = global.playerSettings[event.player_index] or {}
+            local playerSettings = global.playerSettings[event.player_index]
 
             TLBE.Main.follow_player(playerSettings, player)
         end

@@ -59,7 +59,6 @@ function Config.reload(event)
         end
     end
 
-    playerSettings.cameras[1] = mainCamera
     global.playerSettings[event.player_index] = playerSettings
 
     return playerSettings.enabled and mainCamera.centerPos == nil
