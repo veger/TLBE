@@ -10,7 +10,11 @@ function Main.tick()
         local playerSettings = global.playerSettings[player.index]
         local mainCamera = playerSettings.cameras[1]
 
-        if playerSettings.enabled and game.tick % mainCamera.screenshotInterval == 0 then
+        if
+            playerSettings.enabled and
+                (game.tick % mainCamera.screenshotInterval == 0 or
+                    (global.rocketLaunching and game.tick % mainCamera.rocketInterval == 0))
+         then
             if mainCamera.factorySize == nil then
                 Main.follow_player(playerSettings, player)
 
@@ -20,6 +24,7 @@ function Main.tick()
                 end
             elseif global.rocketLaunching ~= nil then
                 -- Focus on launch
+                -- TODO get a proper rocket camera
                 Main.follow_center_pos(
                     playerSettings,
                     player,
@@ -112,11 +117,12 @@ function Main.rocket_launch(event)
     for i, playerSettings in ipairs(global.playerSettings) do
         local mainCamera = playerSettings.cameras[1]
         mainCamera.lastChange = game.tick
-        global.rocketLaunching = {
-            centerPos = event.rocket_silo.position,
-            size = {x = 1, y = 1} -- don't care about size, it will fit with maxZoom
-        }
     end
+
+    global.rocketLaunching = {
+        centerPos = event.rocket_silo.position,
+        size = {x = 1, y = 1} -- don't care about size, it will fit with maxZoom
+    }
 end
 
 function Main.rocket_launched()
@@ -125,8 +131,9 @@ function Main.rocket_launched()
         local mainCamera = playerSettings.cameras[1]
 
         mainCamera.lastChange = game.tick
-        global.rocketLaunching = nil
     end
+
+    global.rocketLaunching = nil
 end
 
 function Main.follow_player(playerSettings, player)
@@ -138,10 +145,20 @@ function Main.follow_player(playerSettings, player)
 end
 
 function Main.follow_center_pos(playerSettings, player, camera, centerPos, centerSize)
-    local ticksLeft = camera.lastChange + camera.zoomTicks - game.tick
+    local ticksLeft = camera.lastChange - game.tick
+    if global.rocketLaunching then
+        ticksLeft = ticksLeft + camera.zoomTicksRocket
+    else
+        ticksLeft = ticksLeft + camera.zoomTicks
+    end
 
     if ticksLeft > 0 then
-        local stepsLeft = ticksLeft / camera.screenshotInterval
+        local stepsLeft
+        if global.rocketLaunching then
+            stepsLeft = ticksLeft / camera.rocketInterval
+        else
+            stepsLeft = ticksLeft / camera.screenshotInterval
+        end
 
         -- Gradually move to new center of the base
         local xDiff = centerPos.x - camera.centerPos.x

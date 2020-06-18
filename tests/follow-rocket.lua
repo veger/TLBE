@@ -24,8 +24,10 @@ function TestFollowRocket:SetUp()
                     height = 480,
                     centerPos = {x = 1.5, y = 1.5}, -- center of existing entity
                     screenshotInterval = 1,
+                    rocketInterval = 1,
                     zoom = 1,
                     zoomTicks = 10,
+                    zoomTicksRocket = 10,
                     lastChange = 1
                 }
             }

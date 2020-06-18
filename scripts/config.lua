@@ -31,6 +31,9 @@ function Config.reload(event)
             ticks_per_second * guiSettings["tlbe-zoom-period"].value * guiSettings["tlbe-speed-increase"].value
         )
 
+        mainCamera.rocketInterval = math.floor(ticks_per_second / guiSettings["tlbe-frame-rate"].value)
+        mainCamera.zoomTicksRocket = math.floor(ticks_per_second * guiSettings["tlbe-zoom-period"].value)
+
         local width = guiSettings["tlbe-resolution-x"].value
         if width ~= mainCamera.width and mainCamera.width ~= nil then
             needRescale = true
