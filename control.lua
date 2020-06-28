@@ -6,6 +6,11 @@ local TLBE = {
 script.on_init(
     function()
         global.playerSettings = {}
+
+        for index, player in pairs(game.players) do
+            -- initialize player(s) when mod is laoded into existing game
+            TLBE.Config.reload({player_index = index})
+        end
     end
 )
 
