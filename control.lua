@@ -10,7 +10,7 @@ script.on_init(
         for index, player in pairs(game.players) do
             -- initialize player(s) when mod is loaded into existing game
             TLBE.Config.reload({player_index = index})
-            player.print({'mod-loaded'}, {r = 1, g = 0.5, b = 0})
+            player.print({"mod-loaded"}, {r = 1, g = 0.5, b = 0})
         end
     end
 )

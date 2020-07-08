@@ -1,10 +1,14 @@
 ---------------------------------------------------------------------------------------------------
-Version: 0.1.0
-Date: 20-06-2020
-  Info:
-    - Initial release
+Version: 0.1.2
+  Ease of use:
+    - Warn that base dimensions are unknown if TLBE is laoded into an existing game
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.1
 Date: 28-06-2020
   Bugfixes:
     - Basic support loading into existing games
+---------------------------------------------------------------------------------------------------
+Version: 0.1.0
+Date: 20-06-2020
+  Info:
+    - Initial release
