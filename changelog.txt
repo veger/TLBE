@@ -1,7 +1,7 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.2
   Ease of use:
-    - Warn that base dimensions are unknown if TLBE is laoded into an existing game
+    - Warn that base dimensions are unknown if TLBE is loaded into an existing game
     - Changed "speed increase" default to take one screenshot per minute
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.1
