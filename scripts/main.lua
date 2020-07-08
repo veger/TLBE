@@ -54,10 +54,6 @@ function Main.tick()
                 allow_in_replay = true,
                 daytime = 0 -- take screenshot at full light
             }
-
-            if playerSettings.noticesEnabled then
-                player.print({"screenshot-taken"})
-            end
         end
     end
 end

@@ -8,13 +8,6 @@ data:extend(
             order = "1"
         },
         {
-            type = "bool-setting",
-            name = "tlbe-notices-enabled",
-            setting_type = "runtime-per-user",
-            default_value = true,
-            order = "2"
-        },
-        {
             type = "string-setting",
             name = "tlbe-save-folder",
             setting_type = "runtime-per-user",

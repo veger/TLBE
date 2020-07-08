@@ -15,11 +15,11 @@ function Config.reload(event)
             cameras = {{name = "main"}}
         }
     local mainCamera = playerSettings.cameras[1]
+    local previousState = playerSettings.enabled
     playerSettings.enabled = guiSettings["tlbe-enabled"].value
 
     if playerSettings.enabled then
         local needRescale = false
-        playerSettings.noticesEnabled = guiSettings["tlbe-notices-enabled"].value
         playerSettings.saveFolder = guiSettings["tlbe-save-folder"].value
         playerSettings.followPlayer = guiSettings["tlbe-follow-player"].value
         mainCamera.screenshotInterval =
@@ -56,6 +56,10 @@ function Config.reload(event)
 
         if needRescale then
             mainCamera.lastChange = game.tick
+        end
+
+        if previousState ~= playerSettings.enabled then
+            player.print({"tlbe-enabled"})
         end
     end
 
