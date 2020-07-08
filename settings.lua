@@ -48,7 +48,7 @@ data:extend(
             name = "tlbe-speed-increase",
             setting_type = "runtime-per-user",
             minimum_value = 1,
-            default_value = 10.0,
+            default_value = 60.0,
             order = "31"
         },
         {
