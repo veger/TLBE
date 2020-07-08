@@ -1,5 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.2
+Date: 08-07-2020
   Minor Features:
     - Inform player when TBLE starts to take screenshots (instead of a notification per screenshot)
   Ease of use:
