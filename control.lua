@@ -23,8 +23,9 @@ script.on_event(
             -- initialize player settings if not yet done to prevent issues later
             local player = game.players[event.player_index]
             local playerSettings = global.playerSettings[event.player_index]
-
-            TLBE.Main.follow_player(playerSettings, player)
+            for _, camera in ipairs(playerSettings.cameras) do
+                TLBE.Main.camera_follow_player(camera, player)
+            end
         end
     end
 )
