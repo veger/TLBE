@@ -2,9 +2,13 @@
 
 local lu = require("luaunit")
 
+-- Unit tests
 require("camera_follow-tracker")
 require("camera_follow-player")
 require("tracker-base")
 require("tracker-rocket")
+
+-- Integration tests
+require("camera")
 
 os.exit(lu.LuaUnit:run())

@@ -5,24 +5,36 @@ local boundarySize = 2
 local maxZoom = 1
 local minZoom = 0.031250
 
+local function findActiveTracker(trackers)
+    local previous
+    for _, tracker in pairs(trackers) do
+        if tracker.enabled == true then
+            if tracker.moveToNextTracker ~= true then
+                return previous, tracker
+            end
+            previous = tracker
+        end
+    end
+    return previous, nil
+end
+
 function Main.tick()
-    for index, player in pairs(game.players) do
+    for _, player in pairs(game.players) do
         local playerSettings = global.playerSettings[player.index]
         if playerSettings.enabled == false then
             goto nextPlayer
         end
 
         for _, camera in pairs(playerSettings.cameras) do
-            local activeTracker
-            for _, tracker in pairs(camera.trackers) do
-                if tracker.enabled == true then
-                    activeTracker = tracker
-                    break
-                end
-            end
+            local previousTracker, activeTracker = findActiveTracker(camera.trackers)
             if activeTracker == nil then
                 -- If there are no active trackers, skip camera as it has nothing to do
                 goto nextCamera
+            end
+
+            if previousTracker ~= nil and activeTracker then
+                -- Need a transition to activeTracker
+                activeTracker.lastChange = game.tick
             end
 
             local realtimeCamera = activeTracker.type == "rocket"
@@ -57,6 +69,14 @@ function Main.tick()
             ::nextCamera::
         end
 
+        for _, tracker in pairs(playerSettings.trackers) do
+            if tracker.moveToNextTracker then
+                -- Moved to next tracker, so disable this one
+                tracker.enabled = false
+                tracker.moveToNextTracker = nil
+            end
+        end
+
         ::nextPlayer::
     end
 end
@@ -70,7 +90,7 @@ function Main.entity_built(event)
         top = event.created_entity.bounding_box.right_bottom.y + boundarySize
     }
 
-    for i, playerSettings in pairs(global.playerSettings) do
+    for _, playerSettings in pairs(global.playerSettings) do
         for _, tracker in pairs(playerSettings.trackers) do
             if tracker.enabled == false then
                 goto nextTracker
@@ -118,7 +138,7 @@ function Main.entity_built(event)
 end
 
 function Main.rocket_launch(event)
-    for i, playerSettings in pairs(global.playerSettings) do
+    for _, playerSettings in pairs(global.playerSettings) do
         for _, tracker in pairs(playerSettings.trackers) do
             if tracker.type ~= "rocket" then
                 goto nextTracker
@@ -138,7 +158,7 @@ function Main.rocket_launch(event)
 end
 
 function Main.rocket_launched()
-    for i, playerSettings in pairs(global.playerSettings) do
+    for _, playerSettings in pairs(global.playerSettings) do
         for _, tracker in pairs(playerSettings.trackers) do
             if tracker.type ~= "rocket" then
                 goto nextTracker
@@ -146,8 +166,7 @@ function Main.rocket_launched()
 
             if tracker.enabled then
                 -- recenter on next tracker from list (disable rocket tracker)
-                tracker.enabled = false
-                tracker.lastChange = game.tick
+                tracker.moveToNextTracker = true
             end
 
             ::nextTracker::
