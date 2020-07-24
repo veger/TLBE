@@ -1,10 +1,2 @@
-data:extend(
-    {
-        {
-            type = "custom-input",
-            name = "tlbe-main-window-close",
-            key_sequence = "ESCAPE",
-            consuming = "none"
-        }
-    }
-)
+require("prototypes.sprites")
+require("prototypes.shortcuts")

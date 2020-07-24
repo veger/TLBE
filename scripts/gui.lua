@@ -5,12 +5,11 @@ local ModGui = require("mod-gui")
 function GUI.init(player)
     -- Add main button if if does not exist yet
     local buttonFlow = ModGui.get_button_flow(player)
-    buttonFlow["tlbe-main-icon"].destroy()
     if buttonFlow["tlbe-main-icon"] == nil then
         buttonFlow.add {
             type = "sprite-button",
-            -- style = "frame_action_button",
-            sprite = "utility/missing_icon",
+            style = ModGui.button_style,
+            sprite = "tlbe-logo",
             name = "tlbe-main-icon"
         }
     end
