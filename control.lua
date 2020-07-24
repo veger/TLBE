@@ -3,35 +3,27 @@ local TLBE = {
     Config = require("scripts.config")
 }
 
-script.on_init(
-    function()
-        global.playerSettings = {}
+local function on_init()
+    global.playerSettings = {}
 
-        for index, player in pairs(game.players) do
-            -- initialize player(s) when mod is loaded into existing game
-            TLBE.Config.reload({player_index = index})
-            player.print({"mod-loaded"}, {r = 1, g = 0.5, b = 0})
-        end
+    for index, player in pairs(game.players) do
+        -- initialize player(s) when mod is loaded into existing game
+        TLBE.Config.reload({player_index = index})
+        player.print({"mod-loaded"}, {r = 1, g = 0.5, b = 0})
     end
-)
+end
 
-script.on_event(
-    defines.events.on_runtime_mod_setting_changed,
-    function(event)
-        local justEnabled = TLBE.Config.reload(event)
-        if justEnabled then
-            -- initialize player settings if not yet done to prevent issues later
-            local player = game.players[event.player_index]
-            local playerSettings = global.playerSettings[event.player_index]
-            for _, camera in ipairs(playerSettings.cameras) do
-                TLBE.Main.camera_follow_player(camera, player)
-            end
-        end
-    end
-)
+-- A player got created (or joined the game)
+local function on_player_created(event)
+    -- Initialize playerSettings
+    TLBE.Config.reload(event)
+end
 
-script.on_event(defines.events.on_player_created, TLBE.Config.reload)
+script.on_init(on_init)
 
+script.on_event(defines.events.on_runtime_mod_setting_changed, TLBE.Config.reload)
+script.on_event(defines.events.on_player_created, on_player_created)
+script.on_event(defines.events.on_player_joined_game, on_player_created)
 script.on_event(defines.events.on_built_entity, TLBE.Main.entity_built)
 script.on_event(defines.events.on_rocket_launch_ordered, TLBE.Main.rocket_launch)
 script.on_event(defines.events.on_rocket_launched, TLBE.Main.rocket_launched)

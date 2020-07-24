@@ -15,7 +15,7 @@ function TestTrackerRocket:SetUp()
 
     -- mock TLBE tables
     global.playerSettings = {
-        TLBE.Config.newPlayerSettings()
+        TLBE.Config.newPlayerSettings({position = {x = 0, y = 0}})
     }
 
     -- Update rocket tracker with our test settings

@@ -8,7 +8,7 @@ function Config.reload(event)
     local player = game.players[event.player_index]
     local guiSettings = settings.get_player_settings(player)
 
-    local playerSettings = global.playerSettings[event.player_index] or Config.newPlayerSettings()
+    local playerSettings = global.playerSettings[event.player_index] or Config.newPlayerSettings(player)
     local mainCamera = playerSettings.cameras[1]
     local previousState = playerSettings.enabled
     playerSettings.enabled = guiSettings["tlbe-enabled"].value
@@ -63,7 +63,7 @@ function Config.reload(event)
     return playerSettings.enabled and mainCamera.centerPos == nil
 end
 
-function Config.newPlayerSettings()
+function Config.newPlayerSettings(player)
     -- Setup some default trackers
     local trackers = {
         {type = "player", untilBuild = true, enabled = true},
@@ -71,12 +71,22 @@ function Config.newPlayerSettings()
         {type = "base", enabled = true}
     }
 
+    local camera = Config.newCamera(player)
+    camera.trackers = {trackers[1], trackers[2], trackers[3]}
+
     return {
         -- Setup a default camera and attach trackers to it
-        cameras = {
-            {name = "main", trackers = {trackers[1], trackers[2], trackers[3]}}
-        },
+        cameras = {camera},
         trackers = trackers
+    }
+end
+
+function Config.newCamera(player)
+    return {
+        name = "main",
+        trackers = {},
+        centerPos = player.position,
+        zoom = 1
     }
 end
 

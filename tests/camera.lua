@@ -27,8 +27,8 @@ function TestCamera:SetUp()
 
     -- mock TLBE tables
     global.playerSettings = {
-        TLBE.Config.newPlayerSettings(),
-        TLBE.Config.newPlayerSettings()
+        TLBE.Config.newPlayerSettings({position = {x = 0, y = 0}}),
+        TLBE.Config.newPlayerSettings({position = {x = 0, y = 0}})
     }
 
     game.players = {
@@ -87,7 +87,8 @@ function TestCamera:TestTransitionFromPlayerToBaseTracker()
     lu.assertEquals(self.testCameraPlayer1.centerPos.y, 3.5, "expected to be at entity center")
     lu.assertEquals(self.testCameraPlayer1.zoom, 1, "expected that zoom at max_zoom")
 
-    lu.assertIsNil(global.playerSettings[2].cameras[1].centerPos, "expected disabled player to be unchanged")
+    lu.assertEquals(global.playerSettings[2].cameras[1].centerPos.x, 0, "expected disabled player to be unchanged")
+    lu.assertEquals(global.playerSettings[2].cameras[1].centerPos.y, 0, "expected disabled player to be unchanged")
 end
 
 function TestCamera:TestRocketLaunch()
