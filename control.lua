@@ -25,6 +25,11 @@ local function on_player_created(event)
     TLBE.GUI.init(player)
 end
 
+local function on_tick()
+    TLBE.Main.tick()
+    TLBE.GUI.tick()
+end
+
 script.on_init(on_init)
 
 script.on_event(defines.events.on_gui_click, TLBE.GUI.onClick)
@@ -37,4 +42,4 @@ script.on_event(defines.events.on_rocket_launched, TLBE.Main.rocket_launched)
 
 script.on_event("tlbe-main-window-close", TLBE.GUI.closeMainWindow)
 
-script.on_event(defines.events.on_tick, TLBE.Main.tick)
+script.on_event(defines.events.on_tick, on_tick)
