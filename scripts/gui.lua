@@ -27,8 +27,7 @@ function GUI.tick()
         local playerSettings = global.playerSettings[player.index]
         if playerSettings.gui ~= nil then
             if playerSettings.gui.cameraInfo.valid then
-                local cameraIndex = playerSettings.gui.cameraSelector.selected_index
-                local camera = playerSettings.cameras[cameraIndex]
+                local camera = playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
                 GUI.updateCameraInfo(playerSettings.gui.cameraInfo, camera)
 
                 GUI.updateTrackerInfo(
@@ -49,11 +48,55 @@ end
 
 function GUI.onClick(event)
     local player = game.players[event.player_index]
+    local playerSettings = global.playerSettings[event.player_index]
 
     if event.element.name == "tlbe-main-icon" then
         GUI.toggleMainWindow(player)
     elseif event.element.name == "tlbe-main-window-close" then
         GUI.closeMainWindow(event)
+    else
+        local _, index
+        _, _, index = event.element.name:find("^camera_tracker_(%d+)")
+        if index ~= nil then
+            index = tonumber(index)
+            playerSettings.guiPersist.selectedCameraTracker = index
+            GUI.fancyListBoxSelectItem(playerSettings.gui.cameraTrackerList, index)
+            GUI.updateTrackerInfo(
+                playerSettings.gui.cameraTrackerInfo,
+                playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers[
+                    playerSettings.guiPersist.selectedCameraTracker
+                ]
+            )
+            return
+        end
+
+        _, _, index = event.element.name:find("^tracker_(%d+)")
+        if index ~= nil then
+            index = tonumber(index)
+            playerSettings.guiPersist.selectedTracker = index
+            GUI.fancyListBoxSelectItem(playerSettings.gui.trackerList, index)
+            GUI.updateTrackerInfo(
+                playerSettings.gui.trackerInfo,
+                playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+            )
+            return
+        end
+    end
+end
+
+function GUI.onSelected(event)
+    -- local player = game.players[event.player_index]
+    local playerSettings = global.playerSettings[event.player_index]
+
+    if event.element.name == "tlbe-cameras-list" then
+        playerSettings.guiPersist.selectedCamera = event.element.selected_index
+        playerSettings.guiPersist.selectedCameraTracker = 1
+        GUI.createTrackerList(
+            playerSettings.gui.cameraTrackerList,
+            1,
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
+            "camera_tracker_"
+        )
     end
 end
 
@@ -147,20 +190,19 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras)
     -- Trackers
     flow.add {type = "label", caption = "Trackers"}
     local trackerBox = flow.add {type = "flow"}
-    local trackerList =
+    playerGUI.cameraTrackerList =
         trackerBox.add {
         type = "scroll-pane",
         name = "tlbe-tracker-list",
         horizontal_scroll_policy = "never",
         style = "tlbe_tracker_list"
     }
-    for index, tracker in pairs(cameras[guiPersist.selectedCamera].trackers) do
-        local style = "tlbe_fancy_list_box_item"
-        if index == guiPersist.selectedCameraTracker then
-            style = "tlbe_fancy_list_box_item_selected"
-        end
-        trackerList.add {type = "button", caption = tracker.type, style = style}
-    end
+    GUI.createTrackerList(
+        playerGUI.cameraTrackerList,
+        guiPersist.selectedCameraTracker,
+        cameras[guiPersist.selectedCamera].trackers,
+        "camera_tracker_"
+    )
 
     -- Tracker info
     playerGUI.cameraTrackerInfo = trackerBox.add {type = "flow", direction = "vertical"}
@@ -178,20 +220,14 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, trackers)
     local flow = parent.add {type = "flow"}
 
     -- Trackers
-    local trackerList =
+    playerGUI.trackerList =
         flow.add {
         type = "scroll-pane",
         name = "tlbe-tracker-list",
         horizontal_scroll_policy = "never",
         style = "tlbe_tracker_list"
     }
-    for index, tracker in pairs(trackers) do
-        local style = "tlbe_fancy_list_box_item"
-        if index == guiPersist.selectedTracker then
-            style = "tlbe_fancy_list_box_item_selected"
-        end
-        trackerList.add {type = "button", caption = tracker.type, style = style}
-    end
+    GUI.createTrackerList(playerGUI.trackerList, guiPersist.selectedTracker, trackers, "tracker_")
 
     -- Tracker info
     playerGUI.trackerInfo = flow.add {type = "flow", direction = "vertical"}
@@ -200,6 +236,23 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, trackers)
     GUI.updateTrackerInfo(playerGUI.trackerInfo, trackers[guiPersist.selectedTracker])
 
     return flow
+end
+
+function GUI.createTrackerList(trackerList, selectedIndex, trackers, namePrefix)
+    trackerList.clear()
+
+    for index, tracker in pairs(trackers) do
+        local style = "tlbe_fancy_list_box_item"
+        if index == selectedIndex then
+            style = "tlbe_fancy_list_box_item_selected"
+        end
+        trackerList.add {
+            type = "button",
+            name = namePrefix .. index,
+            caption = tracker.type,
+            style = style
+        }
+    end
 end
 
 function GUI.updateCameraInfo(cameraInfo, camera)
@@ -225,6 +278,16 @@ function GUI.updateTrackerInfo(trackerInfo, tracker)
         trackerInfo["tracker-size"].caption = "size: unset"
     else
         trackerInfo["tracker-size"].caption = string.format("size: %d, %d", tracker.size.x, tracker.size.y)
+    end
+end
+
+function GUI.fancyListBoxSelectItem(fancyList, selectedIndex)
+    for index, element in pairs(fancyList.children) do
+        local style = "tlbe_fancy_list_box_item"
+        if index == selectedIndex then
+            style = "tlbe_fancy_list_box_item_selected"
+        end
+        element.style = style
     end
 end
 

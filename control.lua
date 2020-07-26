@@ -33,6 +33,7 @@ end
 script.on_init(on_init)
 
 script.on_event(defines.events.on_gui_click, TLBE.GUI.onClick)
+script.on_event(defines.events.on_gui_selection_state_changed, TLBE.GUI.onSelected)
 script.on_event(defines.events.on_runtime_mod_setting_changed, TLBE.Config.reload)
 script.on_event(defines.events.on_player_created, on_player_created)
 script.on_event(defines.events.on_player_joined_game, on_player_created)
