@@ -18,7 +18,6 @@ function GUI.init(player)
 end
 
 function GUI.tick()
-    -- update once per second
     if game.tick % ticks_per_half_second ~= 0 then
         return
     end
@@ -56,7 +55,7 @@ function GUI.onClick(event)
         GUI.closeMainWindow(event)
     else
         local _, index
-        _, _, index = event.element.name:find("^camera_tracker_(%d+)")
+        _, _, index = event.element.name:find("^camera_tracker_(%d+)$")
         if index ~= nil then
             index = tonumber(index)
             playerSettings.guiPersist.selectedCameraTracker = index
@@ -70,7 +69,7 @@ function GUI.onClick(event)
             return
         end
 
-        _, _, index = event.element.name:find("^tracker_(%d+)")
+        _, _, index = event.element.name:find("^tracker_(%d+)$")
         if index ~= nil then
             index = tonumber(index)
             playerSettings.guiPersist.selectedTracker = index
@@ -78,6 +77,29 @@ function GUI.onClick(event)
             GUI.updateTrackerInfo(
                 playerSettings.gui.trackerInfo,
                 playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+            )
+            return
+        end
+
+        _, _, index = event.element.name:find("^tracker_(%d+)_enable$")
+        if index ~= nil then
+            index = tonumber(index)
+            playerSettings.trackers[index].enabled = playerSettings.trackers[index].enabled == false
+
+            GUI.createTrackerList(
+                playerSettings.gui.trackerList,
+                playerSettings.guiPersist.selectedTracker,
+                playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
+                "tracker_",
+                GUI.addTrackerButtons
+            )
+
+            GUI.createTrackerList(
+                playerSettings.gui.cameraTrackerList,
+                playerSettings.guiPersist.selectedCameraTracker,
+                playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
+                "camera_tracker_",
+                GUI.addCameraTrackerButtons
             )
             return
         end
@@ -95,7 +117,8 @@ function GUI.onSelected(event)
             playerSettings.gui.cameraTrackerList,
             1,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
-            "camera_tracker_"
+            "camera_tracker_",
+            GUI.addCameraTrackerButtons
         )
     end
 end
@@ -201,7 +224,8 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras)
         playerGUI.cameraTrackerList,
         guiPersist.selectedCameraTracker,
         cameras[guiPersist.selectedCamera].trackers,
-        "camera_tracker_"
+        "camera_tracker_",
+        GUI.addCameraTrackerButtons
     )
 
     -- Tracker info
@@ -227,7 +251,13 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, trackers)
         horizontal_scroll_policy = "never",
         style = "tlbe_tracker_list"
     }
-    GUI.createTrackerList(playerGUI.trackerList, guiPersist.selectedTracker, trackers, "tracker_")
+    GUI.createTrackerList(
+        playerGUI.trackerList,
+        guiPersist.selectedTracker,
+        trackers,
+        "tracker_",
+        GUI.addTrackerButtons
+    )
 
     -- Tracker info
     playerGUI.trackerInfo = flow.add {type = "flow", direction = "vertical"}
@@ -238,7 +268,7 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, trackers)
     return flow
 end
 
-function GUI.createTrackerList(trackerList, selectedIndex, trackers, namePrefix)
+function GUI.createTrackerList(trackerList, selectedIndex, trackers, namePrefix, addTrackerButtons)
     trackerList.clear()
 
     for index, tracker in pairs(trackers) do
@@ -246,11 +276,51 @@ function GUI.createTrackerList(trackerList, selectedIndex, trackers, namePrefix)
         if index == selectedIndex then
             style = "tlbe_fancy_list_box_item_selected"
         end
-        trackerList.add {
-            type = "button",
+
+        local trackerRow =
+            trackerList.add {
+            type = "frame",
             name = namePrefix .. index,
-            caption = tracker.type,
             style = style
+        }
+
+        addTrackerButtons(namePrefix, index, tracker, trackerRow)
+
+        trackerRow.add {
+            type = "label",
+            name = namePrefix .. index,
+            caption = tracker.name,
+            style = "tlbe_fancy_list_box_label"
+        }
+    end
+end
+
+function GUI.addCameraTrackerButtons()
+    -- no buttons to add (yet)
+end
+
+function GUI.addTrackerButtons(namePrefix, index, tracker, trackerRow)
+    local sprite = "utility/pause"
+    if tracker.enabled then
+        sprite = "utility/play"
+    end
+    if tracker.userCanEnable then
+        local style = "tlbe_tracker_disabled_button"
+        if tracker.enabled then
+            style = "tlbe_tracker_enabled_button"
+        end
+
+        trackerRow.add {
+            type = "sprite-button",
+            name = namePrefix .. index .. "_enable",
+            sprite = sprite,
+            style = style
+        }
+    else
+        trackerRow.add {
+            type = "sprite",
+            sprite = sprite,
+            style = "tlbe_fancy_list_box_button_disabled"
         }
     end
 end

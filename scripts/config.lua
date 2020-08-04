@@ -66,9 +66,9 @@ end
 function Config.newPlayerSettings(player)
     -- Setup some default trackers
     local trackers = {
-        {type = "player", untilBuild = true, enabled = true},
-        {type = "rocket", enabled = false},
-        {type = "base", enabled = true}
+        {type = "player", name = "player", untilBuild = true, enabled = true, userCanEnable = true},
+        {type = "rocket", name = "rocket", enabled = false},
+        {type = "base", name = "base", enabled = true, userCanEnable = true}
     }
 
     local camera = Config.newCamera(player)

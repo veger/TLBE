@@ -32,7 +32,7 @@ function Main.tick()
                 goto nextCamera
             end
 
-            if previousTracker ~= nil and activeTracker then
+            if previousTracker ~= nil then
                 -- Need a transition to activeTracker
                 activeTracker.lastChange = game.tick
             end
