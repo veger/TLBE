@@ -4,6 +4,14 @@ local ModGui = require("mod-gui")
 
 local ticks_per_half_second = 30
 
+local function findActiveTracker(trackers)
+    for _, tracker in pairs(trackers) do
+        if tracker.enabled == true then
+            return tracker
+        end
+    end
+end
+
 function GUI.init(player)
     -- Add main button if if does not exist yet
     local buttonFlow = ModGui.get_button_flow(player)
@@ -22,6 +30,7 @@ function GUI.tick()
         return
     end
 
+    -- TODO performance: Use some kind of event system to update the GUI for
     for _, player in pairs(game.players) do
         local playerSettings = global.playerSettings[player.index]
         if playerSettings.gui ~= nil then
@@ -32,6 +41,16 @@ function GUI.tick()
                 GUI.updateTrackerInfo(
                     playerSettings.gui.cameraTrackerInfo,
                     camera.trackers[playerSettings.guiPersist.selectedCameraTracker]
+                )
+            end
+
+            if playerSettings.gui.cameraTrackerList.valid then
+                GUI.createTrackerList(
+                    playerSettings.gui.cameraTrackerList,
+                    playerSettings.guiPersist.selectedCameraTracker,
+                    playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
+                    "camera_tracker_",
+                    GUI.addCameraTrackerButtons
                 )
             end
 
@@ -284,7 +303,7 @@ function GUI.createTrackerList(trackerList, selectedIndex, trackers, namePrefix,
             style = style
         }
 
-        addTrackerButtons(namePrefix, index, tracker, trackerRow)
+        addTrackerButtons(index, trackers, trackerRow)
 
         trackerRow.add {
             type = "label",
@@ -295,12 +314,25 @@ function GUI.createTrackerList(trackerList, selectedIndex, trackers, namePrefix,
     end
 end
 
-function GUI.addCameraTrackerButtons()
-    -- no buttons to add (yet)
+function GUI.addCameraTrackerButtons(index, trackers, trackerRow)
+    local tracker = trackers[index]
+    if findActiveTracker(trackers) == tracker then
+        trackerRow.add {
+            type = "sprite",
+            sprite = "utility/play",
+            style = "tlbe_fancy_list_box_image"
+        }
+    else
+        trackerRow.add {
+            type = "empty-widget",
+            style = "tlbe_fancy_list_box_button_hidden"
+        }
+    end
 end
 
-function GUI.addTrackerButtons(namePrefix, index, tracker, trackerRow)
+function GUI.addTrackerButtons(index, trackers, trackerRow)
     local sprite = "utility/pause"
+    local tracker = trackers[index]
     if tracker.enabled then
         sprite = "utility/play"
     end
@@ -312,7 +344,7 @@ function GUI.addTrackerButtons(namePrefix, index, tracker, trackerRow)
 
         trackerRow.add {
             type = "sprite-button",
-            name = namePrefix .. index .. "_enable",
+            name = "tracker_" .. index .. "_enable",
             sprite = sprite,
             style = style
         }

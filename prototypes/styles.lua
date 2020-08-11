@@ -72,6 +72,20 @@ default_gui["tlbe_fancy_list_box_button_disabled"] = {
     }
 }
 
+default_gui["tlbe_fancy_list_box_image"] = {
+    type = "image_style",
+    width = 22,
+    height = 22,
+    padding = 0,
+    stretch_image_to_widget_size = true
+}
+
+default_gui["tlbe_fancy_list_box_button_hidden"] = {
+    type = "empty_widget_style",
+    width = 22,
+    height = 22
+}
+
 -- specific styles
 default_gui["tlbe_camera_dropdown"] = {
     type = "dropdown_style",
