@@ -127,6 +127,42 @@ function GUI.onClick(event)
             return
         end
 
+        _, _, index = event.element.name:find("^camera_tracker_(%d+)_up$")
+        if index ~= nil then
+            index = tonumber(index)
+            local cameraTrackers = playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
+            local tmp = cameraTrackers[index]
+            cameraTrackers[index] = cameraTrackers[index - 1]
+            cameraTrackers[index - 1] = tmp
+            if playerSettings.guiPersist.selectedCameraTracker == index then
+                playerSettings.guiPersist.selectedCameraTracker = index - 1
+            elseif playerSettings.guiPersist.selectedCameraTracker == index - 1 then
+                playerSettings.guiPersist.selectedCameraTracker = index
+            end
+
+            GUI.createCameraTrackerList(playerSettings)
+
+            return
+        end
+
+        _, _, index = event.element.name:find("^camera_tracker_(%d+)_down")
+        if index ~= nil then
+            index = tonumber(index)
+            local cameraTrackers = playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
+            local tmp = cameraTrackers[index]
+            cameraTrackers[index] = cameraTrackers[index + 1]
+            cameraTrackers[index + 1] = tmp
+            if playerSettings.guiPersist.selectedCameraTracker == index then
+                playerSettings.guiPersist.selectedCameraTracker = index + 1
+            elseif playerSettings.guiPersist.selectedCameraTracker == index + 1 then
+                playerSettings.guiPersist.selectedCameraTracker = index
+            end
+
+            GUI.createCameraTrackerList(playerSettings)
+
+            return
+        end
+
         _, _, index = event.element.name:find("^camera_tracker_(%d+)_remove$")
         if index ~= nil then
             index = tonumber(index)
@@ -137,19 +173,8 @@ function GUI.onClick(event)
                 playerSettings.guiPersist.selectedCameraTracker = currentIndex - 1
             end
 
-            GUI.createTrackerList(
-                playerSettings.gui.cameraTrackerList,
-                playerSettings.guiPersist.selectedCameraTracker,
-                playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
-                "camera_tracker_",
-                GUI.addCameraTrackerButtons
-            )
+            GUI.createCameraTrackerList(playerSettings)
 
-            GUI.createCameraAddTracker(
-                playerSettings.gui.cameraTrackerListFlow,
-                playerSettings.trackers,
-                playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
-            )
             return
         end
     end
@@ -416,9 +441,53 @@ function GUI.createTrackerList(trackerList, selectedIndex, trackers, namePrefix,
     end
 end
 
+function GUI.createCameraTrackerList(playerSettings)
+    GUI.createTrackerList(
+        playerSettings.gui.cameraTrackerList,
+        playerSettings.guiPersist.selectedCameraTracker,
+        playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
+        "camera_tracker_",
+        GUI.addCameraTrackerButtons
+    )
+
+    GUI.createCameraAddTracker(
+        playerSettings.gui.cameraTrackerListFlow,
+        playerSettings.trackers,
+        playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
+    )
+end
+
 function GUI.addCameraTrackerButtons(index, trackers, trackerRow)
     local tracker = trackers[index]
     local isActiveTracker = findActiveTracker(trackers) == tracker
+
+    local orderFlow = trackerRow.add {type = "flow", direction = "vertical"}
+
+    if index > 1 then
+        orderFlow.add {
+            type = "button",
+            name = "camera_tracker_" .. index .. "_up",
+            style = "tlbe_order_up_button"
+        }
+    else
+        orderFlow.add {
+            type = "empty-widget",
+            style = "tlbe_order_hidden_button"
+        }
+    end
+
+    if index < #trackers then
+        orderFlow.add {
+            type = "button",
+            name = "camera_tracker_" .. index .. "_down",
+            style = "tlbe_order_down_button"
+        }
+    else
+        orderFlow.add {
+            type = "empty-widget",
+            style = "tlbe_order_hidden_button"
+        }
+    end
 
     trackerRow.add {
         type = "sprite-button",

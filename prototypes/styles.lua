@@ -110,6 +110,7 @@ default_gui["tble_tracker_add_dropdown"] = {
 -- Default button that glows red on hover/select
 default_gui["tlbe_tracker_remove_button"] = {
     type = "button_style",
+    size = {15, 28}, -- extra height to align (more) nicely with order buttons
     parent = "tlbe_fancy_list_box_button",
     -- from red_button
     hovered_graphical_set = {
@@ -158,4 +159,61 @@ default_gui["tlbe_tracker_disabled_button"] = {
         base = {position = {187, 17}, corner_size = 8},
         shadow = default_dirt
     }
+}
+
+default_gui["tlbe_order_up_button"] = {
+    type = "button_style",
+    size = {12, 12},
+    -- from column_ordering_ascending_button_style
+    default_graphical_set = {
+        filename = "__core__/graphics/arrows/table-header-sort-arrow-up-active.png",
+        size = {16, 16},
+        scale = 0.5
+    },
+    hovered_graphical_set = {
+        filename = "__core__/graphics/arrows/table-header-sort-arrow-up-hover.png",
+        size = {16, 16},
+        scale = 0.5
+    },
+    clicked_graphical_set = {
+        filename = "__core__/graphics/arrows/table-header-sort-arrow-up-active.png",
+        size = {16, 16},
+        scale = 0.5
+    },
+    disabled_graphical_set = {
+        filename = "__core__/graphics/arrows/table-header-sort-arrow-up-white.png",
+        size = {16, 16},
+        scale = 0.5
+    }
+}
+
+default_gui["tlbe_order_down_button"] = {
+    type = "button_style",
+    size = {12, 12},
+    -- from column_ordering_descending_button_style
+    default_graphical_set = {
+        filename = "__core__/graphics/arrows/table-header-sort-arrow-down-active.png",
+        size = {16, 16},
+        scale = 0.5
+    },
+    hovered_graphical_set = {
+        filename = "__core__/graphics/arrows/table-header-sort-arrow-down-hover.png",
+        size = {16, 16},
+        scale = 0.5
+    },
+    clicked_graphical_set = {
+        filename = "__core__/graphics/arrows/table-header-sort-arrow-down-active.png",
+        size = {16, 16},
+        scale = 0.5
+    },
+    disabled_graphical_set = {
+        filename = "__core__/graphics/arrows/table-header-sort-arrow-down-white.png",
+        size = {16, 16},
+        scale = 0.5
+    }
+}
+
+default_gui["tlbe_order_hidden_button"] = {
+    type = "empty_widget_style",
+    size = {12, 12}
 }
