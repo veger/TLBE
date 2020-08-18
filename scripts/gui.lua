@@ -1,6 +1,9 @@
-local GUI = {}
+local GUI = {
+    allTrackers = {"base", "player", "rocket"}
+}
 
 local ModGui = require("mod-gui")
+local Tracker = require("tracker")
 
 local ticks_per_half_second = 30
 
@@ -108,7 +111,7 @@ function GUI.onClick(event)
             GUI.createTrackerList(
                 playerSettings.gui.trackerList,
                 playerSettings.guiPersist.selectedTracker,
-                playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
+                playerSettings.trackers,
                 "tracker_",
                 GUI.addTrackerButtons
             )
@@ -138,6 +141,24 @@ function GUI.onSelected(event)
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
             "camera_tracker_",
             GUI.addCameraTrackerButtons
+        )
+    elseif event.element.name == "tlbe-tracker-add" then
+        local trackerIndex = event.element.selected_index - 1
+        if trackerIndex < 1 then
+            -- Ignore first item (placeholder) in the list
+            return
+        end
+
+        local newTracker = Tracker.newTracker(GUI.allTrackers[trackerIndex], playerSettings.trackers)
+        table.insert(playerSettings.trackers, newTracker)
+        playerSettings.guiPersist.selectedTracker = #playerSettings.trackers
+
+        GUI.createTrackerList(
+            playerSettings.gui.trackerList,
+            playerSettings.guiPersist.selectedTracker,
+            playerSettings.trackers,
+            "tracker_",
+            GUI.addTrackerButtons
         )
     end
 end
@@ -260,11 +281,25 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras)
 end
 
 function GUI.createTrackerSettings(parent, playerGUI, guiPersist, trackers)
-    local flow = parent.add {type = "flow"}
+    local flow = parent.add {type = "flow", direction = "horizontal"}
+    local trackersFlow =
+        flow.add {
+        type = "flow",
+        direction = "vertical"
+    }
+
+    -- New tracker GUI
+    trackersFlow.add {
+        type = "drop-down",
+        selected_index = 1,
+        name = "tlbe-tracker-add",
+        items = {"<new tracker>", table.unpack(GUI.allTrackers)},
+        style = "tble_tracker_add_dropdown"
+    }
 
     -- Trackers
     playerGUI.trackerList =
-        flow.add {
+        trackersFlow.add {
         type = "scroll-pane",
         name = "tlbe-tracker-list",
         horizontal_scroll_policy = "never",

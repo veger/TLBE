@@ -1,5 +1,7 @@
 local Config = {}
 
+local Tracker = require("scripts.tracker")
+
 local ticks_per_second = 60
 
 --- (re)loads the mod settings
@@ -66,9 +68,9 @@ end
 function Config.newPlayerSettings(player)
     -- Setup some default trackers
     local trackers = {
-        {type = "player", name = "player", untilBuild = true, enabled = true, userCanEnable = true},
-        {type = "rocket", name = "rocket", enabled = false},
-        {type = "base", name = "base", enabled = true, userCanEnable = true}
+        Tracker.newTracker "player",
+        Tracker.newTracker "rocket",
+        Tracker.newTracker "base"
     }
 
     local camera = Config.newCamera(player)
