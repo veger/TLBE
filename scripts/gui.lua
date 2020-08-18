@@ -126,6 +126,32 @@ function GUI.onClick(event)
             )
             return
         end
+
+        _, _, index = event.element.name:find("^camera_tracker_(%d+)_remove$")
+        if index ~= nil then
+            index = tonumber(index)
+            table.remove(playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers, index)
+            local currentIndex = playerSettings.guiPersist.selectedCameraTracker
+            if currentIndex > 1 and currentIndex >= index then
+                -- Select previous entry if entry above was deleted (so same entry stays selected)
+                playerSettings.guiPersist.selectedCameraTracker = currentIndex - 1
+            end
+
+            GUI.createTrackerList(
+                playerSettings.gui.cameraTrackerList,
+                playerSettings.guiPersist.selectedCameraTracker,
+                playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
+                "camera_tracker_",
+                GUI.addCameraTrackerButtons
+            )
+
+            GUI.createCameraAddTracker(
+                playerSettings.gui.cameraTrackerListFlow,
+                playerSettings.trackers,
+                playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
+            )
+            return
+        end
     end
 end
 
@@ -392,7 +418,16 @@ end
 
 function GUI.addCameraTrackerButtons(index, trackers, trackerRow)
     local tracker = trackers[index]
-    if findActiveTracker(trackers) == tracker then
+    local isActiveTracker = findActiveTracker(trackers) == tracker
+
+    trackerRow.add {
+        type = "sprite-button",
+        name = "camera_tracker_" .. index .. "_remove",
+        sprite = "utility/close_black",
+        style = "tlbe_tracker_remove_button"
+    }
+
+    if isActiveTracker then
         trackerRow.add {
             type = "sprite",
             sprite = "utility/play",

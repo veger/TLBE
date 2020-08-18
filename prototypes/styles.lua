@@ -107,6 +107,22 @@ default_gui["tble_tracker_add_dropdown"] = {
     right_margin = camera_flow_left_side_margin
 }
 
+-- Default button that glows red on hover/select
+default_gui["tlbe_tracker_remove_button"] = {
+    type = "button_style",
+    parent = "tlbe_fancy_list_box_button",
+    -- from red_button
+    hovered_graphical_set = {
+        base = {position = {170, 17}, corner_size = 8},
+        shadow = default_dirt,
+        glow = default_glow(red_button_glow_color, 0.5)
+    },
+    clicked_graphical_set = {
+        base = {position = {187, 17}, corner_size = 8},
+        shadow = default_dirt
+    }
+}
+
 default_gui["tlbe_tracker_enabled_button"] = {
     type = "button_style",
     parent = "tlbe_fancy_list_box_button",
