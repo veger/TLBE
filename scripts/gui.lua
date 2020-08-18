@@ -455,25 +455,29 @@ function GUI.createCameraAddTracker(parent, allTrackers, cameraTrackers)
 end
 
 function GUI.updateCameraInfo(cameraInfo, camera)
-    if camera.centerPos == nil then
+    if camera == nil or camera.centerPos == nil then
         cameraInfo["camera-position"].caption = "position: unset"
     else
         cameraInfo["camera-position"].caption =
             string.format("position: %d, %d", camera.centerPos.x, camera.centerPos.y)
     end
 
-    cameraInfo["camera-zoom"].caption = string.format("zoom: %2.2f", camera.zoom)
+    if camera == nil then
+        cameraInfo["camera-zoom"].caption = "zoom: unset"
+    else
+        cameraInfo["camera-zoom"].caption = string.format("zoom: %2.2f", camera.zoom)
+    end
 end
 
 function GUI.updateTrackerInfo(trackerInfo, tracker)
-    if tracker.centerPos == nil then
+    if tracker == nil or tracker.centerPos == nil then
         trackerInfo["tracker-position"].caption = "position: unset"
     else
         trackerInfo["tracker-position"].caption =
             string.format("position: %d, %d", tracker.centerPos.x, tracker.centerPos.y)
     end
 
-    if tracker.size == nil then
+    if tracker == nil or tracker.size == nil then
         trackerInfo["tracker-size"].caption = "size: unset"
     else
         trackerInfo["tracker-size"].caption = string.format("size: %d, %d", tracker.size.x, tracker.size.y)
