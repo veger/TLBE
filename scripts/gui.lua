@@ -3,7 +3,8 @@ local GUI = {
 }
 
 local ModGui = require("mod-gui")
-local Tracker = require("tracker")
+local Tracker = require("scripts.tracker")
+local Utils = require("scripts.utils")
 
 local ticks_per_half_second = 30
 
@@ -129,7 +130,6 @@ function GUI.onClick(event)
 end
 
 function GUI.onSelected(event)
-    -- local player = game.players[event.player_index]
     local playerSettings = global.playerSettings[event.player_index]
 
     if event.element.name == "tlbe-cameras-list" then
@@ -145,9 +145,10 @@ function GUI.onSelected(event)
     elseif event.element.name == "tlbe-tracker-add" then
         local trackerIndex = event.element.selected_index - 1
         if trackerIndex < 1 then
-            -- Ignore first item (placeholder) in the list
+            -- Paranoia check: ignore first item (placeholder) in the list
             return
         end
+        event.element.selected_index = 1
 
         local newTracker = Tracker.newTracker(GUI.allTrackers[trackerIndex], playerSettings.trackers)
         table.insert(playerSettings.trackers, newTracker)
@@ -159,6 +160,37 @@ function GUI.onSelected(event)
             playerSettings.trackers,
             "tracker_",
             GUI.addTrackerButtons
+        )
+
+        GUI.createCameraAddTracker(
+            playerSettings.gui.cameraTrackerListFlow,
+            playerSettings.trackers,
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
+        )
+    elseif event.element.name == "tlbe-camera-add-tracker" then
+        if event.element.selected_index <= 1 then
+            -- Paranoia check: ignore first item (placeholder) in the list
+            return
+        end
+
+        local trackerToAdd = Utils.findName(playerSettings.trackers, event.element.items[event.element.selected_index])
+
+        table.insert(playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers, trackerToAdd)
+        playerSettings.guiPersist.selectedCameraTracker =
+            #playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
+
+        GUI.createTrackerList(
+            playerSettings.gui.cameraTrackerList,
+            1,
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
+            "camera_tracker_",
+            GUI.addCameraTrackerButtons
+        )
+
+        GUI.createCameraAddTracker(
+            playerSettings.gui.cameraTrackerListFlow,
+            playerSettings.trackers,
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
         )
     end
 end
@@ -211,7 +243,13 @@ function GUI.toggleMainWindow(player)
         local cameraTab = tabPane.add {type = "tab", caption = "Camera"}
         tabPane.add_tab(
             cameraTab,
-            GUI.createCameraSettings(tabPane, playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
+            GUI.createCameraSettings(
+                tabPane,
+                playerSettings.gui,
+                playerSettings.guiPersist,
+                playerSettings.cameras,
+                playerSettings.trackers
+            )
         )
 
         local trackerTab = tabPane.add {type = "tab", caption = "Tracker"}
@@ -224,7 +262,7 @@ function GUI.toggleMainWindow(player)
     end
 end
 
-function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras)
+function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, trackers)
     local flow = parent.add {type = "flow", direction = "vertical"}
 
     -- Cameras
@@ -253,8 +291,9 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras)
     -- Trackers
     flow.add {type = "label", caption = "Trackers"}
     local trackerBox = flow.add {type = "flow"}
+    playerGUI.cameraTrackerListFlow = trackerBox.add {type = "flow", direction = "vertical"}
     playerGUI.cameraTrackerList =
-        trackerBox.add {
+        playerGUI.cameraTrackerListFlow.add {
         type = "scroll-pane",
         name = "tlbe-tracker-list",
         horizontal_scroll_policy = "never",
@@ -267,6 +306,8 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras)
         "camera_tracker_",
         GUI.addCameraTrackerButtons
     )
+
+    GUI.createCameraAddTracker(playerGUI.cameraTrackerListFlow, trackers, cameras[guiPersist.selectedCamera].trackers)
 
     -- Tracker info
     playerGUI.cameraTrackerInfo = trackerBox.add {type = "flow", direction = "vertical"}
@@ -388,6 +429,27 @@ function GUI.addTrackerButtons(index, trackers, trackerRow)
             type = "sprite",
             sprite = sprite,
             style = "tlbe_fancy_list_box_button_disabled"
+        }
+    end
+end
+
+function GUI.createCameraAddTracker(parent, allTrackers, cameraTrackers)
+    if parent["tlbe-camera-add-tracker"] ~= nil then
+        parent["tlbe-camera-add-tracker"].destroy()
+    end
+
+    local availableTrackers = Utils.filterOut(allTrackers, cameraTrackers)
+    if #availableTrackers > 0 then
+        local availableTrackerNames = {}
+        for _, tracker in pairs(availableTrackers) do
+            table.insert(availableTrackerNames, tracker.name)
+        end
+        parent.add {
+            type = "drop-down",
+            selected_index = 1,
+            name = "tlbe-camera-add-tracker",
+            items = {"<add tracker>", table.unpack(availableTrackerNames)},
+            style = "tble_tracker_add_dropdown"
         }
     end
 end
