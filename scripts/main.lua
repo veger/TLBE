@@ -1,22 +1,11 @@
 local Main = {}
 
+local Tracker = require("scripts.tracker")
+
 local tileSize = 32
 local boundarySize = 2
 local maxZoom = 1
 local minZoom = 0.031250
-
-local function findActiveTracker(trackers)
-    local previous
-    for _, tracker in pairs(trackers) do
-        if tracker.enabled == true then
-            if tracker.moveToNextTracker ~= true then
-                return previous, tracker
-            end
-            previous = tracker
-        end
-    end
-    return previous, nil
-end
 
 function Main.tick()
     for _, player in pairs(game.players) do
@@ -26,7 +15,7 @@ function Main.tick()
                 goto nextCamera
             end
 
-            local previousTracker, activeTracker = findActiveTracker(camera.trackers)
+            local previousTracker, activeTracker = Tracker.findActiveTracker(camera.trackers)
             if activeTracker == nil then
                 -- If there are no active trackers, skip camera as it has nothing to do
                 goto nextCamera
@@ -34,24 +23,24 @@ function Main.tick()
 
             if previousTracker ~= nil then
                 -- Need a transition to activeTracker
+                -- TODO Only if smooth camera following is enabled
                 activeTracker.lastChange = game.tick
             end
 
-            local realtimeCamera = activeTracker.type == "rocket"
-
             if
-                (realtimeCamera == false and game.tick % camera.screenshotInterval ~= 0) or
-                    (realtimeCamera and game.tick % camera.realtimeInterval ~= 0)
+                (activeTracker.realtimeCamera == false and game.tick % camera.screenshotInterval ~= 0) or
+                    (activeTracker.realtimeCamera and game.tick % camera.realtimeInterval ~= 0)
              then
                 -- No time for a screenshot yet
                 goto nextCamera
             end
 
+            -- TODO Get rid of this exception when camera smooth follow is optional
             if activeTracker.type == "player" then
                 Main.camera_follow_player(camera, player)
             else
                 -- Move to tracker
-                Main.camera_follow_tracker(playerSettings, player, realtimeCamera, camera, activeTracker)
+                Main.camera_follow_tracker(playerSettings, player, activeTracker.realtimeCamera, camera, activeTracker)
             end
 
             game.take_screenshot {
@@ -69,13 +58,8 @@ function Main.tick()
             ::nextCamera::
         end
 
-        for _, tracker in pairs(playerSettings.trackers) do
-            if tracker.moveToNextTracker then
-                -- Moved to next tracker, so disable this one
-                tracker.enabled = false
-                tracker.moveToNextTracker = nil
-            end
-        end
+        -- Done moving to next trackers
+        Tracker.MoveToNextTrackerFinished(playerSettings.trackers)
     end
 end
 
@@ -95,7 +79,8 @@ function Main.entity_built(event)
             end
 
             if tracker.type == "player" then
-                tracker.enabled = false
+                -- TODO only when tracker has setting set
+                Tracker.moveToNextTracker(tracker)
             elseif tracker.type == "base" then
                 if tracker.size == nil then
                     -- Set start point of base
@@ -164,7 +149,7 @@ function Main.rocket_launched()
 
             if tracker.enabled then
                 -- recenter on next tracker from list (disable rocket tracker)
-                tracker.moveToNextTracker = true
+                Tracker.moveToNextTracker(tracker)
             end
 
             ::nextTracker::
