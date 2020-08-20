@@ -21,11 +21,11 @@ end
 function Main.tick()
     for _, player in pairs(game.players) do
         local playerSettings = global.playerSettings[player.index]
-        if playerSettings.enabled == false then
-            goto nextPlayer
-        end
-
         for _, camera in pairs(playerSettings.cameras) do
+            if not camera.enabled then
+                goto nextCamera
+            end
+
             local previousTracker, activeTracker = findActiveTracker(camera.trackers)
             if activeTracker == nil then
                 -- If there are no active trackers, skip camera as it has nothing to do
@@ -76,8 +76,6 @@ function Main.tick()
                 tracker.moveToNextTracker = nil
             end
         end
-
-        ::nextPlayer::
     end
 end
 
@@ -92,7 +90,7 @@ function Main.entity_built(event)
 
     for _, playerSettings in pairs(global.playerSettings) do
         for _, tracker in pairs(playerSettings.trackers) do
-            if tracker.enabled == false then
+            if not tracker.enabled then
                 goto nextTracker
             end
 

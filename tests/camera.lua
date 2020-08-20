@@ -36,11 +36,12 @@ function TestCamera:SetUp()
         {index = 2}
     }
 
-    -- Disable TLBE for player2
-    global.playerSettings[2].enabled = false
+    -- Disable player2 camera
+    global.playerSettings[2].cameras[1].enabled = false
 
     -- Make cameras easier to test
     self.testCameraPlayer1 = global.playerSettings[1].cameras[1]
+    self.testCameraPlayer2 = global.playerSettings[2].cameras[1]
     for _, playerSettings in pairs(global.playerSettings) do
         for _, camera in pairs(playerSettings.cameras) do
             for k, v in pairs(
@@ -87,8 +88,8 @@ function TestCamera:TestTransitionFromPlayerToBaseTracker()
     lu.assertEquals(self.testCameraPlayer1.centerPos.y, 3.5, "expected to be at entity center")
     lu.assertEquals(self.testCameraPlayer1.zoom, 1, "expected that zoom at max_zoom")
 
-    lu.assertEquals(global.playerSettings[2].cameras[1].centerPos.x, 0, "expected disabled player to be unchanged")
-    lu.assertEquals(global.playerSettings[2].cameras[1].centerPos.y, 0, "expected disabled player to be unchanged")
+    lu.assertEquals(self.testCameraPlayer2.centerPos.x, 0, "expected disabled camera to be unchanged")
+    lu.assertEquals(self.testCameraPlayer2.centerPos.y, 0, "expected disabled camera to be unchanged")
 end
 
 function TestCamera:TestRocketLaunch()

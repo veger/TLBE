@@ -76,6 +76,11 @@ function GUI.onClick(event)
         GUI.toggleMainWindow(player)
     elseif event.element.name == "tlbe-main-window-close" then
         GUI.closeMainWindow(event)
+    elseif event.element.name == "tlbe_camera_enable" then
+        local selectedCamera = playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
+        selectedCamera.enabled = not selectedCamera.enabled
+
+        GUI.updateCameraSettings(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
     else
         local _, index
         _, _, index = event.element.name:find("^camera_tracker_(%d+)$")
@@ -186,6 +191,8 @@ function GUI.onSelected(event)
     if event.element.name == "tlbe-cameras-list" then
         playerSettings.guiPersist.selectedCamera = event.element.selected_index
         playerSettings.guiPersist.selectedCameraTracker = 1
+
+        GUI.updateCameraSettings(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
         GUI.createTrackerList(
             playerSettings.gui.cameraTrackerList,
             1,
@@ -318,13 +325,15 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
 
     -- Cameras
     local cameraBox = flow.add {type = "flow"}
+    local cameraLeftFlow = cameraBox.add {type = "flow", direction = "vertical"}
+
     local cameraItems = {}
     for index, camera in pairs(cameras) do
         cameraItems[index] = camera.name
     end
 
     playerGUI.cameraSelector =
-        cameraBox.add {
+        cameraLeftFlow.add {
         type = "drop-down",
         name = "tlbe-cameras-list",
         caption = "cameras",
@@ -333,7 +342,10 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
         style = "tlbe_camera_dropdown"
     }
 
-    -- Tracker info
+    playerGUI.cameraSettings = cameraLeftFlow.add {type = "flow"}
+    GUI.updateCameraSettings(playerGUI, guiPersist, cameras)
+
+    -- Camera info
     playerGUI.cameraInfo = cameraBox.add {type = "flow", direction = "vertical"}
     playerGUI.cameraInfo.add {type = "label", name = "camera-position"}
     playerGUI.cameraInfo.add {type = "label", name = "camera-zoom"}
@@ -556,6 +568,25 @@ function GUI.createCameraAddTracker(parent, allTrackers, cameraTrackers)
             style = "tble_tracker_add_dropdown"
         }
     end
+end
+
+function GUI.updateCameraSettings(playerGUI, guiPersist, cameras)
+    playerGUI.cameraSettings.clear()
+    local selectedCamera = cameras[guiPersist.selectedCamera]
+
+    local sprite = "utility/pause"
+    local style = "tlbe_tracker_disabled_button"
+    if selectedCamera.enabled then
+        style = "tlbe_tracker_enabled_button"
+        sprite = "utility/play"
+    end
+
+    playerGUI.cameraSettings.add {
+        type = "sprite-button",
+        name = "tlbe_camera_enable",
+        sprite = sprite,
+        style = style
+    }
 end
 
 function GUI.updateCameraInfo(cameraInfo, camera)
