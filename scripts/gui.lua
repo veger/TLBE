@@ -325,7 +325,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
 
     -- Cameras
     local cameraBox = flow.add {type = "flow"}
-    local cameraLeftFlow = cameraBox.add {type = "flow", direction = "vertical"}
+    local cameraLeftFlow = cameraBox.add {type = "flow", direction = "vertical", style = "tlbe_fancy_list_parent"}
 
     local cameraItems = {}
     for index, camera in pairs(cameras) do
@@ -346,15 +346,19 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     GUI.updateCameraSettings(playerGUI, guiPersist, cameras)
 
     -- Camera info
-    playerGUI.cameraInfo = cameraBox.add {type = "flow", direction = "vertical"}
+    playerGUI.cameraInfo = cameraBox.add {type = "table", column_count = 2}
+    playerGUI.cameraInfo.add {type = "label", caption = "position: "}
     playerGUI.cameraInfo.add {type = "label", name = "camera-position"}
+    playerGUI.cameraInfo.add {type = "label", caption = "zoom: "}
     playerGUI.cameraInfo.add {type = "label", name = "camera-zoom"}
     GUI.updateCameraInfo(playerGUI.cameraInfo, cameras[guiPersist.selectedCamera])
 
     -- Trackers
+    flow.add {type = "line"}
     flow.add {type = "label", caption = "Trackers"}
     local trackerBox = flow.add {type = "flow"}
-    playerGUI.cameraTrackerListFlow = trackerBox.add {type = "flow", direction = "vertical"}
+    playerGUI.cameraTrackerListFlow =
+        trackerBox.add {type = "flow", direction = "vertical", style = "tlbe_fancy_list_parent"}
     playerGUI.cameraTrackerList =
         playerGUI.cameraTrackerListFlow.add {
         type = "scroll-pane",
@@ -373,8 +377,10 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     GUI.createCameraAddTracker(playerGUI.cameraTrackerListFlow, trackers, cameras[guiPersist.selectedCamera].trackers)
 
     -- Tracker info
-    playerGUI.cameraTrackerInfo = trackerBox.add {type = "flow", direction = "vertical"}
+    playerGUI.cameraTrackerInfo = trackerBox.add {type = "table", column_count = 2}
+    playerGUI.cameraTrackerInfo.add {type = "label", caption = "position: "}
     playerGUI.cameraTrackerInfo.add {type = "label", name = "tracker-position"}
+    playerGUI.cameraTrackerInfo.add {type = "label", caption = "size: "}
     playerGUI.cameraTrackerInfo.add {type = "label", name = "tracker-size"}
     GUI.updateTrackerInfo(
         playerGUI.cameraTrackerInfo,
@@ -385,12 +391,8 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
 end
 
 function GUI.createTrackerSettings(parent, playerGUI, guiPersist, trackers)
-    local flow = parent.add {type = "flow", direction = "horizontal"}
-    local trackersFlow =
-        flow.add {
-        type = "flow",
-        direction = "vertical"
-    }
+    local flow = parent.add {type = "flow"}
+    local trackersFlow = flow.add {type = "flow", direction = "vertical", style = "tlbe_fancy_list_parent"}
 
     -- New tracker GUI
     trackersFlow.add {
@@ -418,8 +420,10 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, trackers)
     )
 
     -- Tracker info
-    playerGUI.trackerInfo = flow.add {type = "flow", direction = "vertical"}
+    playerGUI.trackerInfo = flow.add {type = "table", column_count = 2}
+    playerGUI.trackerInfo.add {type = "label", caption = "position: "}
     playerGUI.trackerInfo.add {type = "label", name = "tracker-position"}
+    playerGUI.trackerInfo.add {type = "label", caption = "position: "}
     playerGUI.trackerInfo.add {type = "label", name = "tracker-size"}
     GUI.updateTrackerInfo(playerGUI.trackerInfo, trackers[guiPersist.selectedTracker])
 
@@ -591,31 +595,29 @@ end
 
 function GUI.updateCameraInfo(cameraInfo, camera)
     if camera == nil or camera.centerPos == nil then
-        cameraInfo["camera-position"].caption = "position: unset"
+        cameraInfo["camera-position"].caption = "unset"
     else
-        cameraInfo["camera-position"].caption =
-            string.format("position: %d, %d", camera.centerPos.x, camera.centerPos.y)
+        cameraInfo["camera-position"].caption = string.format("%d, %d", camera.centerPos.x, camera.centerPos.y)
     end
 
     if camera == nil then
-        cameraInfo["camera-zoom"].caption = "zoom: unset"
+        cameraInfo["camera-zoom"].caption = "unset"
     else
-        cameraInfo["camera-zoom"].caption = string.format("zoom: %2.2f", camera.zoom)
+        cameraInfo["camera-zoom"].caption = string.format("%2.2f", camera.zoom)
     end
 end
 
 function GUI.updateTrackerInfo(trackerInfo, tracker)
     if tracker == nil or tracker.centerPos == nil then
-        trackerInfo["tracker-position"].caption = "position: unset"
+        trackerInfo["tracker-position"].caption = "unset"
     else
-        trackerInfo["tracker-position"].caption =
-            string.format("position: %d, %d", tracker.centerPos.x, tracker.centerPos.y)
+        trackerInfo["tracker-position"].caption = string.format("%d, %d", tracker.centerPos.x, tracker.centerPos.y)
     end
 
     if tracker == nil or tracker.size == nil then
-        trackerInfo["tracker-size"].caption = "size: unset"
+        trackerInfo["tracker-size"].caption = "unset"
     else
-        trackerInfo["tracker-size"].caption = string.format("size: %d, %d", tracker.size.x, tracker.size.y)
+        trackerInfo["tracker-size"].caption = string.format("%d, %d", tracker.size.x, tracker.size.y)
     end
 end
 

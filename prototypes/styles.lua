@@ -88,6 +88,11 @@ default_gui["tlbe_fancy_list_box_button_hidden"] = {
 }
 
 -- specific styles
+default_gui["tlbe_fancy_list_parent"] = {
+    type = "vertical_flow_style",
+    width = camera_flow_left_side_width
+}
+
 default_gui["tlbe_camera_dropdown"] = {
     type = "dropdown_style",
     width = fancy_list_box_width,
