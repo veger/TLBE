@@ -102,6 +102,10 @@ function GUI.onClick(event)
             index = tonumber(index)
             playerSettings.guiPersist.selectedTracker = index
             GUI.fancyListBoxSelectItem(playerSettings.gui.trackerList, index)
+            GUI.updateTrackerConfig(
+                playerSettings.gui.trackerInfo,
+                playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+            )
             GUI.updateTrackerInfo(
                 playerSettings.gui.trackerInfo,
                 playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
@@ -225,6 +229,11 @@ function GUI.onSelected(event)
             playerSettings.trackers,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
         )
+
+        GUI.updateTrackerConfig(
+            playerSettings.gui.trackerInfo,
+            playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+        )
     elseif event.element.name == "tlbe-camera-add-tracker" then
         if event.element.selected_index <= 1 then
             -- Paranoia check: ignore first item (placeholder) in the list
@@ -243,6 +252,31 @@ function GUI.onSelected(event)
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
             "camera_tracker_",
             GUI.addCameraTrackerButtons
+        )
+
+        GUI.createCameraAddTracker(
+            playerSettings.gui.cameraTrackerListFlow,
+            playerSettings.trackers,
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
+        )
+    end
+end
+
+function GUI.onTextChanged(event)
+    local playerSettings = global.playerSettings[event.player_index]
+    if event.element.name == "camera-name" then
+        playerSettings.cameras[playerSettings.guiPersist.selectedCamera].name = event.element.text
+
+        GUI.updateCameraList(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
+    elseif event.element.name == "tracker-name" then
+        playerSettings.trackers[playerSettings.guiPersist.selectedTracker].name = event.element.text
+
+        GUI.createTrackerList(
+            playerSettings.gui.trackerList,
+            playerSettings.guiPersist.selectedTracker,
+            playerSettings.trackers,
+            "tracker_",
+            GUI.addTrackerButtons
         )
 
         GUI.createCameraAddTracker(
@@ -327,30 +361,27 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     local cameraBox = flow.add {type = "flow"}
     local cameraLeftFlow = cameraBox.add {type = "flow", direction = "vertical", style = "tlbe_fancy_list_parent"}
 
-    local cameraItems = {}
-    for index, camera in pairs(cameras) do
-        cameraItems[index] = camera.name
-    end
-
     playerGUI.cameraSelector =
         cameraLeftFlow.add {
         type = "drop-down",
         name = "tlbe-cameras-list",
         caption = "cameras",
-        items = cameraItems,
-        selected_index = guiPersist.selectedCamera,
         style = "tlbe_camera_dropdown"
     }
+    GUI.updateCameraList(playerGUI, guiPersist, cameras)
 
     playerGUI.cameraSettings = cameraLeftFlow.add {type = "flow"}
     GUI.updateCameraSettings(playerGUI, guiPersist, cameras)
 
     -- Camera info
     playerGUI.cameraInfo = cameraBox.add {type = "table", column_count = 2}
+    playerGUI.cameraInfo.add {type = "label", caption = "name: "}
+    playerGUI.cameraInfo.add {type = "textfield", name = "camera-name"}
     playerGUI.cameraInfo.add {type = "label", caption = "position: "}
     playerGUI.cameraInfo.add {type = "label", name = "camera-position"}
     playerGUI.cameraInfo.add {type = "label", caption = "zoom: "}
     playerGUI.cameraInfo.add {type = "label", name = "camera-zoom"}
+    GUI.updateCameraConfig(playerGUI.cameraInfo, cameras[guiPersist.selectedCamera])
     GUI.updateCameraInfo(playerGUI.cameraInfo, cameras[guiPersist.selectedCamera])
 
     -- Trackers
@@ -421,10 +452,13 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, trackers)
 
     -- Tracker info
     playerGUI.trackerInfo = flow.add {type = "table", column_count = 2}
+    playerGUI.trackerInfo.add {type = "label", caption = "name: "}
+    playerGUI.trackerInfo.add {type = "textfield", name = "tracker-name"}
     playerGUI.trackerInfo.add {type = "label", caption = "position: "}
     playerGUI.trackerInfo.add {type = "label", name = "tracker-position"}
     playerGUI.trackerInfo.add {type = "label", caption = "position: "}
     playerGUI.trackerInfo.add {type = "label", name = "tracker-size"}
+    GUI.updateTrackerConfig(playerGUI.trackerInfo, trackers[guiPersist.selectedTracker])
     GUI.updateTrackerInfo(playerGUI.trackerInfo, trackers[guiPersist.selectedTracker])
 
     return flow
@@ -593,6 +627,26 @@ function GUI.updateCameraSettings(playerGUI, guiPersist, cameras)
     }
 end
 
+function GUI.updateCameraList(playerGUI, guiPersist, cameras)
+    local cameraItems = {}
+    for index, camera in pairs(cameras) do
+        cameraItems[index] = camera.name
+    end
+
+    playerGUI.cameraSelector.items = cameraItems
+    playerGUI.cameraSelector.selected_index = guiPersist.selectedCamera
+end
+
+function GUI.updateCameraConfig(cameraInfo, camera)
+    if camera == nil then
+        cameraInfo["camera-name"].text = ""
+        cameraInfo["camera-name"].enabled = false
+    else
+        cameraInfo["camera-name"].enabled = true
+        cameraInfo["camera-name"].text = camera.name
+    end
+end
+
 function GUI.updateCameraInfo(cameraInfo, camera)
     if camera == nil or camera.centerPos == nil then
         cameraInfo["camera-position"].caption = "unset"
@@ -604,6 +658,16 @@ function GUI.updateCameraInfo(cameraInfo, camera)
         cameraInfo["camera-zoom"].caption = "unset"
     else
         cameraInfo["camera-zoom"].caption = string.format("%2.2f", camera.zoom)
+    end
+end
+
+function GUI.updateTrackerConfig(trackerInfo, tracker)
+    if tracker == nil then
+        trackerInfo["tracker-name"].text = ""
+        trackerInfo["tracker-name"].enabled = false
+    else
+        trackerInfo["tracker-name"].enabled = true
+        trackerInfo["tracker-name"].text = tracker.name
     end
 end
 
