@@ -1,5 +1,6 @@
 package.path = package.path .. ";../?.lua"
 local TLBE = {
+    Camera = require("scripts.camera"),
     Main = require("scripts.main"),
     Config = require("scripts.config")
 }
@@ -7,6 +8,23 @@ local TLBE = {
 local lu = require("luaunit")
 
 local tileSize = 32
+
+TestNewCamera = {}
+
+function TestNewCamera.TestUniqueName()
+    local camera1 = TLBE.Camera.newCamera({postion = {0, 0}}, {})
+    lu.assertEquals(camera1.name, "new camera", "with empty list no index is needed")
+
+    local camera2 = TLBE.Camera.newCamera({postion = {0, 0}}, {camera1})
+    lu.assertEquals(camera2.name, "new camera-2", "with camera 'new camera' already in the list, add '-2' to the name")
+
+    local camera3 = TLBE.Camera.newCamera({postion = {0, 0}}, {camera1, camera2})
+    lu.assertEquals(
+        camera3.name,
+        "new camera-3",
+        "with camera 'new camera' and 'new camera-2' already in the list, add '-3' to the name"
+    )
+end
 
 TestCamera = {}
 
@@ -36,8 +54,8 @@ function TestCamera:SetUp()
         {index = 2}
     }
 
-    -- Disable player2 camera
-    global.playerSettings[2].cameras[1].enabled = false
+    -- Enable player1 camera
+    global.playerSettings[1].cameras[1].enabled = true
 
     -- Make cameras easier to test
     self.testCameraPlayer1 = global.playerSettings[1].cameras[1]

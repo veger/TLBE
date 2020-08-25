@@ -2,6 +2,7 @@ local GUI = {
     allTrackers = {"base", "player", "rocket"}
 }
 
+local Camera = require("scripts.camera")
 local ModGui = require("mod-gui")
 local Tracker = require("scripts.tracker")
 local Utils = require("scripts.utils")
@@ -80,7 +81,45 @@ function GUI.onClick(event)
         local selectedCamera = playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         selectedCamera.enabled = not selectedCamera.enabled
 
-        GUI.updateCameraSettings(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
+        GUI.updateCameraActions(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
+    elseif event.element.name == "tlbe_camera_add" then
+        table.insert(playerSettings.cameras, Camera.newCamera(player, playerSettings.cameras))
+        playerSettings.guiPersist.selectedCamera = #playerSettings.cameras
+
+        GUI.updateCameraList(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
+        GUI.updateCameraActions(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
+        GUI.updateCameraConfig(
+            playerSettings.gui.cameraInfo,
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
+        )
+        GUI.updateCameraInfo(
+            playerSettings.gui.cameraInfo,
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
+        )
+        GUI.createCameraTrackerList(playerSettings)
+    elseif event.element.name == "tlbe_camera_delete" then
+        if #playerSettings.cameras == 1 then
+            -- Paranoia check
+            return
+        end
+
+        table.remove(playerSettings.cameras, playerSettings.guiPersist.selectedCamera)
+
+        if playerSettings.guiPersist.selectedCamera > #playerSettings.cameras then
+            playerSettings.guiPersist.selectedCamera = #playerSettings.cameras
+        end
+
+        GUI.updateCameraList(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
+        GUI.updateCameraActions(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
+        GUI.updateCameraConfig(
+            playerSettings.gui.cameraInfo,
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
+        )
+        GUI.updateCameraInfo(
+            playerSettings.gui.cameraInfo,
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
+        )
+        GUI.createCameraTrackerList(playerSettings)
     else
         local _, index
         _, _, index = event.element.name:find("^camera_tracker_(%d+)$")
@@ -196,7 +235,11 @@ function GUI.onSelected(event)
         playerSettings.guiPersist.selectedCamera = event.element.selected_index
         playerSettings.guiPersist.selectedCameraTracker = 1
 
-        GUI.updateCameraSettings(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
+        GUI.updateCameraActions(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
+        GUI.updateCameraConfig(
+            playerSettings.gui.cameraInfo,
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
+        )
         GUI.createTrackerList(
             playerSettings.gui.cameraTrackerList,
             1,
@@ -204,6 +247,7 @@ function GUI.onSelected(event)
             "camera_tracker_",
             GUI.addCameraTrackerButtons
         )
+        GUI.createCameraTrackerList(playerSettings)
     elseif event.element.name == "tlbe-tracker-add" then
         local trackerIndex = event.element.selected_index - 1
         if trackerIndex < 1 then
@@ -370,8 +414,8 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     }
     GUI.updateCameraList(playerGUI, guiPersist, cameras)
 
-    playerGUI.cameraSettings = cameraLeftFlow.add {type = "flow"}
-    GUI.updateCameraSettings(playerGUI, guiPersist, cameras)
+    playerGUI.cameraActions = cameraLeftFlow.add {type = "flow"}
+    GUI.updateCameraActions(playerGUI, guiPersist, cameras)
 
     -- Camera info
     playerGUI.cameraInfo = cameraBox.add {type = "table", column_count = 2}
@@ -608,23 +652,49 @@ function GUI.createCameraAddTracker(parent, allTrackers, cameraTrackers)
     end
 end
 
-function GUI.updateCameraSettings(playerGUI, guiPersist, cameras)
-    playerGUI.cameraSettings.clear()
+function GUI.updateCameraActions(playerGUI, guiPersist, cameras)
+    playerGUI.cameraActions.clear()
     local selectedCamera = cameras[guiPersist.selectedCamera]
 
     local sprite = "utility/pause"
-    local style = "tlbe_tracker_disabled_button"
+    local style = "tool_button_red"
     if selectedCamera.enabled then
-        style = "tlbe_tracker_enabled_button"
+        style = "tool_button_green"
         sprite = "utility/play"
     end
 
-    playerGUI.cameraSettings.add {
+    playerGUI.cameraActions.add {
         type = "sprite-button",
         name = "tlbe_camera_enable",
         sprite = sprite,
         style = style
     }
+
+    playerGUI.cameraActions.add {
+        type = "button",
+        caption = "+",
+        name = "tlbe_camera_add",
+        style = "tool_button"
+    }
+
+    if #cameras == 1 then
+        -- playerGUI.cameraActions.add {type = "empty-widget", style = "tlbe_tool_button_hidden"}
+        playerGUI.cameraActions.add {
+            enabled = false,
+            tooltip = "Cannot delete last camera",
+            type = "sprite-button",
+            name = "tlbe_camera_delete",
+            sprite = "utility/trash_bin",
+            style = "tool_button"
+        }
+    else
+        playerGUI.cameraActions.add {
+            type = "sprite-button",
+            name = "tlbe_camera_delete",
+            sprite = "utility/trash_bin",
+            style = "tool_button_red"
+        }
+    end
 end
 
 function GUI.updateCameraList(playerGUI, guiPersist, cameras)

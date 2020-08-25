@@ -1,5 +1,6 @@
 local Config = {}
 
+local Camera = require("scripts.camera")
 local Tracker = require("scripts.tracker")
 
 local ticks_per_second = 60
@@ -58,23 +59,14 @@ function Config.newPlayerSettings(player)
         Tracker.newTracker "base"
     }
 
-    local camera = Config.newCamera(player)
+    local camera = Camera.newCamera(player, {})
+    camera.name = "main"
     camera.trackers = {trackers[1], trackers[2], trackers[3]}
 
     return {
         -- Setup a default camera and attach trackers to it
         cameras = {camera},
         trackers = trackers
-    }
-end
-
-function Config.newCamera(player)
-    return {
-        name = "main",
-        enabled = true,
-        trackers = {},
-        centerPos = player.position,
-        zoom = 1
     }
 end
 
