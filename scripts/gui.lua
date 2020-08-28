@@ -332,6 +332,12 @@ function GUI.onTextChanged(event)
         Camera.setWidth(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
     elseif event.element.name == "camera-resolution-y" then
         Camera.setHeight(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
+    elseif event.element.name == "camera-frame-rate" then
+        Camera.setFrameRate(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
+    elseif event.element.name == "camera-speed-gain" then
+        Camera.setSpeedGain(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
+    elseif event.element.name == "camera-zoom-period" then
+        Camera.setZoomPeriod(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
     end
 end
 
@@ -423,9 +429,9 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
 
     -- Camera info
     playerGUI.cameraInfo = cameraBox.add {type = "table", column_count = 2}
-    playerGUI.cameraInfo.add {type = "label", caption = "name: "}
+    playerGUI.cameraInfo.add {type = "label", caption = "name:"}
     playerGUI.cameraInfo.add {type = "textfield", name = "camera-name", style = "tlbe_config_textfield"}
-    playerGUI.cameraInfo.add {type = "label", caption = "resolution: "}
+    playerGUI.cameraInfo.add {type = "label", caption = "resolution:"}
     local resolutionFlow = playerGUI.cameraInfo.add {type = "flow", name = "camera-resolution"}
     resolutionFlow.add {
         type = "textfield",
@@ -440,9 +446,32 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
         style = "tlbe_config_half_width_textfield",
         numeric = true
     }
-    playerGUI.cameraInfo.add {type = "label", caption = "position: "}
+    playerGUI.cameraInfo.add {type = "label", caption = "frame rate:"}
+    playerGUI.cameraInfo.add {
+        type = "textfield",
+        name = "camera-frame-rate",
+        style = "tlbe_config_half_width_textfield",
+        numeric = true
+    }
+    playerGUI.cameraInfo.add {type = "label", caption = "speed gain:"}
+    playerGUI.cameraInfo.add {
+        type = "textfield",
+        name = "camera-speed-gain",
+        style = "tlbe_config_half_width_textfield",
+        numeric = true,
+        allow_decimal = true
+    }
+    playerGUI.cameraInfo.add {type = "label", caption = "zoom period:"}
+    playerGUI.cameraInfo.add {
+        type = "textfield",
+        name = "camera-zoom-period",
+        style = "tlbe_config_half_width_textfield",
+        numeric = true,
+        allow_decimal = true
+    }
+    playerGUI.cameraInfo.add {type = "label", caption = "position:"}
     playerGUI.cameraInfo.add {type = "label", name = "camera-position"}
-    playerGUI.cameraInfo.add {type = "label", caption = "zoom: "}
+    playerGUI.cameraInfo.add {type = "label", caption = "zoom:"}
     playerGUI.cameraInfo.add {type = "label", name = "camera-zoom"}
     GUI.updateCameraConfig(playerGUI.cameraInfo, cameras[guiPersist.selectedCamera])
     GUI.updateCameraInfo(playerGUI.cameraInfo, cameras[guiPersist.selectedCamera])
@@ -731,11 +760,17 @@ function GUI.updateCameraConfig(cameraInfo, camera)
     if camera == nil then
         cameraInfo["camera-name"].enabled = false
         cameraInfo["camera-name"].text = ""
+        cameraInfo["camera-frame-rate"].text = ""
+        cameraInfo["camera-speed-gain"].text = ""
+        cameraInfo["camera-zoom-period"].text = ""
         resolutionFlow["camera-resolution-x"].text = ""
         resolutionFlow["camera-resolution-y"].text = ""
     else
         cameraInfo["camera-name"].enabled = true
         cameraInfo["camera-name"].text = camera.name
+        cameraInfo["camera-frame-rate"].text = camera.frameRate or 25
+        cameraInfo["camera-speed-gain"].text = camera.speedGain or 60
+        cameraInfo["camera-zoom-period"].text = camera.zoomPeriod or 1.5
         resolutionFlow["camera-resolution-x"].text = camera.width
         resolutionFlow["camera-resolution-y"].text = camera.height
     end

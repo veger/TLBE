@@ -3,9 +3,7 @@ local Config = {}
 local Camera = require("scripts.camera")
 local Tracker = require("scripts.tracker")
 
-local ticks_per_second = 60
-
---- (re)loads the mod settings
+--- (re)loads the mod settings and initializes player settings if needed
 function Config.reload(event)
     local player = game.players[event.player_index]
     local guiSettings = settings.get_player_settings(player)
@@ -16,22 +14,7 @@ function Config.reload(event)
         global.playerSettings[event.player_index] = playerSettings
     end
 
-    local mainCamera = playerSettings.cameras[1]
     playerSettings.saveFolder = guiSettings["tlbe-save-folder"].value
-    mainCamera.screenshotInterval =
-        math.floor((ticks_per_second * guiSettings["tlbe-speed-increase"].value) / guiSettings["tlbe-frame-rate"].value)
-    mainCamera.zoomTicks =
-        math.floor(ticks_per_second * guiSettings["tlbe-zoom-period"].value * guiSettings["tlbe-speed-increase"].value)
-
-    mainCamera.realtimeInterval = math.floor(ticks_per_second / guiSettings["tlbe-frame-rate"].value)
-    mainCamera.zoomTicksRealtime = math.floor(ticks_per_second * guiSettings["tlbe-zoom-period"].value)
-
-    if mainCamera.screenshotInterval < 1 then
-        mainCamera.enabled = false
-
-        player.print({"err_interval"}, {r = 1})
-        player.print({"tlbe-disabled"})
-    end
 end
 
 function Config.newPlayerSettings(player)
