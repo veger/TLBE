@@ -17,7 +17,6 @@ function Config.reload(event)
     end
 
     local mainCamera = playerSettings.cameras[1]
-    local needRescale = false
     playerSettings.saveFolder = guiSettings["tlbe-save-folder"].value
     mainCamera.screenshotInterval =
         math.floor((ticks_per_second * guiSettings["tlbe-speed-increase"].value) / guiSettings["tlbe-frame-rate"].value)
@@ -27,27 +26,11 @@ function Config.reload(event)
     mainCamera.realtimeInterval = math.floor(ticks_per_second / guiSettings["tlbe-frame-rate"].value)
     mainCamera.zoomTicksRealtime = math.floor(ticks_per_second * guiSettings["tlbe-zoom-period"].value)
 
-    local width = guiSettings["tlbe-resolution-x"].value
-    if width ~= mainCamera.width and mainCamera.width ~= nil then
-        needRescale = true
-    end
-    mainCamera.width = width
-
-    local height = guiSettings["tlbe-resolution-y"].value
-    if height ~= mainCamera.heigth and mainCamera.heigth ~= nil then
-        needRescale = true
-    end
-    mainCamera.height = height
-
     if mainCamera.screenshotInterval < 1 then
         mainCamera.enabled = false
 
         player.print({"err_interval"}, {r = 1})
         player.print({"tlbe-disabled"})
-    end
-
-    if needRescale then
-        mainCamera.lastChange = game.tick
     end
 end
 

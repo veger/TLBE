@@ -328,6 +328,10 @@ function GUI.onTextChanged(event)
             playerSettings.trackers,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
         )
+    elseif event.element.name == "camera-resolution-x" then
+        Camera.setWidth(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
+    elseif event.element.name == "camera-resolution-y" then
+        Camera.setHeight(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
     end
 end
 
@@ -420,7 +424,22 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     -- Camera info
     playerGUI.cameraInfo = cameraBox.add {type = "table", column_count = 2}
     playerGUI.cameraInfo.add {type = "label", caption = "name: "}
-    playerGUI.cameraInfo.add {type = "textfield", name = "camera-name"}
+    playerGUI.cameraInfo.add {type = "textfield", name = "camera-name", style = "tlbe_config_textfield"}
+    playerGUI.cameraInfo.add {type = "label", caption = "resolution: "}
+    local resolutionFlow = playerGUI.cameraInfo.add {type = "flow", name = "camera-resolution"}
+    resolutionFlow.add {
+        type = "textfield",
+        name = "camera-resolution-x",
+        style = "tlbe_config_half_width_textfield",
+        numeric = true
+    }
+    resolutionFlow.add {type = "label", caption = "x", style = "tlbe_config_half_width_label"}
+    resolutionFlow.add {
+        type = "textfield",
+        name = "camera-resolution-y",
+        style = "tlbe_config_half_width_textfield",
+        numeric = true
+    }
     playerGUI.cameraInfo.add {type = "label", caption = "position: "}
     playerGUI.cameraInfo.add {type = "label", name = "camera-position"}
     playerGUI.cameraInfo.add {type = "label", caption = "zoom: "}
@@ -497,7 +516,7 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, trackers)
     -- Tracker info
     playerGUI.trackerInfo = flow.add {type = "table", column_count = 2}
     playerGUI.trackerInfo.add {type = "label", caption = "name: "}
-    playerGUI.trackerInfo.add {type = "textfield", name = "tracker-name"}
+    playerGUI.trackerInfo.add {type = "textfield", name = "tracker-name", style = "tlbe_config_textfield"}
     playerGUI.trackerInfo.add {type = "label", caption = "position: "}
     playerGUI.trackerInfo.add {type = "label", name = "tracker-position"}
     playerGUI.trackerInfo.add {type = "label", caption = "position: "}
@@ -708,12 +727,17 @@ function GUI.updateCameraList(playerGUI, guiPersist, cameras)
 end
 
 function GUI.updateCameraConfig(cameraInfo, camera)
+    local resolutionFlow = cameraInfo["camera-resolution"]
     if camera == nil then
-        cameraInfo["camera-name"].text = ""
         cameraInfo["camera-name"].enabled = false
+        cameraInfo["camera-name"].text = ""
+        resolutionFlow["camera-resolution-x"].text = ""
+        resolutionFlow["camera-resolution-y"].text = ""
     else
         cameraInfo["camera-name"].enabled = true
         cameraInfo["camera-name"].text = camera.name
+        resolutionFlow["camera-resolution-x"].text = camera.width
+        resolutionFlow["camera-resolution-y"].text = camera.height
     end
 end
 

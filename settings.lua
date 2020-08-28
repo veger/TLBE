@@ -30,22 +30,6 @@ data:extend(
             minimum_value = 1,
             default_value = 1.5,
             order = "32"
-        },
-        {
-            type = "int-setting",
-            name = "tlbe-resolution-x",
-            setting_type = "runtime-per-user",
-            minimum_value = 320,
-            default_value = 1920,
-            order = "50"
-        },
-        {
-            type = "int-setting",
-            name = "tlbe-resolution-y",
-            setting_type = "runtime-per-user",
-            minimum_value = 240,
-            default_value = 1080,
-            order = "51"
         }
     }
 )

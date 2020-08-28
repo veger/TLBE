@@ -228,3 +228,22 @@ default_gui["tlbe_tool_button_hidden"] = {
     padding = 2,
     size = 28
 }
+
+default_gui["tlbe_config_textfield"] = {
+    type = "textbox_style",
+    width = 200
+}
+
+default_gui["tlbe_config_half_width_textfield"] = {
+    type = "textbox_style",
+    parent = "tlbe_config_textfield",
+    width = 90
+}
+
+-- aligns 2 tlbe_config_half_width_textfield styles textfields with a single tlbe_config_textfield
+default_gui["tlbe_config_half_width_label"] = {
+    type = "label_style",
+    size = {12, 28}, -- textbox height
+    horizontal_align = "center",
+    vertical_align = "center"
+}
