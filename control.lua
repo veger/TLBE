@@ -1,7 +1,8 @@
 local TLBE = {
     Main = require("scripts.main"),
     Config = require("scripts.config"),
-    GUI = require("scripts.gui")
+    GUI = require("scripts.gui"),
+    Tracker = require("scripts.tracker")
 }
 
 local function on_init()
@@ -11,7 +12,19 @@ local function on_init()
         -- initialize player(s) when mod is loaded into existing game
         TLBE.Config.reload({player_index = index})
         TLBE.GUI.init(player)
+
         player.print({"mod-loaded"}, {r = 1, g = 0.5, b = 0})
+    end
+
+    local baseBBox = TLBE.Main.get_base_bbox()
+    if baseBBox ~= nil then
+        -- Update base trackers of each player
+        for index, _ in pairs(game.players) do
+            local baseTracker = global.playerSettings[index].trackers[3]
+            baseTracker.minPos = baseBBox.minPos
+            baseTracker.maxPos = baseBBox.maxPos
+            TLBE.Tracker.updateCenterAndSize(baseTracker)
+        end
     end
 end
 
