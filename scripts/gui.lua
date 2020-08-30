@@ -4,7 +4,6 @@ local GUI = {
 
 local Camera = require("scripts.camera")
 local Main = require("scripts.main")
-local ModGui = require("mod-gui")
 local Tracker = require("scripts.tracker")
 local Utils = require("scripts.utils")
 
@@ -15,19 +14,6 @@ local function findActiveTracker(trackers)
         if tracker.enabled == true then
             return tracker
         end
-    end
-end
-
-function GUI.init(player)
-    -- Add main button if if does not exist yet
-    local buttonFlow = ModGui.get_button_flow(player)
-    if buttonFlow["tlbe-main-icon"] == nil then
-        buttonFlow.add {
-            type = "sprite-button",
-            style = ModGui.button_style,
-            sprite = "tlbe-logo",
-            name = "tlbe-main-icon"
-        }
     end
 end
 
@@ -76,9 +62,7 @@ function GUI.onClick(event)
     local player = game.players[event.player_index]
     local playerSettings = global.playerSettings[event.player_index]
 
-    if event.element.name == "tlbe-main-icon" then
-        GUI.toggleMainWindow(player)
-    elseif event.element.name == "tlbe-main-window-close" then
+    if event.element.name == "tlbe-main-window-close" then
         GUI.closeMainWindow(event)
     elseif event.element.name == "tlbe_camera_enable" then
         local selectedCamera = playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
@@ -361,16 +345,27 @@ function GUI.onTextChanged(event)
     end
 end
 
-function GUI.closeMainWindow(event)
-    local player = game.players[event.player_index]
-    if player.gui.screen["tlbe-main-window"] ~= nil then
-        player.gui.screen["tlbe-main-window"].destroy()
+function GUI.onShortcut(event)
+    if event.prototype_name == "tlbe-shortcut" then
+        GUI.toggleMainWindow(event)
     end
 end
 
-function GUI.toggleMainWindow(player)
-    local playerSettings = global.playerSettings[player.index]
+function GUI.closeMainWindow(event)
+    local player = game.players[event.player_index]
     if player.gui.screen["tlbe-main-window"] ~= nil then
+        GUI.toggleMainWindow(event)
+    end
+end
+
+function GUI.toggleMainWindow(event)
+    local player = game.players[event.player_index]
+    local playerSettings = global.playerSettings[event.player_index]
+
+    local mainWindowOpen = player.gui.screen["tlbe-main-window"] ~= nil
+    player.set_shortcut_toggled("tlbe-shortcut", not mainWindowOpen)
+
+    if mainWindowOpen then
         player.gui.screen["tlbe-main-window"].destroy()
         playerSettings.gui = nil
     else
