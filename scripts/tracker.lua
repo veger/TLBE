@@ -57,4 +57,29 @@ function Tracker.findActiveTracker(trackers)
     return previous, nil
 end
 
+function Tracker.updateCenterAndSize(tracker)
+    local size = {
+        x = tracker.maxPos.x - tracker.minPos.x,
+        y = tracker.maxPos.y - tracker.minPos.y
+    }
+
+    local centerPos = {
+        x = tracker.minPos.x + size.x / 2,
+        y = tracker.minPos.y + size.y / 2
+    }
+
+    if
+        tracker.centerPos == nil or tracker.size == 0 or centerPos.x ~= tracker.centerPos.x or
+            centerPos.y ~= tracker.centerPos.y or
+            size.x ~= tracker.size.x or
+            size.y ~= tracker.size.y
+     then
+        -- Tracker dimensions changed, so need to recenter camera
+        tracker.lastChange = game.tick
+    end
+
+    tracker.size = size
+    tracker.centerPos = centerPos
+end
+
 return Tracker

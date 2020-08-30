@@ -1,5 +1,7 @@
 local Utils = {}
 
+Utils.boundarySize = 2
+
 function Utils.findName(list, name)
     for _, entry in pairs(list) do
         if entry.name == name then
@@ -37,6 +39,16 @@ function Utils.filterOut(completeList, filterList)
     end
 
     return resultList
+end
+
+function Utils.entityBBox(entity)
+    -- top/bottom seems to be swapped, so use this table to reduce confusion of rest of the code
+    return {
+        left = entity.bounding_box.left_top.x - Utils.boundarySize,
+        bottom = entity.bounding_box.left_top.y - Utils.boundarySize,
+        right = entity.bounding_box.right_bottom.x + Utils.boundarySize,
+        top = entity.bounding_box.right_bottom.y + Utils.boundarySize
+    }
 end
 
 return Utils

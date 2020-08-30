@@ -1,9 +1,9 @@
 local Main = {}
 
 local Tracker = require("scripts.tracker")
+local Utils = require("scripts.utils")
 
 local tileSize = 32
-local boundarySize = 2
 local maxZoom = 1
 local minZoom = 0.031250
 
@@ -64,13 +64,7 @@ function Main.tick()
 end
 
 function Main.entity_built(event)
-    -- top/bottom seems to be swapped, so use this table to reduce confusion of rest of the code
-    local newEntityBBox = {
-        left = event.created_entity.bounding_box.left_top.x - boundarySize,
-        bottom = event.created_entity.bounding_box.left_top.y - boundarySize,
-        right = event.created_entity.bounding_box.right_bottom.x + boundarySize,
-        top = event.created_entity.bounding_box.right_bottom.y + boundarySize
-    }
+    local newEntityBBox = Utils.entityBBox(event.created_entity)
 
     for _, playerSettings in pairs(global.playerSettings) do
         for _, tracker in pairs(playerSettings.trackers) do
@@ -102,17 +96,7 @@ function Main.entity_built(event)
                     end
                 end
 
-                tracker.lastChange = game.tick
-                tracker.size = {
-                    x = tracker.maxPos.x - tracker.minPos.x,
-                    y = tracker.maxPos.y - tracker.minPos.y
-                }
-
-                -- Update center position
-                tracker.centerPos = {
-                    x = tracker.minPos.x + tracker.size.x / 2,
-                    y = tracker.minPos.y + tracker.size.y / 2
-                }
+                Tracker.updateCenterAndSize(tracker)
             end
 
             ::nextTracker::
@@ -205,6 +189,48 @@ function Main.camera_follow_tracker(playerSettings, player, realtimeCamera, came
             playerSettings.noticeMaxZoom = nil
         end
     end
+end
+
+function Main.get_base_bbox()
+    local entities = game.surfaces[1].find_entities_filtered {force = "player"}
+
+    if #entities == 0 then
+        return nil
+    end
+
+    -- Find an initial bbox within the base
+    local entityBBox = Utils.entityBBox(entities[1])
+    local minPos = {x = entityBBox.left, y = entityBBox.bottom}
+    local maxPos = {x = entityBBox.right, y = entityBBox.top}
+
+    for _, entity in ipairs(entities) do
+        if entity.type == "character" then
+            -- Skip player character
+            goto NextEntity
+        end
+
+        entityBBox = Utils.entityBBox(entity)
+
+        if (entityBBox.left < minPos.x) then
+            minPos.x = entityBBox.left
+        end
+        if (entityBBox.bottom < minPos.y) then
+            minPos.y = entityBBox.bottom
+        end
+        if (entityBBox.right > maxPos.x) then
+            maxPos.x = entityBBox.right
+        end
+        if (entityBBox.top > maxPos.y) then
+            maxPos.y = entityBBox.top
+        end
+
+        ::NextEntity::
+    end
+
+    return {
+        minPos = minPos,
+        maxPos = maxPos
+    }
 end
 
 return Main
