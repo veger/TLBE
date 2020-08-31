@@ -47,6 +47,16 @@ function GUI.tick()
                 )
             end
 
+            if playerSettings.gui.trackerList.valid then
+                GUI.createTrackerList(
+                    playerSettings.gui.trackerList,
+                    playerSettings.guiPersist.selectedTracker,
+                    playerSettings.trackers,
+                    "tracker_",
+                    GUI.addTrackerButtons
+                )
+            end
+
             if playerSettings.gui.trackerInfo.valid then
                 GUI.updateTrackerInfo(
                     nil,
