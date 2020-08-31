@@ -107,6 +107,13 @@ function GUI.onClick(event)
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         )
         GUI.createCameraTrackerList(playerSettings)
+    elseif event.element.name == "tlbe_camera_refresh" then
+        Camera.refreshConfig(playerSettings.cameras[playerSettings.guiPersist.selectedCamera])
+
+        GUI.updateCameraConfig(
+            playerSettings.gui.cameraInfo,
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
+        )
     elseif event.element.name == "tlbe_tracker_recalculate" then
         local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         local baseBBox = Main.get_base_bbox()
@@ -267,7 +274,7 @@ function GUI.onSelected(event)
             GUI.addTrackerButtons
         )
 
-        GUI.createCameraAddTracker(
+        GUI.createCameraAndTracker(
             playerSettings.gui.cameraTrackerListFlow,
             playerSettings.trackers,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
@@ -302,7 +309,7 @@ function GUI.onSelected(event)
             GUI.addCameraTrackerButtons
         )
 
-        GUI.createCameraAddTracker(
+        GUI.createCameraAndTracker(
             playerSettings.gui.cameraTrackerListFlow,
             playerSettings.trackers,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
@@ -327,7 +334,7 @@ function GUI.onTextChanged(event)
             GUI.addTrackerButtons
         )
 
-        GUI.createCameraAddTracker(
+        GUI.createCameraAndTracker(
             playerSettings.gui.cameraTrackerListFlow,
             playerSettings.trackers,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
@@ -512,7 +519,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
         GUI.addCameraTrackerButtons
     )
 
-    GUI.createCameraAddTracker(playerGUI.cameraTrackerListFlow, trackers, cameras[guiPersist.selectedCamera].trackers)
+    GUI.createCameraAndTracker(playerGUI.cameraTrackerListFlow, trackers, cameras[guiPersist.selectedCamera].trackers)
 
     -- Tracker info
     playerGUI.cameraTrackerInfo = trackerBox.add {type = "table", column_count = 2}
@@ -610,7 +617,7 @@ function GUI.createCameraTrackerList(playerSettings)
         GUI.addCameraTrackerButtons
     )
 
-    GUI.createCameraAddTracker(
+    GUI.createCameraAndTracker(
         playerSettings.gui.cameraTrackerListFlow,
         playerSettings.trackers,
         playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
@@ -697,7 +704,7 @@ function GUI.addTrackerButtons(index, trackers, trackerRow)
     end
 end
 
-function GUI.createCameraAddTracker(parent, allTrackers, cameraTrackers)
+function GUI.createCameraAndTracker(parent, allTrackers, cameraTrackers)
     if parent["tlbe-camera-add-tracker"] ~= nil then
         parent["tlbe-camera-add-tracker"].destroy()
     end
@@ -760,6 +767,13 @@ function GUI.updateCameraActions(playerGUI, guiPersist, cameras)
             style = "tool_button_red"
         }
     end
+
+    playerGUI.cameraActions.add {
+        type = "sprite-button",
+        name = "tlbe_camera_refresh",
+        sprite = "utility/refresh",
+        style = "tool_button"
+    }
 end
 
 function GUI.updateCameraList(playerGUI, guiPersist, cameras)

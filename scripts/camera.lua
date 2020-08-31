@@ -38,6 +38,31 @@ function Camera.updateConfig(camera)
     camera.zoomTicksRealtime = math.max(math.floor(ticks_per_second * camera.zoomPeriod), 1)
 end
 
+function Camera.refreshConfig(camera)
+    local zoomPeriod, frameRate, speedGain
+    if camera.speedGain == nil then
+        -- Try to recover as good as possible...
+        zoomPeriod = camera.zoomTicksRealtime / ticks_per_second
+        frameRate = ticks_per_second / camera.realtimeInterval
+
+        local speedGain1 = camera.zoomTicks / (ticks_per_second * zoomPeriod)
+        local speedGain2 = (camera.screenshotInterval * frameRate) / ticks_per_second
+        speedGain = (speedGain1 + speedGain2) / 2
+    else
+        zoomPeriod = camera.zoomTicks / (camera.speedGain * ticks_per_second)
+        frameRate = math.floor((ticks_per_second * camera.speedGain) / camera.screenshotInterval)
+
+        -- Two ways to calculate speedGain, so take average
+        local speedGain1 = camera.zoomTicks / (ticks_per_second * camera.zoomPeriod)
+        local speedGain2 = (camera.screenshotInterval * camera.frameRate) / ticks_per_second
+        speedGain = (speedGain1 + speedGain2) / 2
+    end
+
+    camera.zoomPeriod = math.floor(zoomPeriod * 100) / 100
+    camera.frameRate = math.floor(frameRate + 0.5)
+    camera.speedGain = math.floor(speedGain * 100) / 100
+end
+
 function Camera.setWidth(camera, width)
     width = tonumber(width)
 

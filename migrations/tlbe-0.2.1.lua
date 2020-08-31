@@ -1,3 +1,4 @@
+local Camera = require("scripts.camera")
 local Main = require("scripts.main")
 local Tracker = require("scripts.tracker")
 
@@ -19,7 +20,6 @@ for player_index, player in pairs(game.players) do
 
     if mainCamera.zoomTicksRocket ~= nil then
         mainCamera.zoomTicksRealtime = mainCamera.zoomTicksRocket
-        mainCamera.zoomPeriod = math.floor(mainCamera.zoomTicksRocket / ticks_per_second)
     else
         player.print(
             "Could not recover 'zoom period', please set manually as soon as possible. (only rocket tracker won't work as before)",
@@ -31,28 +31,16 @@ for player_index, player in pairs(game.players) do
 
     if mainCamera.rocketInterval ~= nil then
         mainCamera.realtimeInterval = mainCamera.rocketInterval
-        mainCamera.frameRate = math.floor(ticks_per_second / mainCamera.rocketInterval)
     else
         mainCamera.frameRate = 25
-        mainCamera.realtimeInterval = math.floor(ticks_per_second / 25)
+        mainCamera.realtimeInterval = math.floor(ticks_per_second / mainCamera.frameRate)
         player.print(
             "Could not recover 'frame rate', please set manually as soon as possible. (only rocket tracker won't work as before)",
             {r = 1, g = 0.5, b = 0}
         )
     end
 
-    if mainCamera.zoomTicks ~= nil then
-        mainCamera.speedGain = mainCamera.zoomTicks / (ticks_per_second * mainCamera.zoomPeriod)
-    elseif mainCamera.screenshotInterval ~= nil then
-        mainCamera.speedGain = (mainCamera.screenshotInterval * mainCamera.frameRate) / ticks_per_second
-    else
-        -- Set to default
-        mainCamera.speedGain = 60
-        player.print(
-            "Could not recover 'speed increase', please set manually as soon as possible. (TLBE will work as before though)",
-            {r = 1, g = 0.5, b = 0}
-        )
-    end
+    Camera.refreshConfig(mainCamera)
 
     mainCamera.trackers = {
         Tracker.newTracker "player",
