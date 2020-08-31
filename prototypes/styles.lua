@@ -223,12 +223,6 @@ default_gui["tlbe_order_hidden_button"] = {
     size = 12
 }
 
-default_gui["tlbe_tool_button_hidden"] = {
-    type = "empty_widget_style",
-    padding = 2,
-    size = 28
-}
-
 default_gui["tlbe_config_textfield"] = {
     type = "textbox_style",
     width = 200

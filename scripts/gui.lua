@@ -744,7 +744,6 @@ function GUI.updateCameraActions(playerGUI, guiPersist, cameras)
     }
 
     if #cameras == 1 then
-        -- playerGUI.cameraActions.add {type = "empty-widget", style = "tlbe_tool_button_hidden"}
         playerGUI.cameraActions.add {
             enabled = false,
             tooltip = "Cannot delete last camera",
