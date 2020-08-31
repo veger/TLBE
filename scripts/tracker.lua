@@ -69,7 +69,7 @@ function Tracker.updateCenterAndSize(tracker)
     }
 
     if
-        tracker.centerPos == nil or tracker.size == 0 or centerPos.x ~= tracker.centerPos.x or
+        tracker.centerPos == nil or tracker.size == nil or centerPos.x ~= tracker.centerPos.x or
             centerPos.y ~= tracker.centerPos.y or
             size.x ~= tracker.size.x or
             size.y ~= tracker.size.y
