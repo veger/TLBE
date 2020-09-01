@@ -1,7 +1,7 @@
 {
     "name": "TLBE",
-    "version": "0.1.2",
-    "title": "Timelapse Base Edition",
+    "version": "1.0.0",
+    "title": "Time Lapse Base Edition",
     "author": "veger",
     "contact": "",
     "homepage": "",
@@ -10,5 +10,5 @@
     "dependencies": [
         "base >= 0.18"
     ],
-    "description": "Takes screenshots of your base at specified intervals"
+    "description": "Takes screenshots of your base at specified intervals."
 }

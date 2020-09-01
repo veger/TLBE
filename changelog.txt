@@ -1,4 +1,13 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.0.0
+Date: 01-09-2020
+  Major Features:
+    - Use camera and tracker system
+    - Use in-game GUI
+  Minor Features:
+    - (Re)calculate base dimensions when importing TLBE into an existing game
+
+---------------------------------------------------------------------------------------------------
 Version: 0.1.2
 Date: 08-07-2020
   Minor Features:
