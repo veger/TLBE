@@ -1,6 +1,7 @@
 local GUI = {
     allTrackers = {"base", "player", "rocket"},
-    allTrackersLabels = {{"tracker-base"}, {"tracker-player"}, {"tracker-rocket"}}
+    allTrackersLabels = {{"tracker-base"}, {"tracker-player"}, {"tracker-rocket"}},
+    allTrackersLabelsMap = {base = {"tracker-base"}, player = {"tracker-player"}, rocket = {"tracker-rocket"}}
 }
 
 local Camera = require("scripts.camera")
@@ -561,6 +562,12 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
         caption = {"gui.label-center"},
         style = "description_property_name_label"
     }
+    playerGUI.cameraTrackerInfo.add {type = "label", name = "tracker-type"}
+    playerGUI.cameraTrackerInfo.add {
+        type = "label",
+        caption = {"gui.label-center"},
+        style = "description_property_name_label"
+    }
     playerGUI.cameraTrackerInfo.add {type = "label", name = "tracker-position"}
     playerGUI.cameraTrackerInfo.add {
         type = "label",
@@ -610,6 +617,12 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, trackers)
     playerGUI.trackerInfo = infoFlow.add {type = "table", column_count = 2}
     playerGUI.trackerInfo.add {type = "label", caption = {"gui.label-name"}, style = "description_property_name_label"}
     playerGUI.trackerInfo.add {type = "textfield", name = "tracker-name", style = "tlbe_config_textfield"}
+    playerGUI.trackerInfo.add {
+        type = "label",
+        caption = {"gui.label-type"},
+        style = "description_property_name_label"
+    }
+    playerGUI.trackerInfo.add {type = "label", name = "tracker-type"}
     playerGUI.trackerInfo.add {
         type = "label",
         caption = {"gui.label-center"},
@@ -896,6 +909,12 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
 end
 
 function GUI.updateTrackerInfo(trackerInfo, tracker)
+    if tracker == nil then
+        trackerInfo["tracker-type"].caption = ""
+    else
+        trackerInfo["tracker-type"].caption = GUI.allTrackersLabelsMap[tracker.type] or tracker.type
+    end
+
     if tracker == nil or tracker.centerPos == nil then
         trackerInfo["tracker-position"].caption = {"gui.value-unset"}
     else
