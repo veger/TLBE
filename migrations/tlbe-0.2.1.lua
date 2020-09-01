@@ -14,6 +14,11 @@ for player_index, player in pairs(game.players) do
         goto NextPlayer
     end
 
+    if playerSettings.trackers ~= nil then
+        -- Probably a new game, as previous version did not include trackers
+        goto NextPlayer
+    end
+
     player.print {"migrated-camera"}
 
     local mainCamera = playerSettings.cameras[1]
