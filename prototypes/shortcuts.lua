@@ -8,12 +8,6 @@ data:extend(
             consuming = "none"
         },
         {
-            type = "custom-input",
-            name = "tlbe-main-window-close",
-            key_sequence = "ESCAPE",
-            consuming = "none"
-        },
-        {
             type = "shortcut",
             name = "tlbe-shortcut",
             toggleable = true,
