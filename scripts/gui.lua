@@ -31,7 +31,6 @@ function GUI.tick()
                 GUI.updateCameraInfo(playerSettings.gui.cameraInfo, camera)
 
                 GUI.updateTrackerInfo(
-                    nil,
                     playerSettings.gui.cameraTrackerInfo,
                     camera.trackers[playerSettings.guiPersist.selectedCameraTracker]
                 )
@@ -59,7 +58,6 @@ function GUI.tick()
 
             if playerSettings.gui.trackerInfo.valid then
                 GUI.updateTrackerInfo(
-                    nil,
                     playerSettings.gui.trackerInfo,
                     playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
                 )
@@ -124,16 +122,6 @@ function GUI.onClick(event)
             playerSettings.gui.cameraInfo,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         )
-    elseif event.element.name == "tlbe_tracker_recalculate" then
-        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
-        local baseBBox = Main.get_base_bbox()
-        if baseBBox ~= nil then
-            selectedTracker.minPos = baseBBox.minPos
-            selectedTracker.maxPos = baseBBox.maxPos
-            Tracker.updateCenterAndSize(selectedTracker)
-
-            GUI.updateTrackerInfo(playerSettings.gui.trackerActions, playerSettings.gui.trackerInfo, selectedTracker)
-        end
     else
         local _, index
         _, _, index = event.element.name:find("^camera_tracker_(%d+)$")
@@ -142,7 +130,6 @@ function GUI.onClick(event)
             playerSettings.guiPersist.selectedCameraTracker = index
             GUI.fancyListBoxSelectItem(playerSettings.gui.cameraTrackerList, index)
             GUI.updateTrackerInfo(
-                nil,
                 playerSettings.gui.cameraTrackerInfo,
                 playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers[
                     playerSettings.guiPersist.selectedCameraTracker
@@ -161,7 +148,6 @@ function GUI.onClick(event)
                 playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
             )
             GUI.updateTrackerInfo(
-                playerSettings.gui.trackerActions,
                 playerSettings.gui.trackerInfo,
                 playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
             )
@@ -241,6 +227,24 @@ function GUI.onClick(event)
 
             return
         end
+
+        _, _, index = event.element.name:find("^tracker_(%d+)_recalculate$")
+        if index ~= nil then
+            index = tonumber(index)
+            local selectedTracker = playerSettings.trackers[index]
+            local baseBBox = Main.get_base_bbox()
+            if baseBBox ~= nil then
+                selectedTracker.minPos = baseBBox.minPos
+                selectedTracker.maxPos = baseBBox.maxPos
+                Tracker.updateCenterAndSize(selectedTracker)
+
+                if index == playerSettings.guiPersist.selectedTracker then
+                    GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+                end
+            end
+
+            return
+        end
     end
 end
 
@@ -291,7 +295,6 @@ function GUI.onSelected(event)
         )
 
         GUI.updateTrackerInfo(
-            playerSettings.gui.trackerActions,
             playerSettings.gui.trackerInfo,
             playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         )
@@ -538,7 +541,6 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     playerGUI.cameraTrackerInfo.add {type = "label", caption = "size:"}
     playerGUI.cameraTrackerInfo.add {type = "label", name = "tracker-size"}
     GUI.updateTrackerInfo(
-        nil,
         playerGUI.cameraTrackerInfo,
         cameras[guiPersist.selectedCamera].trackers[guiPersist.selectedCameraTracker]
     )
@@ -577,7 +579,6 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, trackers)
 
     -- Tracker info
     local infoFlow = flow.add {type = "flow", direction = "vertical"}
-    playerGUI.trackerActions = infoFlow.add {type = "flow", direction = "vertical"}
     playerGUI.trackerInfo = infoFlow.add {type = "table", column_count = 2}
     playerGUI.trackerInfo.add {type = "label", caption = "name:"}
     playerGUI.trackerInfo.add {type = "textfield", name = "tracker-name", style = "tlbe_config_textfield"}
@@ -586,7 +587,7 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, trackers)
     playerGUI.trackerInfo.add {type = "label", caption = "size:"}
     playerGUI.trackerInfo.add {type = "label", name = "tracker-size"}
     GUI.updateTrackerConfig(playerGUI.trackerInfo, trackers[guiPersist.selectedTracker])
-    GUI.updateTrackerInfo(playerGUI.trackerActions, playerGUI.trackerInfo, trackers[guiPersist.selectedTracker])
+    GUI.updateTrackerInfo(playerGUI.trackerInfo, trackers[guiPersist.selectedTracker])
 
     return flow
 end
@@ -710,6 +711,20 @@ function GUI.addTrackerButtons(index, trackers, trackerRow)
             type = "sprite",
             sprite = sprite,
             style = "tlbe_fancy_list_box_button_disabled"
+        }
+    end
+
+    if tracker.type == "base" then
+        trackerRow.add {
+            type = "sprite-button",
+            name = "tracker_" .. index .. "_recalculate",
+            sprite = "utility/refresh",
+            style = "tlbe_fancy_list_box_button"
+        }
+    else
+        trackerRow.add {
+            type = "empty-widget",
+            style = "tlbe_fancy_list_box_button_hidden"
         }
     end
 end
@@ -841,14 +856,7 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
     end
 end
 
-function GUI.updateTrackerInfo(parent, trackerInfo, tracker)
-    if parent ~= nil then
-        parent.clear()
-        if tracker.type == "base" then
-            parent.add {type = "button", caption = "recalculate", name = "tlbe_tracker_recalculate"}
-        end
-    end
-
+function GUI.updateTrackerInfo(trackerInfo, tracker)
     if tracker == nil or tracker.centerPos == nil then
         trackerInfo["tracker-position"].caption = "unset"
     else
