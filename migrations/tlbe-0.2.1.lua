@@ -66,7 +66,7 @@ for player_index, player in pairs(game.players) do
         table.remove(mainCamera.trackers, 1)
     end
 
-    playerSettings.trackers = mainCamera.trackers
+    playerSettings.trackers = {table.unpack(mainCamera.trackers)}
 
     -- Remove obsolete entries
     global.rocketLaunching = nil
