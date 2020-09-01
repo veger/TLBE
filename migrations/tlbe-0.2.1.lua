@@ -14,17 +14,14 @@ for player_index, player in pairs(game.players) do
         goto NextPlayer
     end
 
-    player.print("Migrated TLBE player settings to new camera settings.")
+    player.print {"migrated-camera"}
 
     local mainCamera = playerSettings.cameras[1]
 
     if mainCamera.zoomTicksRocket ~= nil then
         mainCamera.zoomTicksRealtime = mainCamera.zoomTicksRocket
     else
-        player.print(
-            "Could not recover 'zoom period', please set manually as soon as possible. (only rocket tracker won't work as before)",
-            {r = 1, g = 0.5, b = 0}
-        )
+        player.print({"migration-issue-zoomperiod"}, {r = 1, g = 0.5, b = 0})
         mainCamera.zoomPeriod = 1.5
         mainCamera.zoomTicksRealtime = math.floor(ticks_per_second * mainCamera.zoomPeriod)
     end
@@ -34,10 +31,7 @@ for player_index, player in pairs(game.players) do
     else
         mainCamera.frameRate = 25
         mainCamera.realtimeInterval = math.floor(ticks_per_second / mainCamera.frameRate)
-        player.print(
-            "Could not recover 'frame rate', please set manually as soon as possible. (only rocket tracker won't work as before)",
-            {r = 1, g = 0.5, b = 0}
-        )
+        player.print({"migration-issue-framerate"}, {r = 1, g = 0.5, b = 0})
     end
 
     Camera.refreshConfig(mainCamera)
