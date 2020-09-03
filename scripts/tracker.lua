@@ -14,12 +14,14 @@ function Tracker.newTracker(trackerType, trackerList)
         name = trackerName,
         type = trackerType,
         userCanEnable = true,
-        enabled = true
+        enabled = true,
+        smooth = true
     }
 
     -- Add tracker specific details
     if trackerType == "player" then
         newTracker.untilBuild = true
+        newTracker.smooth = false
     elseif trackerType == "rocket" then
         newTracker.userCanEnable = false
         newTracker.enabled = false

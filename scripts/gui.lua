@@ -367,6 +367,13 @@ function GUI.onTextChanged(event)
     end
 end
 
+function GUI.onStateChanged(event)
+    local playerSettings = global.playerSettings[event.player_index]
+    if event.element.name == "tracker-smooth" then
+        playerSettings.trackers[playerSettings.guiPersist.selectedTracker].smooth = event.element.state
+    end
+end
+
 function GUI.onShortcut(event)
     if event.prototype_name == "tlbe-shortcut" then
         GUI.toggleMainWindow(event)
@@ -617,6 +624,14 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, trackers)
     playerGUI.trackerInfo = infoFlow.add {type = "table", column_count = 2}
     playerGUI.trackerInfo.add {type = "label", caption = {"gui.label-name"}, style = "description_property_name_label"}
     playerGUI.trackerInfo.add {type = "textfield", name = "tracker-name", style = "tlbe_config_textfield"}
+    playerGUI.trackerInfo.add {type = "empty-widget"}
+    playerGUI.trackerInfo.add {
+        type = "checkbox",
+        name = "tracker-smooth",
+        caption = {"gui.label-smooth"},
+        tooltip = {"tooltip.tracker-smooth"},
+        state = false
+    }
     playerGUI.trackerInfo.add {
         type = "label",
         caption = {"gui.label-type"},
@@ -902,9 +917,13 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
     if tracker == nil then
         trackerInfo["tracker-name"].enabled = false
         trackerInfo["tracker-name"].text = ""
+        trackerInfo["tracker-smooth"].enabled = false
+        trackerInfo["tracker-smooth"].state = false
     else
         trackerInfo["tracker-name"].enabled = true
         trackerInfo["tracker-name"].text = tracker.name
+        trackerInfo["tracker-smooth"].enabled = true
+        trackerInfo["tracker-smooth"].state = tracker.smooth
     end
 end
 

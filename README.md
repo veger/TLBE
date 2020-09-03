@@ -5,7 +5,7 @@ Mod for [Factorio](http://www.factorio.com) that takes screenshots of your base 
 Features:
 * Multiple camera support, each taking their own screenshots.
 * Trackers to tell the camera(s) where to look at
-    * Follow player until the first enitity is built.
+    * Follow player until the first entity is built.
     * Follow rocket launch.
     * Follow base growth.
 * Camera use (ordered) tracker list, first enabled tracker is used.

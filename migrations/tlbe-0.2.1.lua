@@ -4,11 +4,11 @@ local Tracker = require("scripts.tracker")
 
 local ticks_per_second = 60
 
-for player_index, player in pairs(game.players) do
-    if global.playerSettings == nil then
-        goto NextPlayer
-    end
+if global.playerSettings == nil then
+    goto SkipMigration
+end
 
+for player_index, player in pairs(game.players) do
     local playerSettings = global.playerSettings[player_index]
     if playerSettings == nil or playerSettings.cameras == nil then
         goto NextPlayer
@@ -79,3 +79,5 @@ for player_index, player in pairs(game.players) do
 
     ::NextPlayer::
 end
+
+::SkipMigration::
