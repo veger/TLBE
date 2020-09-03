@@ -5,10 +5,10 @@ local lu = require("luaunit")
 -- Unit tests
 require("utils")
 require("camera_follow-tracker")
-require("camera_follow-player")
 require("main")
 require("tracker")
 require("tracker-base")
+require("tracker-player")
 require("tracker-rocket")
 
 -- Integration tests

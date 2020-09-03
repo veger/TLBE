@@ -15,11 +15,13 @@ function Tracker.newTracker(trackerType, trackerList)
         type = trackerType,
         userCanEnable = true,
         enabled = true,
-        smooth = true
+        smooth = true,
+        lastChange = 0
     }
 
     -- Add tracker specific details
     if trackerType == "player" then
+        newTracker.size = {x = 1, y = 1}
         newTracker.untilBuild = true
         newTracker.smooth = false
     elseif trackerType == "rocket" then
@@ -29,6 +31,20 @@ function Tracker.newTracker(trackerType, trackerList)
     end
 
     return newTracker
+end
+
+-- Update tracker state (if needed)
+function Tracker.tick(tracker, player)
+    if tracker.type == "player" then
+        if
+            tracker.centerPos == nil or tracker.centerPos.x ~= player.position.x or
+                tracker.centerPos.y ~= player.position.y
+         then
+            tracker.lastChange = game.tick
+        end
+
+        tracker.centerPos = player.position
+    end
 end
 
 -- Allows for a smooth recenter for the next/unknown tracker

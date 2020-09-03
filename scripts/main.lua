@@ -1,11 +1,8 @@
 local Main = {}
 
+local Camera = require("scripts.camera")
 local Tracker = require("scripts.tracker")
 local Utils = require("scripts.utils")
-
-local tileSize = 32
-local maxZoom = 1
-local minZoom = 0.031250
 
 function Main.tick()
     for _, player in pairs(game.players) do
@@ -36,13 +33,10 @@ function Main.tick()
                 goto nextCamera
             end
 
-            -- TODO Get rid of this exception when camera smooth follow is optional
-            if activeTracker.type == "player" then
-                Main.camera_follow_player(camera, player)
-            else
-                -- Move to tracker
-                Main.camera_follow_tracker(playerSettings, player, activeTracker.realtimeCamera, camera, activeTracker)
-            end
+            Tracker.tick(activeTracker, player)
+
+            -- Move to tracker
+            Camera.followTracker(playerSettings, player, camera, activeTracker)
 
             game.take_screenshot {
                 by_player = player,
@@ -138,56 +132,6 @@ function Main.rocket_launched()
             end
 
             ::nextTracker::
-        end
-    end
-end
-
-function Main.camera_follow_player(camera, player)
-    camera.centerPos = player.position
-    camera.zoom = maxZoom
-end
-
-function Main.camera_follow_tracker(playerSettings, player, realtimeCamera, camera, tracker)
-    local ticksLeft = tracker.lastChange - game.tick
-    if realtimeCamera then
-        ticksLeft = ticksLeft + camera.zoomTicksRealtime
-    else
-        ticksLeft = ticksLeft + camera.zoomTicks
-    end
-
-    if ticksLeft > 0 then
-        local stepsLeft
-        if realtimeCamera then
-            stepsLeft = ticksLeft / camera.realtimeInterval
-        else
-            stepsLeft = ticksLeft / camera.screenshotInterval
-        end
-
-        -- Gradually move to new center of the base
-        local xDiff = tracker.centerPos.x - camera.centerPos.x
-        local yDiff = tracker.centerPos.y - camera.centerPos.y
-        camera.centerPos.x = camera.centerPos.x + xDiff / stepsLeft
-        camera.centerPos.y = camera.centerPos.y + yDiff / stepsLeft
-
-        -- Calculate desired zoom
-        local zoomX = camera.width / (tileSize * tracker.size.x)
-        local zoomY = camera.height / (tileSize * tracker.size.y)
-        local zoom = math.min(zoomX, zoomY, maxZoom)
-
-        -- Gradually zoom out with same duration as centering
-        camera.zoom = camera.zoom - (camera.zoom - zoom) / stepsLeft
-
-        if camera.zoom < minZoom then
-            if playerSettings.noticeMaxZoom == nil then
-                player.print({"max-zoom"}, {r = 1})
-                player.print({"msg-once"})
-                playerSettings.noticeMaxZoom = true
-            end
-
-            camera.zoom = minZoom
-        else
-            -- Max (min atually) zoom is not reached (anymore)
-            playerSettings.noticeMaxZoom = nil
         end
     end
 end

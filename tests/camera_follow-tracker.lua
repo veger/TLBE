@@ -1,5 +1,5 @@
 package.path = package.path .. ";../?.lua"
-local TLBE = {Main = require("scripts.main")}
+local TLBE = {Camera = require("scripts.camera")}
 
 local lu = require("luaunit")
 
@@ -7,28 +7,28 @@ local tileSize = 32
 local MAX_TICKS = 100
 
 local function ConvergenceTester(playerSettings, player, camera, tracker)
-    local ticks = 0
+    local startTick = game.tick
     local currentX = camera.centerPos.x
     local currentY = camera.centerPos.y
     local currentZoom = camera.zoom
 
     repeat
-        ticks = ticks + 1
         game.tick = game.tick + 1
         local lastX = currentX
         local lastY = currentY
         local lastZoom = currentZoom
 
-        TLBE.Main.camera_follow_tracker(playerSettings, player, false, camera, tracker)
+        TLBE.Camera.followTracker(playerSettings, player, camera, tracker)
 
         currentX = camera.centerPos.x
         currentY = camera.centerPos.y
         currentZoom = camera.zoom
-    until ticks == MAX_TICKS or
+    until (game.tick - startTick) == MAX_TICKS or
         (math.abs(lastX - currentX) < 0.0001 and math.abs(lastY - currentY) < 0.0001 and
             math.abs(lastZoom - currentZoom) < 0.0001)
 
-    return ticks
+    -- Last tick validated the camera reached convergence so it does not count
+    return game.tick - startTick - 1
 end
 
 TestCameraFollowTracker = {}
@@ -49,6 +49,7 @@ function TestCameraFollowTracker:SetUp()
     self.testTracker = {
         centerPos = {x = 0, y = 0},
         size = {x = 1, y = 1},
+        smooth = true,
         lastChange = 0
     }
 end
@@ -56,7 +57,7 @@ end
 function TestCameraFollowTracker:TestInitialUpRight()
     self.testTracker.centerPos = {x = 1, y = 1}
 
-    TLBE.Main.camera_follow_tracker({}, {}, false, self.testCamera, self.testTracker)
+    TLBE.Camera.followTracker({}, {}, self.testCamera, self.testTracker)
 
     lu.assertIsTrue(self.testCamera.centerPos.x > 0, "expected that centerPos.x moved right")
     lu.assertIsTrue(self.testCamera.centerPos.y > 0, "expected that centerPos.y moved up")
@@ -66,11 +67,23 @@ end
 function TestCameraFollowTracker:TestInitialBottomLeft()
     self.testTracker.centerPos = {x = -1, y = -1}
 
-    TLBE.Main.camera_follow_tracker({}, {}, false, self.testCamera, self.testTracker)
+    TLBE.Camera.followTracker({}, {}, self.testCamera, self.testTracker)
 
     lu.assertIsTrue(self.testCamera.centerPos.x < 0, "expected that centerPos.x moved left")
     lu.assertIsTrue(self.testCamera.centerPos.y < 0, "expected that centerPos.y moved down")
     lu.assertEquals(self.testCamera.zoom, 1, "expected that zoom did not change, as size stayed the same")
+end
+
+function TestCameraFollowTracker:TestNotSmooth()
+    self.testTracker.smooth = false
+    self.testTracker.centerPos = {x = 10, y = 6}
+
+    local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
+
+    lu.assertEquals(ticks, 1, "couldn't converge immediately")
+
+    lu.assertIsTrue(self.testCamera.centerPos.x == 10, "expected move to new center")
+    lu.assertIsTrue(self.testCamera.centerPos.y == 6, "expected move to new center")
 end
 
 function TestCameraFollowTracker:TestZoom()
@@ -78,7 +91,7 @@ function TestCameraFollowTracker:TestZoom()
 
     local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
 
-    lu.assertEquals(ticks, 15, "couldn't converge in expected 15 ticks")
+    lu.assertEquals(ticks, 14, "couldn't converge in expected 14 ticks")
 
     lu.assertEquals(self.testCamera.centerPos.x, 0, "expected to stay in same place")
     lu.assertEquals(self.testCamera.centerPos.y, 0, "expected to stay in same place")
@@ -90,7 +103,7 @@ function TestCameraFollowTracker:TestConvergenceDiagonal()
 
     local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
 
-    lu.assertEquals(ticks, 15, "couldn't converge in expected 15 ticks")
+    lu.assertEquals(ticks, 14, "couldn't converge in expected 14 ticks")
 
     lu.assertIsTrue(self.testCamera.centerPos.x == 10, "expected move to new center")
     lu.assertIsTrue(self.testCamera.centerPos.y == 6, "expected move to new center")
@@ -102,7 +115,7 @@ function TestCameraFollowTracker:TestConvergenceHorizontal()
 
     local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
 
-    lu.assertEquals(ticks, 15, "couldn't converge in expected 15 ticks")
+    lu.assertEquals(ticks, 14, "couldn't converge in expected 14 ticks")
 
     lu.assertIsTrue(self.testCamera.centerPos.x == 10, "expected move to new center")
     lu.assertIsTrue(self.testCamera.centerPos.y == 0, "expected move to new center")
@@ -115,7 +128,7 @@ function TestCameraFollowTracker:TestConvergenceHorizontalBigJump()
 
     local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
 
-    lu.assertEquals(ticks, 15, "couldn't converge in expected 15 ticks")
+    lu.assertEquals(ticks, 14, "couldn't converge in expected 14 ticks")
 
     lu.assertIsTrue(self.testCamera.centerPos.x == 123, "expected move to new center")
     lu.assertIsTrue(self.testCamera.centerPos.y == 0, "expected move to new center")
@@ -128,7 +141,7 @@ function TestCameraFollowTracker:TestConvergenceVertical()
 
     local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
 
-    lu.assertEquals(ticks, 15, "couldn't converge in expected 15 ticks")
+    lu.assertEquals(ticks, 14, "couldn't converge in expected 14 ticks")
 
     lu.assertIsTrue(self.testCamera.centerPos.x == 0, "expected move to new center")
     lu.assertIsTrue(self.testCamera.centerPos.y == 10, "expected move to new center")
@@ -141,7 +154,7 @@ function TestCameraFollowTracker:TestConvergenceVerticalBigJump()
 
     local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
 
-    lu.assertEquals(ticks, 15, "couldn't converge in expected 15 ticks")
+    lu.assertEquals(ticks, 14, "couldn't converge in expected 14 ticks")
 
     lu.assertIsTrue(self.testCamera.centerPos.x == 0, "expected move to new center")
     lu.assertIsTrue(self.testCamera.centerPos.y == 142, "expected move to new center")

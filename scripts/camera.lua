@@ -2,7 +2,10 @@ local Camera = {}
 
 local Utils = require("scripts.utils")
 
+local maxZoom = 1
+local minZoom = 0.031250
 local ticks_per_second = 60
+local tileSize = 32
 
 function Camera.newCamera(player, cameraList)
     local nameIndex = 1
@@ -61,6 +64,63 @@ function Camera.refreshConfig(camera)
     camera.zoomPeriod = math.floor(zoomPeriod * 100) / 100
     camera.frameRate = math.floor(frameRate + 0.5)
     camera.speedGain = math.floor(speedGain * 100) / 100
+end
+
+function Camera.followTracker(playerSettings, player, camera, tracker)
+    if tracker.smooth then
+        Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
+    else
+        camera.centerPos = tracker.centerPos
+        camera.zoom = Camera.zoom(camera, tracker)
+    end
+end
+
+function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
+    local ticksLeft = tracker.lastChange - game.tick
+    if tracker.realtimeCamera then
+        ticksLeft = ticksLeft + camera.zoomTicksRealtime
+    else
+        ticksLeft = ticksLeft + camera.zoomTicks
+    end
+
+    if ticksLeft > 0 then
+        local stepsLeft
+        if tracker.realtimeCamera then
+            stepsLeft = ticksLeft / camera.realtimeInterval
+        else
+            stepsLeft = ticksLeft / camera.screenshotInterval
+        end
+
+        -- Gradually move to new center of the base
+        local xDiff = tracker.centerPos.x - camera.centerPos.x
+        local yDiff = tracker.centerPos.y - camera.centerPos.y
+        camera.centerPos.x = camera.centerPos.x + xDiff / stepsLeft
+        camera.centerPos.y = camera.centerPos.y + yDiff / stepsLeft
+
+        -- Gradually zoom out with same duration as centering
+        local zoom = Camera.zoom(camera, tracker)
+        camera.zoom = camera.zoom - (camera.zoom - zoom) / stepsLeft
+
+        if camera.zoom < minZoom then
+            if playerSettings.noticeMaxZoom == nil then
+                player.print({"max-zoom"}, {r = 1})
+                player.print({"msg-once"})
+                playerSettings.noticeMaxZoom = true
+            end
+
+            camera.zoom = minZoom
+        else
+            -- Max (min atually) zoom is not reached (anymore)
+            playerSettings.noticeMaxZoom = nil
+        end
+    end
+end
+
+function Camera.zoom(camera, tracker)
+    -- Calculate desired zoom
+    local zoomX = camera.width / (tileSize * tracker.size.x)
+    local zoomY = camera.height / (tileSize * tracker.size.y)
+    return math.min(zoomX, zoomY, maxZoom)
 end
 
 function Camera.setWidth(camera, width)
