@@ -75,6 +75,18 @@ function Tracker.findActiveTracker(trackers)
     return previous, nil
 end
 
+function Tracker.inUse(tracker, cameras)
+    for _, camera in ipairs(cameras) do
+        for _, cameraTracker in ipairs(camera.trackers) do
+            if cameraTracker == tracker then
+                return true
+            end
+        end
+    end
+
+    return false
+end
+
 function Tracker.updateCenterAndSize(tracker)
     local size = {
         x = tracker.maxPos.x - tracker.minPos.x,

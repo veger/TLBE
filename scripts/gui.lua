@@ -42,6 +42,7 @@ function GUI.tick()
                 GUI.createTrackerList(
                     playerSettings.gui.cameraTrackerList,
                     playerSettings.guiPersist.selectedCameraTracker,
+                    playerSettings.cameras,
                     playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
                     "camera_tracker_",
                     GUI.addCameraTrackerButtons
@@ -52,6 +53,7 @@ function GUI.tick()
                 GUI.createTrackerList(
                     playerSettings.gui.trackerList,
                     playerSettings.guiPersist.selectedTracker,
+                    playerSettings.cameras,
                     playerSettings.trackers,
                     "tracker_",
                     GUI.addTrackerButtons
@@ -164,6 +166,7 @@ function GUI.onClick(event)
             GUI.createTrackerList(
                 playerSettings.gui.trackerList,
                 playerSettings.guiPersist.selectedTracker,
+                playerSettings.cameras,
                 playerSettings.trackers,
                 "tracker_",
                 GUI.addTrackerButtons
@@ -172,6 +175,7 @@ function GUI.onClick(event)
             GUI.createTrackerList(
                 playerSettings.gui.cameraTrackerList,
                 playerSettings.guiPersist.selectedCameraTracker,
+                playerSettings.cameras,
                 playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
                 "camera_tracker_",
                 GUI.addCameraTrackerButtons
@@ -230,6 +234,47 @@ function GUI.onClick(event)
             return
         end
 
+        _, _, index = event.element.name:find("^tracker_(%d+)_delete$")
+        if index ~= nil then
+            if #playerSettings.trackers == 1 then
+                -- Paranoia check
+                return
+            end
+
+            index = tonumber(index)
+            table.remove(playerSettings.trackers, index)
+
+            if playerSettings.guiPersist.selectedTracker > #playerSettings.trackers then
+                playerSettings.guiPersist.selectedTracker = #playerSettings.trackers
+            end
+
+            GUI.createTrackerList(
+                playerSettings.gui.trackerList,
+                playerSettings.guiPersist.selectedTracker,
+                playerSettings.cameras,
+                playerSettings.trackers,
+                "tracker_",
+                GUI.addTrackerButtons
+            )
+
+            GUI.createCameraAndTracker(
+                playerSettings.gui.cameraTrackerListFlow,
+                playerSettings.trackers,
+                playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
+            )
+
+            GUI.updateTrackerInfo(
+                playerSettings.gui.trackerInfo,
+                playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+            )
+            GUI.updateTrackerConfig(
+                playerSettings.gui.trackerInfo,
+                playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+            )
+
+            return
+        end
+
         _, _, index = event.element.name:find("^tracker_(%d+)_recalculate$")
         if index ~= nil then
             index = tonumber(index)
@@ -265,6 +310,7 @@ function GUI.onSelected(event)
         GUI.createTrackerList(
             playerSettings.gui.cameraTrackerList,
             1,
+            playerSettings.cameras,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
             "camera_tracker_",
             GUI.addCameraTrackerButtons
@@ -285,6 +331,7 @@ function GUI.onSelected(event)
         GUI.createTrackerList(
             playerSettings.gui.trackerList,
             playerSettings.guiPersist.selectedTracker,
+            playerSettings.cameras,
             playerSettings.trackers,
             "tracker_",
             GUI.addTrackerButtons
@@ -319,6 +366,7 @@ function GUI.onSelected(event)
         GUI.createTrackerList(
             playerSettings.gui.cameraTrackerList,
             1,
+            playerSettings.cameras,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
             "camera_tracker_",
             GUI.addCameraTrackerButtons
@@ -344,6 +392,7 @@ function GUI.onTextChanged(event)
         GUI.createTrackerList(
             playerSettings.gui.trackerList,
             playerSettings.guiPersist.selectedTracker,
+            playerSettings.cameras,
             playerSettings.trackers,
             "tracker_",
             GUI.addTrackerButtons
@@ -445,7 +494,13 @@ function GUI.toggleMainWindow(event)
         local trackerTab = tabPane.add {type = "tab", caption = {"gui.tab-trackers"}}
         tabPane.add_tab(
             trackerTab,
-            GUI.createTrackerSettings(tabPane, playerSettings.gui, playerSettings.guiPersist, playerSettings.trackers)
+            GUI.createTrackerSettings(
+                tabPane,
+                playerSettings.gui,
+                playerSettings.guiPersist,
+                playerSettings.cameras,
+                playerSettings.trackers
+            )
         )
 
         mainWindow.force_auto_center()
@@ -555,6 +610,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     GUI.createTrackerList(
         playerGUI.cameraTrackerList,
         guiPersist.selectedCameraTracker,
+        cameras,
         cameras[guiPersist.selectedCamera].trackers,
         "camera_tracker_",
         GUI.addCameraTrackerButtons
@@ -590,7 +646,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     return flow
 end
 
-function GUI.createTrackerSettings(parent, playerGUI, guiPersist, trackers)
+function GUI.createTrackerSettings(parent, playerGUI, guiPersist, cameras, trackers)
     local flow = parent.add {type = "flow"}
     local trackersFlow = flow.add {type = "flow", direction = "vertical", style = "tlbe_fancy_list_parent"}
 
@@ -614,6 +670,7 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, trackers)
     GUI.createTrackerList(
         playerGUI.trackerList,
         guiPersist.selectedTracker,
+        cameras,
         trackers,
         "tracker_",
         GUI.addTrackerButtons
@@ -652,7 +709,7 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, trackers)
     return flow
 end
 
-function GUI.createTrackerList(trackerList, selectedIndex, trackers, namePrefix, addTrackerButtons)
+function GUI.createTrackerList(trackerList, selectedIndex, cameras, trackers, namePrefix, addTrackerButtons)
     trackerList.clear()
 
     for index, tracker in pairs(trackers) do
@@ -668,7 +725,7 @@ function GUI.createTrackerList(trackerList, selectedIndex, trackers, namePrefix,
             style = style
         }
 
-        addTrackerButtons(index, trackers, trackerRow)
+        addTrackerButtons(index, cameras, trackers, trackerRow)
 
         trackerRow.add {
             type = "label",
@@ -683,6 +740,7 @@ function GUI.createCameraTrackerList(playerSettings)
     GUI.createTrackerList(
         playerSettings.gui.cameraTrackerList,
         playerSettings.guiPersist.selectedCameraTracker,
+        playerSettings.cameras,
         playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
         "camera_tracker_",
         GUI.addCameraTrackerButtons
@@ -695,7 +753,7 @@ function GUI.createCameraTrackerList(playerSettings)
     )
 end
 
-function GUI.addCameraTrackerButtons(index, trackers, trackerRow)
+function GUI.addCameraTrackerButtons(index, _, trackers, trackerRow)
     local tracker = trackers[index]
     local isActiveTracker = findActiveTracker(trackers) == tracker
 
@@ -748,7 +806,7 @@ function GUI.addCameraTrackerButtons(index, trackers, trackerRow)
     end
 end
 
-function GUI.addTrackerButtons(index, trackers, trackerRow)
+function GUI.addTrackerButtons(index, cameras, trackers, trackerRow)
     local sprite = "utility/pause"
     local tracker = trackers[index]
     if tracker.enabled then
@@ -773,6 +831,28 @@ function GUI.addTrackerButtons(index, trackers, trackerRow)
             tooltip = {"tooltip.tracker-cannot-enable"},
             sprite = sprite,
             style = "tlbe_fancy_list_box_button_disabled"
+        }
+    end
+
+    if #trackers == 1 or Tracker.inUse(tracker, cameras) then
+        local tooltip
+        if #trackers == 1 then
+            tooltip = "tooltip.tracker-cannot-delete-last"
+        else
+            tooltip = "tooltip.tracker-cannot-delete-inuse"
+        end
+        trackerRow.add {
+            type = "sprite",
+            tooltip = {tooltip},
+            sprite = "utility/trash_bin",
+            style = "tlbe_fancy_list_box_button_disabled"
+        }
+    else
+        trackerRow.add {
+            type = "sprite-button",
+            name = "tracker_" .. index .. "_delete",
+            sprite = "utility/trash_bin",
+            style = "tlbe_tracker_disabled_button"
         }
     end
 

@@ -2,6 +2,8 @@
 Version: 1.1.0
   Major Features:
     - Enable/Disable camera smoothness per tracker
+  Minor Features:
+    - Delete (unused) trackers
   Bugfixes:
     - Fix tracker type label
 
