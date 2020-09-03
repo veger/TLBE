@@ -1,4 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.0
+  Major Features:
+    - Enable/Disable camera smoothness per tracker
+  Bugfixes:
+    - Fix tracker type label
+
+---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 01-09-2020
   Major Features:

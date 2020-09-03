@@ -566,7 +566,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     playerGUI.cameraTrackerInfo = trackerBox.add {type = "table", column_count = 2}
     playerGUI.cameraTrackerInfo.add {
         type = "label",
-        caption = {"gui.label-center"},
+        caption = {"gui.label-type"},
         style = "description_property_name_label"
     }
     playerGUI.cameraTrackerInfo.add {type = "label", name = "tracker-type"}
