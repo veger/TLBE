@@ -411,6 +411,15 @@ function GUI.onTextChanged(event)
             GUI.addTrackerButtons
         )
 
+        GUI.createTrackerList(
+            playerSettings.gui.cameraTrackerList,
+            1,
+            playerSettings.cameras,
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers,
+            "camera_tracker_",
+            GUI.addCameraTrackerButtons
+        )
+
         GUI.createCameraAndTracker(
             playerSettings.gui.cameraTrackerListFlow,
             playerSettings.trackers,
