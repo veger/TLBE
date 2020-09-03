@@ -11,6 +11,14 @@ local Utils = require("scripts.utils")
 
 local ticks_per_half_second = 30
 
+local function getWindowPlayButtonStyle(selected)
+    if selected then
+        return "pause-white", "tlbe_frame_action_button_selected"
+    end
+
+    return "play-white", "frame_action_button"
+end
+
 local function findActiveTracker(trackers)
     for _, tracker in pairs(trackers) do
         if tracker.enabled == true then
@@ -76,6 +84,11 @@ function GUI.onClick(event)
 
     if event.element.name == "tlbe-main-window-close" then
         GUI.closeMainWindow(event)
+    elseif event.element.name == "tlbe-main-window-pause" then
+        playerSettings.pauseOnOpen = not playerSettings.pauseOnOpen
+        game.tick_paused = playerSettings.pauseOnOpen
+
+        event.element.sprite, event.element.style = getWindowPlayButtonStyle(playerSettings.pauseOnOpen)
     elseif event.element.name == "tlbe_camera_enable" then
         local selectedCamera = playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         selectedCamera.enabled = not selectedCamera.enabled
@@ -443,6 +456,10 @@ function GUI.toggleMainWindow(event)
     local mainWindowOpen = player.gui.screen["tlbe-main-window"] ~= nil
     player.set_shortcut_toggled("tlbe-shortcut", not mainWindowOpen)
 
+    if playerSettings.pauseOnOpen and not game.is_multiplayer() then
+        game.tick_paused = not mainWindowOpen
+    end
+
     if mainWindowOpen then
         player.gui.screen["tlbe-main-window"].destroy()
         playerSettings.gui = nil
@@ -469,6 +486,17 @@ function GUI.toggleMainWindow(event)
         dragger.style.vertically_stretchable = true
         dragger.style.horizontally_stretchable = true
         dragger.drag_target = mainWindow
+
+        if not game.is_multiplayer() then
+            local sprite, style = getWindowPlayButtonStyle(playerSettings.pauseOnOpen)
+            title_bar.add {
+                type = "sprite-button",
+                name = "tlbe-main-window-pause",
+                tooltip = {"tooltip.pause-on-open"},
+                sprite = sprite,
+                style = style
+            }
+        end
 
         title_bar.add {
             type = "sprite-button",

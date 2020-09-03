@@ -2,6 +2,7 @@
 Version: 1.1.0
   Major Features:
     - Enable/Disable camera smoothness per tracker
+    - Support pausing game when TLBE window is open
   Minor Features:
     - Delete (unused) trackers
   Bugfixes:

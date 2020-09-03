@@ -88,6 +88,20 @@ default_gui["tlbe_fancy_list_box_button_hidden"] = {
 }
 
 -- specific styles
+default_gui["tlbe_frame_action_button_selected"] = {
+    type = "button_style",
+    parent = "frame_action_button",
+    -- From frame_action_button.selected_graphical_set
+    default_graphical_set = {
+        base = {position = {272, 169}, corner_size = 8}
+    },
+    -- From frame_action_button.selected_hovered_graphical_set
+    hovered_graphical_set = {
+        base = {position = {369, 17}, corner_size = 8},
+        shadow = {position = {440, 24}, corner_size = 8, draw_type = "outer"}
+    }
+}
+
 default_gui["tlbe_fancy_list_parent"] = {
     type = "vertical_flow_style",
     width = camera_flow_left_side_width
