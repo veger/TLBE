@@ -67,6 +67,10 @@ function Camera.refreshConfig(camera)
 end
 
 function Camera.followTracker(playerSettings, player, camera, tracker)
+    if tracker.centerPos == nil then
+        return
+    end
+
     if tracker.smooth then
         Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
     else
