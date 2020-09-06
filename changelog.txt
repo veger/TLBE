@@ -1,51 +1,55 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.1.2
+Version: 1.1.3
+  Gui:
+    - Fix width of tracker tab.
 
+---------------------------------------------------------------------------------------------------
+Version: 1.1.2
   Bugfixes:
-    - Fix crash when no entities are build but base camera is active
+    - Fix crash when no entities are build but base camera is active.
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.1
 Date: 03-09-2020
   Bugfixes:
-    - Update camera tracker list when name changes while game is paused
+    - Update camera tracker list when name changes while game is paused.
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.1.0
 Date: 03-09-2020
   Features:
-    - Enable/Disable camera smoothness per tracker
-    - Support pausing game when TLBE window is open
+    - Enable/Disable camera smoothness per tracker.
+    - Support pausing game when TLBE window is open.
   Minor Features:
-    - Delete (unused) trackers
+    - Delete (unused) trackers.
   Bugfixes:
-    - Fix tracker type label
+    - Fix tracker type label.
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 01-09-2020
   Major Features:
-    - Use camera and tracker system
-    - Use in-game GUI
+    - Use camera and tracker system.
+    - Use in-game GUI.
   Minor Features:
-    - (Re)calculate base dimensions when importing TLBE into an existing game
+    - (Re)calculate base dimensions when importing TLBE into an existing game.
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.2
 Date: 08-07-2020
   Minor Features:
-    - Inform player when TBLE starts to take screenshots (instead of a notification per screenshot)
+    - Inform player when TBLE starts to take screenshots. (instead of a notification per screenshot)
   Ease of use:
-    - Warn that base dimensions are unknown if TLBE is loaded into an existing game
-    - Changed "speed increase" default to take one screenshot per minute
+    - Warn that base dimensions are unknown if TLBE is loaded into an existing game.
+    - Changed "speed increase" default to take one screenshot per minute.
 
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.1
 Date: 28-06-2020
   Bugfixes:
-    - Basic support loading into existing games
+    - Basic support loading into existing games.
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.0
 Date: 20-06-2020
   Info:
-    - Initial release
+    - Initial release.
