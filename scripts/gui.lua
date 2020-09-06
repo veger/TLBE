@@ -514,7 +514,7 @@ function GUI.toggleMainWindow(event)
             name = "tlbe-main-window-close"
         }
 
-        local tabPane = mainWindow.add {type = "tabbed-pane"}
+        local tabPane = mainWindow.add {type = "tabbed-pane", style = "tlbe-tabbed_pane"}
 
         local cameraTab = tabPane.add {type = "tab", caption = {"gui.tab-cameras"}}
         tabPane.add_tab(

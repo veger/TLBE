@@ -5,6 +5,7 @@ local default_gui = data.raw["gui-style"].default
 local fancy_list_box_width = 188
 local camera_flow_left_side_width = 200
 local camera_flow_left_side_margin = 8
+local tab_width = 500
 
 -- 'borrowed' from core
 local function default_glow(tint_value, scale_value)
@@ -88,6 +89,16 @@ default_gui["tlbe_fancy_list_box_button_hidden"] = {
 }
 
 -- specific styles
+default_gui["tlbe-tabbed_pane"] = {
+    type = "tabbed_pane_style",
+    width = tab_width,
+    tab_content_frame = {
+        type = "frame_style",
+        parent = "tabbed_pane_frame",
+        width = tab_width
+    }
+}
+
 default_gui["tlbe_frame_action_button_selected"] = {
     type = "button_style",
     parent = "frame_action_button",
