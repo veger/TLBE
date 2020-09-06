@@ -1,7 +1,12 @@
 local GUI = {
-    allTrackers = {"base", "player", "rocket"},
-    allTrackersLabels = {{"tracker-base"}, {"tracker-player"}, {"tracker-rocket"}},
-    allTrackersLabelsMap = {base = {"tracker-base"}, player = {"tracker-player"}, rocket = {"tracker-rocket"}}
+    allTrackers = {"area", "base", "player", "rocket"},
+    allTrackersLabels = {{"tracker-area"}, {"tracker-base"}, {"tracker-player"}, {"tracker-rocket"}},
+    allTrackersLabelsMap = {
+        area = {"tracker-area"},
+        base = {"tracker-base"},
+        player = {"tracker-player"},
+        rocket = {"tracker-rocket"}
+    }
 }
 
 local Camera = require("scripts.camera")
@@ -139,6 +144,52 @@ function GUI.onClick(event)
             playerSettings.gui.cameraInfo,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         )
+    elseif event.element.name == "tlbe-tracker-tr-player" then
+        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+        -- Note that game origin is top-left, so top is min and bottom is max
+        selectedTracker.maxPos.x = math.floor(player.position.x)
+        selectedTracker.minPos.y = math.floor(player.position.y)
+        Tracker.areaUpdateCenterAndSize(selectedTracker)
+
+        GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+        GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+    elseif event.element.name == "tlbe-tracker-bl-player" then
+        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+        -- Note that game origin is top-left, so top is min and bottom is max
+        selectedTracker.minPos.x = math.floor(player.position.x)
+        selectedTracker.maxPos.y = math.floor(player.position.y)
+        Tracker.areaUpdateCenterAndSize(selectedTracker)
+
+        GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+        GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+    elseif event.element.name == "tlbe-tracker-tr-map" then
+        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+        local tag = Utils.findChartTag(player.force.find_chart_tags(game.surfaces[1]), selectedTracker.name .. "-tr")
+        if tag == nil then
+            player.print({"tag-not-found", selectedTracker.name .. "-tr"})
+        else
+            -- Note that game origin is top-left, so top is min and bottom is max
+            selectedTracker.maxPos.x = math.floor(tag.position.x)
+            selectedTracker.minPos.y = math.floor(tag.position.y)
+            Tracker.areaUpdateCenterAndSize(selectedTracker)
+
+            GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+            GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+        end
+    elseif event.element.name == "tlbe-tracker-bl-map" then
+        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+        local tag = Utils.findChartTag(player.force.find_chart_tags(game.surfaces[1]), selectedTracker.name .. "-bl")
+        if tag == nil then
+            player.print({"tag-not-found", selectedTracker.name .. "-bl"})
+        else
+            -- Note that game origin is top-left, so top is min and bottom is max
+            selectedTracker.minPos.x = math.floor(tag.position.x)
+            selectedTracker.maxPos.y = math.floor(tag.position.y)
+            Tracker.areaUpdateCenterAndSize(selectedTracker)
+
+            GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+            GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+        end
     else
         local _, index
         _, _, index = event.element.name:find("^camera_tracker_(%d+)$")
@@ -160,11 +211,7 @@ function GUI.onClick(event)
             index = tonumber(index)
             playerSettings.guiPersist.selectedTracker = index
             GUI.fancyListBoxSelectItem(playerSettings.gui.trackerList, index)
-            GUI.updateTrackerConfig(
-                playerSettings.gui.trackerInfo,
-                playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
-            )
-            GUI.updateTrackerInfo(
+            GUI.createTrackerConfigAndInfo(
                 playerSettings.gui.trackerInfo,
                 playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
             )
@@ -276,11 +323,7 @@ function GUI.onClick(event)
                 playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
             )
 
-            GUI.updateTrackerInfo(
-                playerSettings.gui.trackerInfo,
-                playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
-            )
-            GUI.updateTrackerConfig(
+            GUI.createTrackerConfigAndInfo(
                 playerSettings.gui.trackerInfo,
                 playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
             )
@@ -356,11 +399,7 @@ function GUI.onSelected(event)
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
         )
 
-        GUI.updateTrackerInfo(
-            playerSettings.gui.trackerInfo,
-            playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
-        )
-        GUI.updateTrackerConfig(
+        GUI.createTrackerConfigAndInfo(
             playerSettings.gui.trackerInfo,
             playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         )
@@ -435,6 +474,48 @@ function GUI.onTextChanged(event)
         Camera.setSpeedGain(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
     elseif event.element.name == "camera-zoom-period" then
         Camera.setZoomPeriod(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
+    elseif event.element.name == "tlbe-tracker-top" then
+        local value = tonumber(event.element.text)
+        if value ~= nil then
+            local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+            -- Note that game origin is top-left, so top is min and bottom is max
+            selectedTracker.minPos.y = value
+            Tracker.areaUpdateCenterAndSize(selectedTracker)
+
+            GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+            GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+        end
+    elseif event.element.name == "tlbe-tracker-bottom" then
+        local value = tonumber(event.element.text)
+        if value ~= nil then
+            local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+            -- Note that game origin is top-left, so top is min and bottom is max
+            selectedTracker.maxPos.y = value
+            Tracker.areaUpdateCenterAndSize(selectedTracker)
+
+            GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+            GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+        end
+    elseif event.element.name == "tlbe-tracker-left" then
+        local value = tonumber(event.element.text)
+        if value ~= nil then
+            local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+            selectedTracker.minPos.x = value
+            Tracker.areaUpdateCenterAndSize(selectedTracker)
+
+            GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+            GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+        end
+    elseif event.element.name == "tlbe-tracker-right" then
+        local value = tonumber(event.element.text)
+        if value ~= nil then
+            local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+            selectedTracker.maxPos.x = value
+            Tracker.areaUpdateCenterAndSize(selectedTracker)
+
+            GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+            GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+        end
     end
 end
 
@@ -716,32 +797,7 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, cameras, track
     -- Tracker info
     local infoFlow = flow.add {type = "flow", direction = "vertical"}
     playerGUI.trackerInfo = infoFlow.add {type = "table", column_count = 2}
-    playerGUI.trackerInfo.add {type = "label", caption = {"gui.label-name"}, style = "description_property_name_label"}
-    playerGUI.trackerInfo.add {type = "textfield", name = "tracker-name", style = "tlbe_config_textfield"}
-    playerGUI.trackerInfo.add {type = "empty-widget"}
-    playerGUI.trackerInfo.add {
-        type = "checkbox",
-        name = "tracker-smooth",
-        caption = {"gui.label-smooth"},
-        tooltip = {"tooltip.tracker-smooth"},
-        state = false
-    }
-    playerGUI.trackerInfo.add {
-        type = "label",
-        caption = {"gui.label-type"},
-        style = "description_property_name_label"
-    }
-    playerGUI.trackerInfo.add {type = "label", name = "tracker-type"}
-    playerGUI.trackerInfo.add {
-        type = "label",
-        caption = {"gui.label-center"},
-        style = "description_property_name_label"
-    }
-    playerGUI.trackerInfo.add {type = "label", name = "tracker-position"}
-    playerGUI.trackerInfo.add {type = "label", caption = {"gui.label-size"}, style = "description_property_name_label"}
-    playerGUI.trackerInfo.add {type = "label", name = "tracker-size"}
-    GUI.updateTrackerConfig(playerGUI.trackerInfo, trackers[guiPersist.selectedTracker])
-    GUI.updateTrackerInfo(playerGUI.trackerInfo, trackers[guiPersist.selectedTracker])
+    GUI.createTrackerConfigAndInfo(playerGUI.trackerInfo, trackers[guiPersist.selectedTracker])
 
     return flow
 end
@@ -1030,6 +1086,108 @@ function GUI.updateCameraInfo(cameraInfo, camera)
     end
 end
 
+function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
+    trackerInfo.clear()
+
+    trackerInfo.add {type = "label", caption = {"gui.label-name"}, style = "description_property_name_label"}
+    trackerInfo.add {type = "textfield", name = "tracker-name", style = "tlbe_config_textfield"}
+    trackerInfo.add {type = "empty-widget"}
+    trackerInfo.add {
+        type = "checkbox",
+        name = "tracker-smooth",
+        caption = {"gui.label-smooth"},
+        tooltip = {"tooltip.tracker-smooth"},
+        state = false
+    }
+
+    if tracker ~= nil and tracker.type == "area" then
+        trackerInfo.add {
+            type = "label",
+            caption = {"gui.label-top-right"},
+            style = "description_property_name_label"
+        }
+        local trFlow = trackerInfo.add {type = "flow", name = "tracker-tr"}
+        trFlow.add {
+            type = "textfield",
+            name = "tlbe-tracker-top",
+            style = "tlbe_config_half_width_textfield",
+            numeric = true,
+            allow_negative = true
+        }
+        trFlow.add {type = "label", caption = "/", style = "tlbe_config_half_width_label"}
+        trFlow.add {
+            type = "textfield",
+            name = "tlbe-tracker-right",
+            style = "tlbe_config_half_width_textfield",
+            numeric = true,
+            allow_negative = true
+        }
+        trFlow.add {
+            type = "sprite-button",
+            name = "tlbe-tracker-tr-player",
+            tooltip = {"tooltip.tracker-area-player"},
+            sprite = "utility/show_player_names_in_map_view_black",
+            style = "tlbe_config_button"
+        }
+        trFlow.add {
+            type = "sprite-button",
+            name = "tlbe-tracker-tr-map",
+            tooltip = {"tooltip.tracker-area-map", tracker.name .. "-tr"},
+            sprite = "utility/station_name",
+            style = "tlbe_config_button"
+        }
+
+        trackerInfo.add {type = "label", caption = {"gui.label-bottom-left"}, style = "description_property_name_label"}
+        local blFlow = trackerInfo.add {type = "flow", name = "tracker-bl"}
+        blFlow.add {
+            type = "textfield",
+            name = "tlbe-tracker-bottom",
+            style = "tlbe_config_half_width_textfield",
+            numeric = true,
+            allow_negative = true
+        }
+        blFlow.add {type = "label", caption = "/", style = "tlbe_config_half_width_label"}
+        blFlow.add {
+            type = "textfield",
+            name = "tlbe-tracker-left",
+            style = "tlbe_config_half_width_textfield",
+            numeric = true,
+            allow_negative = true
+        }
+        blFlow.add {
+            type = "sprite-button",
+            name = "tlbe-tracker-bl-player",
+            tooltip = {"tooltip.tracker-area-player"},
+            sprite = "utility/show_player_names_in_map_view_black",
+            style = "tlbe_config_button"
+        }
+        blFlow.add {
+            type = "sprite-button",
+            name = "tlbe-tracker-bl-map",
+            tooltip = {"tooltip.tracker-area-map", tracker.name .. "-bl"},
+            sprite = "utility/station_name",
+            style = "tlbe_config_button"
+        }
+    end
+
+    trackerInfo.add {
+        type = "label",
+        caption = {"gui.label-type"},
+        style = "description_property_name_label"
+    }
+    trackerInfo.add {type = "label", name = "tracker-type"}
+    trackerInfo.add {
+        type = "label",
+        caption = {"gui.label-center"},
+        style = "description_property_name_label"
+    }
+    trackerInfo.add {type = "label", name = "tracker-position"}
+    trackerInfo.add {type = "label", caption = {"gui.label-size"}, style = "description_property_name_label"}
+    trackerInfo.add {type = "label", name = "tracker-size"}
+    GUI.updateTrackerConfig(trackerInfo, tracker)
+    GUI.updateTrackerInfo(trackerInfo, tracker)
+end
+
 function GUI.updateTrackerConfig(trackerInfo, tracker)
     if tracker == nil then
         trackerInfo["tracker-name"].enabled = false
@@ -1041,6 +1199,30 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
         trackerInfo["tracker-name"].text = tracker.name
         trackerInfo["tracker-smooth"].enabled = true
         trackerInfo["tracker-smooth"].state = tracker.smooth
+
+        if tracker.type == "area" then
+            local trFlow = trackerInfo["tracker-tr"]
+            local blFlow = trackerInfo["tracker-bl"]
+            -- Note that game origin is top-left, so top is min and bottom is max
+            trFlow["tlbe-tracker-top"].text = tracker.minPos.y
+            blFlow["tlbe-tracker-bottom"].text = tracker.maxPos.y
+            trFlow["tlbe-tracker-right"].text = tracker.maxPos.x
+            blFlow["tlbe-tracker-left"].text = tracker.minPos.x
+
+            local style = "tlbe_config_half_width_textfield"
+            if tracker.minPos.y >= tracker.maxPos.y then
+                style = "tlbe_config_half_width_textfield_invalid"
+            end
+            trFlow["tlbe-tracker-top"].style = style
+            blFlow["tlbe-tracker-bottom"].style = style
+
+            style = "tlbe_config_half_width_textfield"
+            if tracker.minPos.x >= tracker.maxPos.x then
+                style = "tlbe_config_half_width_textfield_invalid"
+            end
+            trFlow["tlbe-tracker-right"].style = style
+            blFlow["tlbe-tracker-left"].style = style
+        end
     end
 end
 

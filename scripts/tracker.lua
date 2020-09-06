@@ -20,7 +20,11 @@ function Tracker.newTracker(trackerType, trackerList)
     }
 
     -- Add tracker specific details
-    if trackerType == "player" then
+    if trackerType == "area" then
+        newTracker.minPos = {x = -5, y = -5}
+        newTracker.maxPos = {x = 5, y = 5}
+        Tracker.updateCenterAndSize(newTracker)
+    elseif trackerType == "player" then
         newTracker.size = {x = 1, y = 1}
         newTracker.untilBuild = true
         newTracker.smooth = false
@@ -85,6 +89,13 @@ function Tracker.inUse(tracker, cameras)
     end
 
     return false
+end
+
+function Tracker.areaUpdateCenterAndSize(tracker)
+    if tracker.minPos.x < tracker.maxPos.x and tracker.minPos.y < tracker.maxPos.y then
+        -- Only update when area is valid
+        Tracker.updateCenterAndSize(tracker)
+    end
 end
 
 function Tracker.updateCenterAndSize(tracker)

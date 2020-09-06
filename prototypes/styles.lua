@@ -5,7 +5,7 @@ local default_gui = data.raw["gui-style"].default
 local fancy_list_box_width = 188
 local camera_flow_left_side_width = 200
 local camera_flow_left_side_margin = 8
-local tab_width = 500
+local tab_width = 560
 
 -- 'borrowed' from core
 local function default_glow(tint_value, scale_value)
@@ -18,10 +18,24 @@ local function default_glow(tint_value, scale_value)
     }
 end
 
+local function rounded_corners_glow(tint_value)
+    return {
+        position = {240, 783},
+        corner_size = 16,
+        tint = tint_value,
+        top_outer_border_shift = 4,
+        bottom_outer_border_shift = -4,
+        left_outer_border_shift = 4,
+        right_outer_border_shift = -4,
+        draw_type = "outer"
+    }
+end
+
 local green_button_glow_color = {135, 216, 139, 128}
 local red_button_glow_color = {254, 90, 90, 128}
 local default_dirt_color = {15, 7, 3, 100}
 local default_dirt = default_glow(default_dirt_color, 0.5)
+local textbox_dirt = rounded_corners_glow(default_dirt_color)
 
 -- general styles
 default_gui["tlbe_fancy_list_box"] = {
@@ -248,6 +262,12 @@ default_gui["tlbe_order_hidden_button"] = {
     size = 12
 }
 
+default_gui["tlbe_config_button"] = {
+    type = "button_style",
+    size = 28,
+    padding = 0
+}
+
 default_gui["tlbe_config_textfield"] = {
     type = "textbox_style",
     width = 200
@@ -257,6 +277,20 @@ default_gui["tlbe_config_half_width_textfield"] = {
     type = "textbox_style",
     parent = "tlbe_config_textfield",
     width = 90
+}
+
+default_gui["tlbe_config_half_width_textfield_invalid"] = {
+    type = "textbox_style",
+    parent = "tlbe_config_half_width_textfield",
+    -- from invalid_value_textfield
+    default_background = {
+        base = {position = {0, 913}, corner_size = 8},
+        shadow = textbox_dirt
+    },
+    active_background = {
+        base = {position = {0, 913}, corner_size = 8},
+        shadow = textbox_dirt
+    }
 }
 
 -- aligns 2 tlbe_config_half_width_textfield styles textfields with a single tlbe_config_textfield

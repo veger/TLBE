@@ -51,4 +51,14 @@ function Utils.entityBBox(entity)
     }
 end
 
+function Utils.findChartTag(tags, name)
+    for _, tag in ipairs(tags) do
+        if tag.text == name then
+            return tag
+        end
+    end
+
+    return nil
+end
+
 return Utils
