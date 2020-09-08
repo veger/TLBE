@@ -15,6 +15,7 @@ function Config.reload(event)
     end
 
     playerSettings.saveFolder = guiSettings["tlbe-save-folder"].value
+    playerSettings.sequentialNames = guiSettings["tlbe-sequential-names"].value
 end
 
 function Config.newPlayerSettings(player)
@@ -30,6 +31,7 @@ function Config.newPlayerSettings(player)
     camera.trackers = {trackers[1], trackers[2], trackers[3]}
 
     return {
+        screenshotNumber = 1,
         -- Setup a default camera and attach trackers to it
         cameras = {camera},
         trackers = trackers

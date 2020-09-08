@@ -2,6 +2,7 @@
 Version: 1.2.0
   Features:
     - Add Area Tracker
+    - Choose between sequential or game tick numbering method for the screenshots.
   Gui:
     - Fix width of tracker tab.
 

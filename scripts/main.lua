@@ -38,13 +38,21 @@ function Main.tick()
             -- Move to tracker
             Camera.followTracker(playerSettings, player, camera, activeTracker)
 
+            local screenshotNumber
+            if playerSettings.sequentialNames then
+                screenshotNumber = playerSettings.screenshotNumber
+                playerSettings.screenshotNumber = playerSettings.screenshotNumber + 1
+            else
+                screenshotNumber = game.tick
+            end
+
             game.take_screenshot {
                 by_player = player,
                 surface = game.surfaces[1],
                 position = camera.centerPos,
                 resolution = {camera.width, camera.height},
                 zoom = camera.zoom,
-                path = string.format("%s/%08d-%s.png", playerSettings.saveFolder, game.tick, camera.name),
+                path = string.format("%s/%08d-%s.png", playerSettings.saveFolder, screenshotNumber, camera.name),
                 show_entity_info = false,
                 allow_in_replay = true,
                 daytime = 0 -- take screenshot at full light
