@@ -8,11 +8,13 @@ Features:
     * Follow player until the first entity is built.
     * Follow rocket launch.
     * Follow base growth.
+    * Keep focus on specified area.
 * Camera use (ordered) tracker list, first enabled tracker is used.
 * Camera gradually (configurable period) recenters and zooms out.
 * Each camera has customizable resolution, frame rate and speed gain.
 * All screenshots are taken with full daylight.
 * Configurable screenshot folder (e.g. to support multiple save files that are played in parallel).
+* Configurable screenshot numbering, either sequential (default, more suitable for Windows ffmpeg) or game tick (easier to synchronize multiple cameras).
 
 Open the TLBE settings from shortcut bar or CTRL-T (default key binding) to configure your camera(s) and trackers.
 

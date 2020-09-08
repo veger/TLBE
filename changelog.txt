@@ -1,13 +1,11 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.0
+Date:
   Features:
     - Add Area Tracker
     - Choose between sequential or game tick numbering method for the screenshots.
   Gui:
     - Fix width of tracker tab.
-
----------------------------------------------------------------------------------------------------
-Version: 1.1.2
   Bugfixes:
     - Fix crash when no entities are build but base camera is active.
 
