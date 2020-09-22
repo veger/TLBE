@@ -1,6 +1,6 @@
 # Timelapse Base Edition (TLBE)
 
-Mod for [Factorio](http://www.factorio.com) that takes screenshots of your base at specified intervals.
+[Mod](https://mods.factorio.com/mod/TLBE) for [Factorio](http://www.factorio.com) that takes screenshots of your base at specified intervals.
 
 Features:
 * Multiple camera support, each taking their own screenshots.
@@ -12,7 +12,7 @@ Features:
 * Camera use (ordered) tracker list, first enabled tracker is used.
 * Camera gradually (configurable period) recenters and zooms out.
 * Each camera has customizable resolution, frame rate and speed gain.
-* All screenshots are taken with full daylight.
+* All screenshots are taken with full daylight and optionally show entity information.
 * Configurable screenshot folder (e.g. to support multiple save files that are played in parallel).
 * Configurable screenshot numbering, either sequential (default, more suitable for Windows ffmpeg) or game tick (easier to synchronize multiple cameras).
 

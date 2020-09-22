@@ -18,6 +18,7 @@ function Camera.newCamera(player, cameraList)
     local camera = {
         name = cameraName,
         enabled = false,
+        entityInfo = false,
         trackers = {},
         centerPos = player.position,
         zoom = 1,

@@ -521,7 +521,9 @@ end
 
 function GUI.onStateChanged(event)
     local playerSettings = global.playerSettings[event.player_index]
-    if event.element.name == "tracker-smooth" then
+    if event.element.name == "camera-entity-info" then
+        playerSettings.cameras[playerSettings.guiPersist.selectedCamera].entityInfo = event.element.state
+    elseif event.element.name == "tracker-smooth" then
         playerSettings.trackers[playerSettings.guiPersist.selectedTracker].smooth = event.element.state
     end
 end
@@ -701,6 +703,14 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
         numeric = true,
         allow_decimal = true
     }
+    playerGUI.cameraInfo.add {type = "empty-widget"}
+    playerGUI.cameraInfo.add {
+        type = "checkbox",
+        name = "camera-entity-info",
+        caption = {"gui.label-entity-info"},
+        tooltip = {"tooltip.camera-entity-info"},
+        state = false
+    }
     playerGUI.cameraInfo.add {
         type = "label",
         caption = {"gui.label-position"},
@@ -709,6 +719,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     playerGUI.cameraInfo.add {type = "label", name = "camera-position"}
     playerGUI.cameraInfo.add {type = "label", caption = {"gui.label-zoom"}, style = "description_property_name_label"}
     playerGUI.cameraInfo.add {type = "label", name = "camera-zoom"}
+
     GUI.updateCameraConfig(playerGUI.cameraInfo, cameras[guiPersist.selectedCamera])
     GUI.updateCameraInfo(playerGUI.cameraInfo, cameras[guiPersist.selectedCamera])
 
@@ -1052,21 +1063,14 @@ function GUI.updateCameraList(playerGUI, guiPersist, cameras)
 end
 
 function GUI.updateCameraConfig(cameraInfo, camera)
-    local resolutionFlow = cameraInfo["camera-resolution"]
-    if camera == nil then
-        cameraInfo["camera-name"].enabled = false
-        cameraInfo["camera-name"].text = ""
-        cameraInfo["camera-frame-rate"].text = ""
-        cameraInfo["camera-speed-gain"].text = ""
-        cameraInfo["camera-zoom-period"].text = ""
-        resolutionFlow["camera-resolution-x"].text = ""
-        resolutionFlow["camera-resolution-y"].text = ""
-    else
-        cameraInfo["camera-name"].enabled = true
+    -- Paranoia check
+    if camera ~= nil then
+        local resolutionFlow = cameraInfo["camera-resolution"]
         cameraInfo["camera-name"].text = camera.name
         cameraInfo["camera-frame-rate"].text = camera.frameRate or 25
         cameraInfo["camera-speed-gain"].text = camera.speedGain or 60
         cameraInfo["camera-zoom-period"].text = camera.zoomPeriod or 1.5
+        cameraInfo["camera-entity-info"].state = camera.entityInfo
         resolutionFlow["camera-resolution-x"].text = camera.width
         resolutionFlow["camera-resolution-y"].text = camera.height
     end

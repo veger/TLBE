@@ -1,6 +1,11 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.2.1
+  Minor Features:
+    - Optionally show entity information in screenshots.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.2.0
-Date:
+Date: 08-09-2020
   Features:
     - Add Area Tracker
     - Choose between sequential or game tick numbering method for the screenshots.
