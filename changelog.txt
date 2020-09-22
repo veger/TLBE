@@ -1,5 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.1
+Date: 22-09-2020
   Minor Features:
     - Optionally show entity information in screenshots.
 
