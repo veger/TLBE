@@ -1,5 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.2
+Date: 10-10-2020
   Minor Features:
     - Warn player(s) to enable camera on first (mod) start.
   Gui:
