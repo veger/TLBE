@@ -7,6 +7,7 @@ Version: 1.2.2
       - Use one sprite for a button (don't toggle on state anymore).
       - Use disabled sprite-buttons for disabled buttons (instead of regular sprites).
       - Hide some disabled buttons.
+    - Refresh tracker list when deleting camera or remove tracker from camera to reflect changes.
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.1
 Date: 22-09-2020

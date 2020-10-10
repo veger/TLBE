@@ -136,6 +136,14 @@ function GUI.onClick(event)
             playerSettings.gui.cameraInfo,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         )
+        GUI.createTrackerList(
+            playerSettings.gui.trackerList,
+            playerSettings.guiPersist.selectedTracker,
+            playerSettings.cameras,
+            playerSettings.trackers,
+            "tracker_",
+            GUI.addTrackerButtons
+        )
         GUI.createCameraTrackerList(playerSettings)
     elseif event.element.name == "tlbe_camera_refresh" then
         Camera.refreshConfig(playerSettings.cameras[playerSettings.guiPersist.selectedCamera])
@@ -290,6 +298,14 @@ function GUI.onClick(event)
             end
 
             GUI.createCameraTrackerList(playerSettings)
+            GUI.createTrackerList(
+                playerSettings.gui.trackerList,
+                playerSettings.guiPersist.selectedTracker,
+                playerSettings.cameras,
+                playerSettings.trackers,
+                "tracker_",
+                GUI.addTrackerButtons
+            )
 
             return
         end
