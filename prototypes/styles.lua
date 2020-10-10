@@ -31,7 +31,6 @@ local function rounded_corners_glow(tint_value)
     }
 end
 
-local green_button_glow_color = {135, 216, 139, 128}
 local red_button_glow_color = {254, 90, 90, 128}
 local default_dirt_color = {15, 7, 3, 100}
 local default_dirt = default_glow(default_dirt_color, 0.5)
@@ -75,19 +74,6 @@ default_gui["tlbe_fancy_list_box_button"] = {
     padding = 0
 }
 
-default_gui["tlbe_fancy_list_box_button_disabled"] = {
-    type = "image_style",
-    width = 22,
-    height = 22,
-    padding = 0,
-    stretch_image_to_widget_size = true,
-    -- from button.disabled_graphical_set
-    graphical_set = {
-        base = {position = {17, 17}, corner_size = 8},
-        shadow = default_dirt
-    }
-}
-
 default_gui["tlbe_fancy_list_box_image"] = {
     type = "image_style",
     width = 22,
@@ -118,12 +104,28 @@ default_gui["tlbe_frame_action_button_selected"] = {
     parent = "frame_action_button",
     -- From frame_action_button.selected_graphical_set
     default_graphical_set = {
-        base = {position = {272, 169}, corner_size = 8}
+        base = {position = {272, 169}, corner_size = 8},
+        shadow = {position = {440, 24}, corner_size = 8, draw_type = "outer"}
     },
     -- From frame_action_button.selected_hovered_graphical_set
     hovered_graphical_set = {
         base = {position = {369, 17}, corner_size = 8},
         shadow = {position = {440, 24}, corner_size = 8, draw_type = "outer"}
+    }
+}
+
+default_gui["tlbe_tool_button_selected"] = {
+    type = "button_style",
+    parent = "tool_button",
+    -- From button.selected_graphical_set
+    default_graphical_set = {
+        base = {position = {225, 17}, corner_size = 8},
+        shadow = default_dirt
+    },
+    -- From button.selected_hovered_graphical_set
+    hovered_graphical_set = {
+        base = {position = {369, 17}, corner_size = 8},
+        shadow = default_dirt
     }
 }
 
@@ -168,28 +170,30 @@ default_gui["tlbe_tracker_remove_button"] = {
     }
 }
 
-default_gui["tlbe_tracker_enabled_button"] = {
+default_gui["tlbe_tracker_button"] = {
+    type = "button_style",
+    parent = "tlbe_fancy_list_box_button"
+}
+
+default_gui["tlbe_tracker_button_selected"] = {
     type = "button_style",
     parent = "tlbe_fancy_list_box_button",
-    -- from green_button
-    clicked_graphical_set = {
-        base = {position = {68, 17}, corner_size = 8},
+    -- From button.selected_graphical_set
+    default_graphical_set = {
+        base = {position = {225, 17}, corner_size = 8},
         shadow = default_dirt
     },
+    -- From button.selected_hovered_graphical_set
     hovered_graphical_set = {
-        base = {position = {119, 17}, corner_size = 8},
-        glow = default_glow(green_button_glow_color, 0.5)
-    },
-    default_graphical_set = {
-        base = {position = {119, 17}, corner_size = 8},
+        base = {position = {369, 17}, corner_size = 8},
         shadow = default_dirt
     }
 }
 
-default_gui["tlbe_tracker_disabled_button"] = {
+default_gui["tlbe_tracker_button_red"] = {
     type = "button_style",
     parent = "tlbe_fancy_list_box_button",
-    -- from red_button
+    -- From red_button
     default_graphical_set = {
         base = {position = {136, 17}, corner_size = 8},
         shadow = default_dirt
@@ -201,6 +205,10 @@ default_gui["tlbe_tracker_disabled_button"] = {
     },
     clicked_graphical_set = {
         base = {position = {187, 17}, corner_size = 8},
+        shadow = default_dirt
+    },
+    disabled_graphical_set = {
+        base = {position = {153, 17}, corner_size = 8},
         shadow = default_dirt
     }
 }

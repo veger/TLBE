@@ -18,10 +18,10 @@ local ticks_per_half_second = 30
 
 local function getWindowPlayButtonStyle(selected)
     if selected then
-        return "pause-white", "tlbe_frame_action_button_selected"
+        return "tlbe_frame_action_button_selected"
     end
 
-    return "play-white", "frame_action_button"
+    return "frame_action_button"
 end
 
 local function findActiveTracker(trackers)
@@ -93,7 +93,7 @@ function GUI.onClick(event)
         playerSettings.pauseOnOpen = not playerSettings.pauseOnOpen
         game.tick_paused = playerSettings.pauseOnOpen
 
-        event.element.sprite, event.element.style = getWindowPlayButtonStyle(playerSettings.pauseOnOpen)
+        event.element.style = getWindowPlayButtonStyle(playerSettings.pauseOnOpen)
     elseif event.element.name == "tlbe_camera_enable" then
         local selectedCamera = playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         selectedCamera.enabled = not selectedCamera.enabled
@@ -580,12 +580,12 @@ function GUI.toggleMainWindow(event)
         dragger.drag_target = mainWindow
 
         if not game.is_multiplayer() then
-            local sprite, style = getWindowPlayButtonStyle(playerSettings.pauseOnOpen)
+            local style = getWindowPlayButtonStyle(playerSettings.pauseOnOpen)
             title_bar.add {
                 type = "sprite-button",
                 name = "tlbe-main-window-pause",
                 tooltip = {"tooltip.pause-on-open"},
-                sprite = sprite,
+                sprite = "pause-white",
                 style = style
             }
         end
@@ -911,53 +911,43 @@ function GUI.addCameraTrackerButtons(index, _, trackers, trackerRow)
 end
 
 function GUI.addTrackerButtons(index, cameras, trackers, trackerRow)
-    local sprite = "utility/pause"
     local tracker = trackers[index]
+    local style = "tlbe_tracker_button"
     if tracker.enabled then
-        sprite = "utility/play"
+        style = "tlbe_tracker_button_selected"
     end
-    if tracker.userCanEnable then
-        local style = "tlbe_tracker_disabled_button"
-        if tracker.enabled then
-            style = "tlbe_tracker_enabled_button"
-        end
 
+    if tracker.userCanEnable then
         trackerRow.add {
             type = "sprite-button",
             name = "tracker_" .. index .. "_enable",
             tooltip = {"tooltip.tracker-enable"},
-            sprite = sprite,
+            sprite = "utility/play",
             style = style
         }
     else
         trackerRow.add {
-            type = "sprite",
+            enabled = false,
+            type = "sprite-button",
             tooltip = {"tooltip.tracker-cannot-enable"},
-            sprite = sprite,
-            style = "tlbe_fancy_list_box_button_disabled"
+            sprite = "utility/play",
+            style = "tlbe_fancy_list_box_button"
         }
     end
 
-    if #trackers == 1 or Tracker.inUse(tracker, cameras) then
-        local tooltip
-        if #trackers == 1 then
-            tooltip = "tooltip.tracker-cannot-delete-last"
-        else
-            tooltip = "tooltip.tracker-cannot-delete-inuse"
-        end
-        trackerRow.add {
-            type = "sprite",
-            tooltip = {tooltip},
-            sprite = "utility/trash_bin",
-            style = "tlbe_fancy_list_box_button_disabled"
-        }
-    else
-        trackerRow.add {
+    if #trackers > 1 then
+        local button =
+            trackerRow.add {
             type = "sprite-button",
             name = "tracker_" .. index .. "_delete",
             sprite = "utility/trash_bin",
-            style = "tlbe_tracker_disabled_button"
+            style = "tlbe_tracker_button_red"
         }
+
+        if Tracker.inUse(tracker, cameras) then
+            button.enabled = false
+            button.tooltip = {"tooltip.tracker-cannot-delete-inuse"}
+        end
     end
 
     if tracker.type == "base" then
@@ -1001,18 +991,16 @@ function GUI.updateCameraActions(playerGUI, guiPersist, cameras)
     playerGUI.cameraActions.clear()
     local selectedCamera = cameras[guiPersist.selectedCamera]
 
-    local sprite = "utility/pause"
-    local style = "tool_button_red"
+    local style = "tool_button"
     if selectedCamera.enabled then
-        style = "tool_button_green"
-        sprite = "utility/play"
+        style = "tlbe_tool_button_selected"
     end
 
     playerGUI.cameraActions.add {
         type = "sprite-button",
         name = "tlbe_camera_enable",
         tooltip = {"tooltip.camera-enable"},
-        sprite = sprite,
+        sprite = "utility/play",
         style = style
     }
 
@@ -1024,16 +1012,7 @@ function GUI.updateCameraActions(playerGUI, guiPersist, cameras)
         style = "tool_button"
     }
 
-    if #cameras == 1 then
-        playerGUI.cameraActions.add {
-            enabled = false,
-            type = "sprite-button",
-            name = "tlbe_camera_delete",
-            tooltip = {"tooltip.camera-delete-last"},
-            sprite = "utility/trash_bin",
-            style = "tool_button"
-        }
-    else
+    if #cameras > 1 then
         playerGUI.cameraActions.add {
             type = "sprite-button",
             name = "tlbe_camera_delete",

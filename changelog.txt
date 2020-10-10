@@ -2,7 +2,11 @@
 Version: 1.2.2
   Minor Features:
     - Warn player(s) to enable camera on first (mod) start.
-
+  Gui:
+    - Make GUI more clear/consistent:
+      - Use one sprite for a button (don't toggle on state anymore).
+      - Use disabled sprite-buttons for disabled buttons (instead of regular sprites).
+      - Hide some disabled buttons.
 ---------------------------------------------------------------------------------------------------
 Version: 1.2.1
 Date: 22-09-2020
