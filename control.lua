@@ -13,6 +13,7 @@ local function on_init()
         TLBE.Config.reload({player_index = index})
 
         player.print({"mod-loaded"}, {r = 1, g = 0.5, b = 0})
+        player.print({"mod-loaded2"})
     end
 
     local baseBBox = TLBE.Main.get_base_bbox()
@@ -31,6 +32,8 @@ end
 local function on_player_created(event)
     -- Initialize playerSettings
     TLBE.Config.reload(event)
+
+    game.players[event.player_index].print({"mod-loaded2"}, {r = 1, g = 0.5, b = 0})
 end
 
 local function on_tick()
