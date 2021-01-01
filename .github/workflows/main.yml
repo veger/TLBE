@@ -18,7 +18,7 @@ jobs:
     - name: lint
       uses: Roang-zero1/factorio-mod-luacheck@v1.1.0
       with:
-          luacheckrc_url: https://raw.githubusercontent.com/veger/Factorio-luacheckrc/ignore-tests/.luacheckrc
+          luacheckrc_url: https://raw.githubusercontent.com/Nexela/Factorio-luacheckrc/master/.luacheckrc
     
     - name: unit test
       run: lua test-suite.lua -v
