@@ -1033,7 +1033,7 @@ function GUI.updateCameraActions(playerGUI, guiPersist, cameras)
             type = "sprite-button",
             name = "tlbe_camera_delete",
             tooltip = {"tooltip.camera-delete"},
-            sprite = "utility/trash_bin",
+            sprite = "utility/trash",
             style = "tool_button_red"
         }
     end
