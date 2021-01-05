@@ -956,7 +956,7 @@ function GUI.addTrackerButtons(index, cameras, trackers, trackerRow)
             trackerRow.add {
             type = "sprite-button",
             name = "tracker_" .. index .. "_delete",
-            sprite = "utility/trash_bin",
+            sprite = "utility/trash",
             style = "tlbe_tracker_button_red"
         }
 
@@ -1033,7 +1033,7 @@ function GUI.updateCameraActions(playerGUI, guiPersist, cameras)
             type = "sprite-button",
             name = "tlbe_camera_delete",
             tooltip = {"tooltip.camera-delete"},
-            sprite = "utility/trash_bin",
+            sprite = "utility/trash",
             style = "tool_button_red"
         }
     end
@@ -1062,12 +1062,12 @@ function GUI.updateCameraConfig(cameraInfo, camera)
     if camera ~= nil then
         local resolutionFlow = cameraInfo["camera-resolution"]
         cameraInfo["camera-name"].text = camera.name
-        cameraInfo["camera-frame-rate"].text = camera.frameRate or 25
-        cameraInfo["camera-speed-gain"].text = camera.speedGain or 60
-        cameraInfo["camera-zoom-period"].text = camera.zoomPeriod or 1.5
+        cameraInfo["camera-frame-rate"].text = string.format("%d", camera.frameRate) or "25"
+        cameraInfo["camera-speed-gain"].text = string.format("%d", camera.speedGain) or "60"
+        cameraInfo["camera-zoom-period"].text = string.format("%2.2f", camera.zoomPeriod) or "1.5"
         cameraInfo["camera-entity-info"].state = camera.entityInfo
-        resolutionFlow["camera-resolution-x"].text = camera.width
-        resolutionFlow["camera-resolution-y"].text = camera.height
+        resolutionFlow["camera-resolution-x"].text = string.format("%d", camera.width)
+        resolutionFlow["camera-resolution-y"].text = string.format("%d", camera.height)
     end
 end
 
@@ -1203,10 +1203,10 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
             local trFlow = trackerInfo["tracker-tr"]
             local blFlow = trackerInfo["tracker-bl"]
             -- Note that game origin is top-left, so top is min and bottom is max
-            trFlow["tlbe-tracker-top"].text = tracker.minPos.y
-            blFlow["tlbe-tracker-bottom"].text = tracker.maxPos.y
-            trFlow["tlbe-tracker-right"].text = tracker.maxPos.x
-            blFlow["tlbe-tracker-left"].text = tracker.minPos.x
+            trFlow["tlbe-tracker-top"].text = string.format("%d", tracker.minPos.y)
+            blFlow["tlbe-tracker-bottom"].text = string.format("%d", tracker.maxPos.y)
+            trFlow["tlbe-tracker-right"].text = string.format("%d", tracker.maxPos.x)
+            blFlow["tlbe-tracker-left"].text = string.format("%d", tracker.minPos.x)
 
             local style = "tlbe_config_half_width_textfield"
             if tracker.minPos.y >= tracker.maxPos.y then
