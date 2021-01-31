@@ -5,6 +5,11 @@ local Tracker = require("scripts.tracker")
 
 --- (re)loads the mod settings and initializes player settings if needed
 function Config.reload(event)
+    if event.player_index == nil then
+        -- The reload was not caused by a player (but a script)
+        return
+    end
+
     local player = game.players[event.player_index]
     local guiSettings = settings.get_player_settings(player)
 
