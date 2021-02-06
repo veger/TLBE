@@ -13,7 +13,10 @@ TestTrackerBase = {}
 function TestTrackerBase:SetUp()
     -- mock Factorio provided globals
     global = {}
-    game = {tick = 0}
+    game = {
+        tick = 0,
+        surfaces = {{}}
+    }
 
     -- mock TLBE tables
     global.playerSettings = {

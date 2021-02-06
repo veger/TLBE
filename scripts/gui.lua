@@ -445,6 +445,9 @@ function GUI.onSelected(event)
             playerSettings.trackers,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
         )
+    elseif event.element.name == "camera-surface" then
+        playerSettings.cameras[playerSettings.guiPersist.selectedCamera].surfaceName =
+            event.element.get_item(event.element.selected_index)
     end
 end
 
@@ -549,6 +552,53 @@ function GUI.onShortcut(event)
         GUI.toggleMainWindow(event)
     elseif event.prototype_name == "tlbe-pause-shortcut" then
         GUI.togglePauseCameras(event)
+    end
+end
+
+function GUI.onSurfacesUpdated()
+    -- Surface list got udpated so refresh GUI
+    for _, player in pairs(game.players) do
+        local playerSettings = global.playerSettings[player.index]
+        if playerSettings.gui ~= nil then
+            GUI.updateCameraConfig(
+                playerSettings.gui.cameraInfo,
+                playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
+            )
+        end
+    end
+end
+
+function GUI.onSurfaceChanged(event)
+    local surfaceName = event.old_name
+    if surfaceName == nil then
+        -- on_pre_surface_deleted does not contain surface name in event
+        surfaceName = game.surfaces[event.surface_index].name
+    end
+
+    for _, player in pairs(game.players) do
+        local playerSettings = global.playerSettings[player.index]
+
+        for _, camera in pairs(playerSettings.cameras) do
+            if camera.surfaceName == surfaceName then
+                -- Update surface name
+                camera.surfaceName = event.new_name or game.surfaces[1].name
+
+                if camera.surfaceName == game.surfaces[1].name and camera.enabled then
+                    camera.enabled = false
+                    if playerSettings.gui ~= nil then
+                        GUI.updateCameraActions(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
+                    end
+                    game.players[player.index].print({"camera-surface-deleted", camera.name}, {r = 1, g = 0.5, b = 0})
+                end
+
+                if playerSettings.gui ~= nil then
+                    GUI.updateCameraConfig(
+                        playerSettings.gui.cameraInfo,
+                        playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
+                    )
+                end
+            end
+        end
     end
 end
 
@@ -675,6 +725,17 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     playerGUI.cameraInfo = cameraBox.add {type = "table", column_count = 2}
     playerGUI.cameraInfo.add {type = "label", caption = {"gui.label-name"}, style = "description_property_name_label"}
     playerGUI.cameraInfo.add {type = "textfield", name = "camera-name", style = "tlbe_config_textfield"}
+    playerGUI.cameraInfo.add {
+        type = "label",
+        caption = {"gui.label-surface"},
+        style = "description_property_name_label"
+    }
+    playerGUI.cameraInfo.add {
+        type = "drop-down",
+        name = "camera-surface",
+        items = {},
+        style = "tlbe_config_dropdown"
+    }
     playerGUI.cameraInfo.add {
         type = "label",
         caption = {"gui.label-resolution"},
@@ -1078,6 +1139,8 @@ function GUI.updateCameraConfig(cameraInfo, camera)
         cameraInfo["camera-entity-info"].state = camera.entityInfo
         resolutionFlow["camera-resolution-x"].text = string.format("%d", camera.width)
         resolutionFlow["camera-resolution-y"].text = string.format("%d", camera.height)
+
+        GUI.updateSurfacesDropdown(cameraInfo, camera)
     end
 end
 
@@ -1093,6 +1156,22 @@ function GUI.updateCameraInfo(cameraInfo, camera)
     else
         cameraInfo["camera-zoom"].caption = string.format("%2.2f", camera.zoom)
     end
+end
+
+-- Update surfaces down-down items and set selected
+function GUI.updateSurfacesDropdown(cameraInfo, camera)
+    local surfaces = {}
+    local count = 0
+    local selectedItem = 1
+    for _, surface in pairs(game.surfaces) do
+        table.insert(surfaces, surface.name)
+        count = count + 1
+        if surface.name == camera.surfaceName then
+            selectedItem = count
+        end
+    end
+    cameraInfo["camera-surface"].items = surfaces
+    cameraInfo["camera-surface"].selected_index = selectedItem
 end
 
 function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)

@@ -281,6 +281,11 @@ default_gui["tlbe_config_textfield"] = {
     width = 200
 }
 
+default_gui["tlbe_config_dropdown"] = {
+    type = "dropdown_style",
+    width = 200,
+}
+
 default_gui["tlbe_config_half_width_textfield"] = {
     type = "textbox_style",
     parent = "tlbe_config_textfield",

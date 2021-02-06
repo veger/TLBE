@@ -54,7 +54,7 @@ function Main.tick()
 
             game.take_screenshot {
                 by_player = player,
-                surface = game.surfaces[1],
+                surface = camera.surfaceName or game.surfaces[1],
                 position = camera.centerPos,
                 resolution = {camera.width, camera.height},
                 zoom = camera.zoom,
