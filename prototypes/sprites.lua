@@ -25,6 +25,17 @@ data:extend(
         },
         {
             type = "sprite",
+            name = "tlbe-pause-camera",
+            filename = "__TLBE__/graphics/pause-camera.png",
+            priority = "extra-high-no-scale",
+            width = 64,
+            height = 64,
+            position = {0, 0},
+            scale = 0.5,
+            flags = {"gui-icon"}
+        },
+        {
+            type = "sprite",
             name = "play-white",
             filename = "__TLBE__/graphics/play-white.png",
             priority = "medium",

@@ -547,7 +547,17 @@ end
 function GUI.onShortcut(event)
     if event.prototype_name == "tlbe-shortcut" then
         GUI.toggleMainWindow(event)
+    elseif event.prototype_name == "tlbe-pause-shortcut" then
+        GUI.togglePauseCameras(event)
     end
+end
+
+function GUI.togglePauseCameras(event)
+    local player = game.players[event.player_index]
+    local playerSettings = global.playerSettings[event.player_index]
+
+    playerSettings.pauseCameras = playerSettings.pauseCameras ~= true
+    player.set_shortcut_toggled("tlbe-pause-shortcut", playerSettings.pauseCameras)
 end
 
 function GUI.closeMainWindow(event)

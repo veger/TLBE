@@ -7,6 +7,12 @@ local Utils = require("scripts.utils")
 function Main.tick()
     for _, player in pairs(game.players) do
         local playerSettings = global.playerSettings[player.index]
+
+        if playerSettings.pauseCameras == true then
+            -- Skip this player as the pause-cameras toggle is enabled
+            goto nextPlayer
+        end
+
         for _, camera in pairs(playerSettings.cameras) do
             if not camera.enabled then
                 goto nextCamera
@@ -63,6 +69,8 @@ function Main.tick()
 
         -- Done moving to next trackers
         Tracker.MoveToNextTrackerFinished(playerSettings.trackers)
+
+        ::nextPlayer::
     end
 end
 

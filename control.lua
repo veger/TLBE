@@ -55,6 +55,7 @@ script.on_event(defines.events.on_rocket_launch_ordered, TLBE.Main.rocket_launch
 script.on_event(defines.events.on_rocket_launched, TLBE.Main.rocket_launched)
 
 script.on_event("tlbe-main-window-toggle", TLBE.GUI.toggleMainWindow)
+script.on_event("tlbe-pause-cameras", TLBE.GUI.togglePauseCameras)
 script.on_event(defines.events.on_lua_shortcut, TLBE.GUI.onShortcut)
 
 script.on_event(defines.events.on_tick, on_tick)
