@@ -15,7 +15,7 @@ function TestTrackerBase:SetUp()
     global = {}
     game = {
         tick = 0,
-        surfaces = {{}}
+        surfaces = {{name = "nauvis"}, {name = "other-surface"}}
     }
 
     -- mock TLBE tables
@@ -40,6 +40,26 @@ function TestTrackerBase:TestDisabledTracker()
     TLBE.Main.entity_built(
         {
             created_entity = {
+                surface = game.surfaces[1],
+                bounding_box = {
+                    left_top = {x = 1, y = 3},
+                    right_bottom = {x = 3, y = 4}
+                }
+            }
+        }
+    )
+
+    lu.assertEquals(self.baseTracker.lastChange, 1, "expected to be at old value")
+    lu.assertIsNil(self.baseTracker.centerPos, "expected to be at old value")
+    lu.assertIsNil(self.baseTracker.size, "expected to be at old value")
+end
+
+function TestTrackerBase:TestBuildOnOtherSurface()
+    game.tick = 10
+    TLBE.Main.entity_built(
+        {
+            created_entity = {
+                surface = game.surfaces[2],
                 bounding_box = {
                     left_top = {x = 1, y = 3},
                     right_bottom = {x = 3, y = 4}
@@ -58,6 +78,7 @@ function TestTrackerBase:TestSingleEntityBuilt()
     TLBE.Main.entity_built(
         {
             created_entity = {
+                surface = game.surfaces[1],
                 bounding_box = {
                     left_top = {x = 1, y = 3},
                     right_bottom = {x = 3, y = 4}
@@ -86,6 +107,7 @@ function TestTrackerBase:TestMultipleEntitiesBuilt()
     TLBE.Main.entity_built(
         {
             created_entity = {
+                surface = game.surfaces[1],
                 bounding_box = {
                     left_top = {x = 1, y = 3},
                     right_bottom = {x = 3, y = 4}
@@ -100,6 +122,7 @@ function TestTrackerBase:TestMultipleEntitiesBuilt()
     TLBE.Main.entity_built(
         {
             created_entity = {
+                surface = game.surfaces[1],
                 bounding_box = {
                     left_top = {x = -2, y = 5},
                     right_bottom = {x = 0, y = 8}

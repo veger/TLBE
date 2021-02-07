@@ -448,6 +448,9 @@ function GUI.onSelected(event)
     elseif event.element.name == "camera-surface" then
         playerSettings.cameras[playerSettings.guiPersist.selectedCamera].surfaceName =
             event.element.get_item(event.element.selected_index)
+    elseif event.element.name == "tracker-surface" then
+        playerSettings.trackers[playerSettings.guiPersist.selectedTracker].surfaceName =
+            event.element.get_item(event.element.selected_index)
     end
 end
 
@@ -1140,7 +1143,7 @@ function GUI.updateCameraConfig(cameraInfo, camera)
         resolutionFlow["camera-resolution-x"].text = string.format("%d", camera.width)
         resolutionFlow["camera-resolution-y"].text = string.format("%d", camera.height)
 
-        GUI.updateSurfacesDropdown(cameraInfo, camera)
+        GUI.updateSurfacesDropdown(cameraInfo["camera-surface"], camera.surfaceName)
     end
 end
 
@@ -1159,19 +1162,19 @@ function GUI.updateCameraInfo(cameraInfo, camera)
 end
 
 -- Update surfaces down-down items and set selected
-function GUI.updateSurfacesDropdown(cameraInfo, camera)
+function GUI.updateSurfacesDropdown(dropdown, surfaceName)
     local surfaces = {}
     local count = 0
     local selectedItem = 1
     for _, surface in pairs(game.surfaces) do
         table.insert(surfaces, surface.name)
         count = count + 1
-        if surface.name == camera.surfaceName then
+        if surface.name == surfaceName then
             selectedItem = count
         end
     end
-    cameraInfo["camera-surface"].items = surfaces
-    cameraInfo["camera-surface"].selected_index = selectedItem
+    dropdown.items = surfaces
+    dropdown.selected_index = selectedItem
 end
 
 function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
@@ -1179,6 +1182,13 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
 
     trackerInfo.add {type = "label", caption = {"gui.label-name"}, style = "description_property_name_label"}
     trackerInfo.add {type = "textfield", name = "tracker-name", style = "tlbe_config_textfield"}
+    trackerInfo.add {type = "label", caption = {"gui.label-surface"}, style = "description_property_name_label"}
+    trackerInfo.add {
+        type = "drop-down",
+        name = "tracker-surface",
+        items = {},
+        style = "tlbe_config_dropdown"
+    }
     trackerInfo.add {type = "empty-widget"}
     trackerInfo.add {
         type = "checkbox",
@@ -1284,6 +1294,7 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
         trackerInfo["tracker-smooth"].state = false
     else
         trackerInfo["tracker-name"].enabled = true
+        GUI.updateSurfacesDropdown(trackerInfo["tracker-surface"], tracker.surfaceName)
         trackerInfo["tracker-name"].text = tracker.name
         trackerInfo["tracker-smooth"].enabled = true
         trackerInfo["tracker-smooth"].state = tracker.smooth

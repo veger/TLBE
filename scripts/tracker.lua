@@ -13,6 +13,7 @@ function Tracker.newTracker(trackerType, trackerList)
     local newTracker = {
         name = trackerName,
         type = trackerType,
+        surfaceName = game.surfaces[1].name,
         userCanEnable = true,
         enabled = true,
         smooth = true,
@@ -39,7 +40,7 @@ end
 
 -- Update tracker state (if needed)
 function Tracker.tick(tracker, player)
-    if tracker.type == "player" then
+    if tracker.type == "player" and tracker.surfaceName == player.surface.name then
         if
             tracker.centerPos == nil or tracker.centerPos.x ~= player.position.x or
                 tracker.centerPos.y ~= player.position.y

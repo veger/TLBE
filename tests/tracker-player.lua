@@ -6,12 +6,14 @@ local TLBE = {
 
 local lu = require("luaunit")
 
-function TestTrackerPlayer()
+TestTrackerPlayer = {}
+
+function TestTrackerPlayer:SetUp()
     -- mock Factorio provided globals
     global = {}
     game = {
         tick = 0,
-        surfaces = {{}}
+        surfaces = {{name = "nauvis"}, {name = "other-surface"}}
     }
 
     -- mock TLBE tables
@@ -19,17 +21,27 @@ function TestTrackerPlayer()
         TLBE.Config.newPlayerSettings({position = {x = 0, y = 0}})
     }
 
-    local playerTracker = global.playerSettings[1].trackers[1]
+    self.playerTracker = global.playerSettings[1].trackers[1]
+end
 
+function TestTrackerPlayer:TestTrackerPlayer()
     game.tick = 10
-    TLBE.Tracker.tick(playerTracker, {position = {x = 10, y = 20}})
+    TLBE.Tracker.tick(self.playerTracker, {surface = game.surfaces[1], position = {x = 10, y = 20}})
 
-    lu.assertEquals(playerTracker.lastChange, 10, "expected to be updated to game.tick")
-    lu.assertEquals(playerTracker.centerPos.x, 10, "expected to center to player")
-    lu.assertEquals(playerTracker.centerPos.y, 20, "expected to center to player")
+    lu.assertEquals(self.playerTracker.lastChange, 10, "expected to be updated to game.tick")
+    lu.assertEquals(self.playerTracker.centerPos.x, 10, "expected to center to player")
+    lu.assertEquals(self.playerTracker.centerPos.y, 20, "expected to center to player")
 
     game.tick = 20
-    TLBE.Tracker.tick(playerTracker, {position = {x = 10, y = 20}})
+    TLBE.Tracker.tick(self.playerTracker, {surface = game.surfaces[1], position = {x = 10, y = 20}})
 
-    lu.assertEquals(playerTracker.lastChange, 10, "expected to be the same as the player did not move")
+    lu.assertEquals(self.playerTracker.lastChange, 10, "expected to be the same as the player did not move")
+end
+
+function TestTrackerPlayer:TestTrackerPlayerOnOtherSurface()
+    game.tick = 10
+    TLBE.Tracker.tick(self.playerTracker, {surface = game.surfaces[2], position = {x = 10, y = 20}})
+
+    lu.assertEquals(self.playerTracker.lastChange, 0, "expected to be at old value")
+    lu.assertEquals(self.playerTracker.centerPos, nil, "expected to be at old value")
 end
