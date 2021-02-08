@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.0
-
+Date: 08-02-2021
   Features:
     - Configurable surface for each camera (when multiple surfaces are available).
       Hint: The 'Area Tracker' seems most suitable for small surfaces, as used in for example Factorissimo2.
