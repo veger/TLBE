@@ -51,6 +51,7 @@ script.on_event(defines.events.on_runtime_mod_setting_changed, TLBE.Config.reloa
 script.on_event(defines.events.on_player_created, on_player_created)
 script.on_event(defines.events.on_player_joined_game, on_player_created)
 script.on_event(defines.events.on_pre_surface_deleted, TLBE.GUI.onSurfaceChanged)
+script.on_event(defines.events.on_surface_deleted, TLBE.GUI.onSurfacesUpdated)
 script.on_event(defines.events.on_surface_created, TLBE.GUI.onSurfacesUpdated)
 script.on_event(defines.events.on_surface_imported, TLBE.GUI.onSurfacesUpdated)
 script.on_event(defines.events.on_surface_renamed, TLBE.GUI.onSurfaceChanged)

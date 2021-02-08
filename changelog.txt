@@ -2,9 +2,9 @@
 Version: 1.4.0
 
   Features:
-    - Configurable surface for each camera.
+    - Configurable surface for each camera (when multiple surfaces are available).
       Hint: The 'Area Tracker' seems most suitable for small surfaces, as used in for example Factorissimo2.
-    - Configurable surface for each tracker.
+    - Configurable surface for each tracker (when multiple surfaces are available).
     - Camera only uses trackers on same surface.
   Minor Features:
     - Add toggle/shortcut to pause all cameras.
