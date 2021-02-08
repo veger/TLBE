@@ -18,7 +18,7 @@ function Main.tick()
                 goto nextCamera
             end
 
-            local previousTracker, activeTracker = Tracker.findActiveTracker(camera.trackers)
+            local previousTracker, activeTracker = Tracker.findActiveTracker(camera.trackers, camera.surfaceName)
             if activeTracker == nil then
                 -- If there are no active trackers, skip camera as it has nothing to do
                 goto nextCamera
