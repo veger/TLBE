@@ -18,6 +18,7 @@ function Camera.newCamera(player, cameraList)
     local camera = {
         name = cameraName,
         enabled = false,
+        surfaceName = game.surfaces[1].name,
         entityInfo = false,
         trackers = {},
         centerPos = player.position,
@@ -115,7 +116,7 @@ function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
 
             camera.zoom = minZoom
         else
-            -- Max (min atually) zoom is not reached (anymore)
+            -- Max (min actually) zoom is not reached (anymore)
             playerSettings.noticeMaxZoom = nil
         end
     end

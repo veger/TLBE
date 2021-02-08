@@ -18,7 +18,7 @@ function Main.tick()
                 goto nextCamera
             end
 
-            local previousTracker, activeTracker = Tracker.findActiveTracker(camera.trackers)
+            local previousTracker, activeTracker = Tracker.findActiveTracker(camera.trackers, camera.surfaceName)
             if activeTracker == nil then
                 -- If there are no active trackers, skip camera as it has nothing to do
                 goto nextCamera
@@ -54,7 +54,7 @@ function Main.tick()
 
             game.take_screenshot {
                 by_player = player,
-                surface = game.surfaces[1],
+                surface = camera.surfaceName or game.surfaces[1],
                 position = camera.centerPos,
                 resolution = {camera.width, camera.height},
                 zoom = camera.zoom,
@@ -87,6 +87,10 @@ function Main.entity_built(event)
                 -- TODO only when tracker has setting set
                 Tracker.moveToNextTracker(tracker)
             elseif tracker.type == "base" then
+                if tracker.surfaceName ~= event.created_entity.surface.name then
+                    goto nextTracker
+                end
+
                 if tracker.size == nil then
                     -- Set start point of base
                     tracker.minPos = {x = newEntityBBox.left, y = newEntityBBox.bottom}
@@ -118,7 +122,7 @@ end
 function Main.rocket_launch(event)
     for _, playerSettings in pairs(global.playerSettings) do
         for _, tracker in pairs(playerSettings.trackers) do
-            if tracker.type ~= "rocket" then
+            if tracker.type ~= "rocket" or tracker.surfaceName ~= event.rocket_silo.surface.name then
                 goto nextTracker
             end
 
@@ -135,10 +139,10 @@ function Main.rocket_launch(event)
     end
 end
 
-function Main.rocket_launched()
+function Main.rocket_launched(event)
     for _, playerSettings in pairs(global.playerSettings) do
         for _, tracker in pairs(playerSettings.trackers) do
-            if tracker.type ~= "rocket" then
+            if tracker.type ~= "rocket" or tracker.surfaceName ~= event.rocket_silo.surface.name then
                 goto nextTracker
             end
 

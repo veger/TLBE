@@ -11,7 +11,10 @@ TestTrackerRocket = {}
 function TestTrackerRocket:SetUp()
     -- mock Factorio provided globals
     global = {}
-    game = {tick = 0}
+    game = {
+        tick = 0,
+        surfaces = {{name = "nauvis"}, {name = "other-surface"}}
+    }
 
     -- mock TLBE tables
     global.playerSettings = {
@@ -32,7 +35,7 @@ end
 
 function TestTrackerRocket:TestRocketLaunch()
     game.tick = 10
-    TLBE.Main.rocket_launch({rocket_silo = {position = {x = 10, y = 10}}})
+    TLBE.Main.rocket_launch({rocket_silo = {surface = game.surfaces[1], position = {x = 10, y = 10}}})
 
     lu.assertIsTrue(self.rocketTracker.enabled, "expected be enabled after rocket launch")
     lu.assertEquals(self.rocketTracker.lastChange, 10, "expected to be updated to game.tick")
@@ -42,7 +45,7 @@ end
 
 function TestTrackerRocket:TestRocketLaunchAlreadyActive()
     self.rocketTracker.enabled = true
-    TLBE.Main.rocket_launch({rocket_silo = {position = {x = 10, y = 10}}})
+    TLBE.Main.rocket_launch({rocket_silo = {surface = game.surfaces[1], position = {x = 10, y = 10}}})
 
     lu.assertIsTrue(self.rocketTracker.enabled, "expected be still enabled after rocket launch")
     lu.assertEquals(self.rocketTracker.lastChange, 1, "expected to be at old value")
@@ -50,10 +53,16 @@ function TestTrackerRocket:TestRocketLaunchAlreadyActive()
     lu.assertEquals(self.rocketTracker.centerPos.y, 0, "expected to be at old value")
 end
 
+function TestTrackerRocket:TestRocketLaunchOtherSurface()
+    TLBE.Main.rocket_launch({rocket_silo = {surface = game.surfaces[2], position = {x = 10, y = 10}}})
+
+    lu.assertIsFalse(self.rocketTracker.enabled, "expected be disabled after rocket launch on other surface")
+end
+
 function TestTrackerRocket:TestRocketLaunched()
     game.tick = 15
     self.rocketTracker.enabled = true
-    TLBE.Main.rocket_launched()
+    TLBE.Main.rocket_launched({rocket_silo = {surface = game.surfaces[1]}})
 
     lu.assertIsFalse(self.rocketTracker.enabled, "expected be disabled after rocket launched")
     lu.assertEquals(self.rocketTracker.lastChange, 15, "expected to be updated to game.tick")
@@ -62,7 +71,7 @@ end
 function TestTrackerRocket:TestRocketLaunched()
     game.tick = 15
     self.rocketTracker.enabled = false
-    TLBE.Main.rocket_launched()
+    TLBE.Main.rocket_launched({rocket_silo = {surface = game.surfaces[1]}})
 
     lu.assertIsFalse(self.rocketTracker.enabled, "expected be still disabled after rocket launched")
     lu.assertEquals(self.rocketTracker.lastChange, 1, "expected to be at old value")

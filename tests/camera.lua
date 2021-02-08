@@ -38,7 +38,7 @@ function TestCamera:SetUp()
     global = {}
     game = {
         tick = 0,
-        surfaces = {{}},
+        surfaces = {{name = "nauvis"}},
         take_screenshot = function()
         end
     }
@@ -50,8 +50,8 @@ function TestCamera:SetUp()
     }
 
     game.players = {
-        {index = 1},
-        {index = 2}
+        {index = 1, surface = game.surfaces[1]},
+        {index = 2, surface = game.surfaces[1]}
     }
 
     -- Enable player1 camera
@@ -92,6 +92,7 @@ function TestCamera:TestTransitionFromPlayerToBaseTracker()
     TLBE.Main.entity_built(
         {
             created_entity = {
+                surface = game.surfaces[1],
                 bounding_box = {
                     left_top = {x = 1, y = 3},
                     right_bottom = {x = 3, y = 4}
@@ -119,6 +120,7 @@ function TestCamera:TestRocketLaunch()
     TLBE.Main.entity_built(
         {
             created_entity = {
+                surface = game.surfaces[1],
                 bounding_box = {
                     left_top = {x = -1, y = -1},
                     right_bottom = {x = 1, y = 1}
@@ -132,7 +134,7 @@ function TestCamera:TestRocketLaunch()
     lu.assertEquals(self.testCameraPlayer1.zoom, 1, "expected that zoom at max_zoom")
 
     -- Launch rocket
-    TLBE.Main.rocket_launch({rocket_silo = {position = {x = 10, y = 10}}})
+    TLBE.Main.rocket_launch({rocket_silo = {surface = game.surfaces[1], position = {x = 10, y = 10}}})
     nextTick()
 
     lu.assertEquals(self.testCameraPlayer1.centerPos.x, 10, "expected to be at rocket_silo position")
@@ -140,7 +142,7 @@ function TestCamera:TestRocketLaunch()
     lu.assertEquals(self.testCameraPlayer1.zoom, 1, "expected that zoom at max_zoom")
 
     -- Rocket launched (return back to base)
-    TLBE.Main.rocket_launched()
+    TLBE.Main.rocket_launched({rocket_silo = {surface = game.surfaces[1]}})
     nextTick()
 
     lu.assertEquals(self.testCameraPlayer1.centerPos.x, 0, "expected to be back at entity center")

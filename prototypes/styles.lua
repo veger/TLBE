@@ -82,6 +82,12 @@ default_gui["tlbe_fancy_list_box_image"] = {
     stretch_image_to_widget_size = true
 }
 
+default_gui["tlbe_fancy_list_box_image_reduce_size"] = {
+    type = "image_style",
+    parent = "tlbe_fancy_list_box_image",
+    padding = 5,
+}
+
 default_gui["tlbe_fancy_list_box_button_hidden"] = {
     type = "empty_widget_style",
     width = 22,
@@ -279,6 +285,11 @@ default_gui["tlbe_config_button"] = {
 default_gui["tlbe_config_textfield"] = {
     type = "textbox_style",
     width = 200
+}
+
+default_gui["tlbe_config_dropdown"] = {
+    type = "dropdown_style",
+    width = 200,
 }
 
 default_gui["tlbe_config_half_width_textfield"] = {

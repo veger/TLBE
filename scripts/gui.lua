@@ -24,9 +24,9 @@ local function getWindowPlayButtonStyle(selected)
     return "frame_action_button"
 end
 
-local function findActiveTracker(trackers)
+local function findActiveTracker(trackers, surfaceName)
     for _, tracker in pairs(trackers) do
-        if tracker.enabled == true then
+        if tracker.enabled == true and tracker.surfaceName == surfaceName then
             return tracker
         end
     end
@@ -53,6 +53,7 @@ function GUI.tick()
 
             if playerSettings.gui.cameraTrackerList.valid then
                 GUI.createTrackerList(
+                    playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
                     playerSettings.gui.cameraTrackerList,
                     playerSettings.guiPersist.selectedCameraTracker,
                     playerSettings.cameras,
@@ -64,6 +65,7 @@ function GUI.tick()
 
             if playerSettings.gui.trackerList.valid then
                 GUI.createTrackerList(
+                    playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
                     playerSettings.gui.trackerList,
                     playerSettings.guiPersist.selectedTracker,
                     playerSettings.cameras,
@@ -137,6 +139,7 @@ function GUI.onClick(event)
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         )
         GUI.createTrackerList(
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
             playerSettings.gui.trackerList,
             playerSettings.guiPersist.selectedTracker,
             playerSettings.cameras,
@@ -232,6 +235,7 @@ function GUI.onClick(event)
             playerSettings.trackers[index].enabled = playerSettings.trackers[index].enabled == false
 
             GUI.createTrackerList(
+                playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
                 playerSettings.gui.trackerList,
                 playerSettings.guiPersist.selectedTracker,
                 playerSettings.cameras,
@@ -241,6 +245,7 @@ function GUI.onClick(event)
             )
 
             GUI.createTrackerList(
+                playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
                 playerSettings.gui.cameraTrackerList,
                 playerSettings.guiPersist.selectedCameraTracker,
                 playerSettings.cameras,
@@ -299,6 +304,7 @@ function GUI.onClick(event)
 
             GUI.createCameraTrackerList(playerSettings)
             GUI.createTrackerList(
+                playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
                 playerSettings.gui.trackerList,
                 playerSettings.guiPersist.selectedTracker,
                 playerSettings.cameras,
@@ -325,6 +331,7 @@ function GUI.onClick(event)
             end
 
             GUI.createTrackerList(
+                playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
                 playerSettings.gui.trackerList,
                 playerSettings.guiPersist.selectedTracker,
                 playerSettings.cameras,
@@ -333,10 +340,10 @@ function GUI.onClick(event)
                 GUI.addTrackerButtons
             )
 
-            GUI.createCameraAndTracker(
+            GUI.createCameraAddTracker(
                 playerSettings.gui.cameraTrackerListFlow,
                 playerSettings.trackers,
-                playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
+                playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
             )
 
             GUI.createTrackerConfigAndInfo(
@@ -380,6 +387,7 @@ function GUI.onSelected(event)
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         )
         GUI.createTrackerList(
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
             playerSettings.gui.cameraTrackerList,
             1,
             playerSettings.cameras,
@@ -401,6 +409,7 @@ function GUI.onSelected(event)
         playerSettings.guiPersist.selectedTracker = #playerSettings.trackers
 
         GUI.createTrackerList(
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
             playerSettings.gui.trackerList,
             playerSettings.guiPersist.selectedTracker,
             playerSettings.cameras,
@@ -409,10 +418,10 @@ function GUI.onSelected(event)
             GUI.addTrackerButtons
         )
 
-        GUI.createCameraAndTracker(
+        GUI.createCameraAddTracker(
             playerSettings.gui.cameraTrackerListFlow,
             playerSettings.trackers,
-            playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         )
 
         GUI.createTrackerConfigAndInfo(
@@ -432,6 +441,7 @@ function GUI.onSelected(event)
             #playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
 
         GUI.createTrackerList(
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
             playerSettings.gui.cameraTrackerList,
             1,
             playerSettings.cameras,
@@ -440,11 +450,21 @@ function GUI.onSelected(event)
             GUI.addCameraTrackerButtons
         )
 
-        GUI.createCameraAndTracker(
+        GUI.createCameraAddTracker(
             playerSettings.gui.cameraTrackerListFlow,
             playerSettings.trackers,
-            playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         )
+    elseif event.element.name == "camera-surface" then
+        playerSettings.cameras[playerSettings.guiPersist.selectedCamera].surfaceName =
+            event.element.get_item(event.element.selected_index)
+
+        GUI.createCameraTrackerList(playerSettings)
+    elseif event.element.name == "tracker-surface" then
+        playerSettings.trackers[playerSettings.guiPersist.selectedTracker].surfaceName =
+            event.element.get_item(event.element.selected_index)
+
+        GUI.createCameraTrackerList(playerSettings)
     end
 end
 
@@ -458,6 +478,7 @@ function GUI.onTextChanged(event)
         playerSettings.trackers[playerSettings.guiPersist.selectedTracker].name = event.element.text
 
         GUI.createTrackerList(
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
             playerSettings.gui.trackerList,
             playerSettings.guiPersist.selectedTracker,
             playerSettings.cameras,
@@ -467,6 +488,7 @@ function GUI.onTextChanged(event)
         )
 
         GUI.createTrackerList(
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
             playerSettings.gui.cameraTrackerList,
             1,
             playerSettings.cameras,
@@ -475,10 +497,10 @@ function GUI.onTextChanged(event)
             GUI.addCameraTrackerButtons
         )
 
-        GUI.createCameraAndTracker(
+        GUI.createCameraAddTracker(
             playerSettings.gui.cameraTrackerListFlow,
             playerSettings.trackers,
-            playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
+            playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         )
     elseif event.element.name == "camera-resolution-x" then
         Camera.setWidth(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
@@ -549,6 +571,59 @@ function GUI.onShortcut(event)
         GUI.toggleMainWindow(event)
     elseif event.prototype_name == "tlbe-pause-shortcut" then
         GUI.togglePauseCameras(event)
+    end
+end
+
+function GUI.onSurfacesUpdated()
+    -- Surface list got udpated so refresh GUI
+    for _, player in pairs(game.players) do
+        local playerSettings = global.playerSettings[player.index]
+        if playerSettings.gui ~= nil then
+            GUI.updateCameraConfig(
+                playerSettings.gui.cameraInfo,
+                playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
+            )
+            GUI.updateTrackerConfig(
+                playerSettings.gui.trackerInfo,
+                playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+            )
+        end
+    end
+end
+
+function GUI.onSurfaceChanged(event)
+    local surfaceName = event.old_name
+    if surfaceName == nil then
+        -- on_pre_surface_deleted does not contain surface name in event
+        surfaceName = game.surfaces[event.surface_index].name
+    end
+
+    for _, player in pairs(game.players) do
+        local playerSettings = global.playerSettings[player.index]
+
+        for _, camera in pairs(playerSettings.cameras) do
+            if camera.surfaceName == surfaceName then
+                -- Update surface name
+                camera.surfaceName = event.new_name or game.surfaces[1].name
+
+                if playerSettings.gui ~= nil then
+                    GUI.createCameraTrackerList(playerSettings)
+                    GUI.createCameraAddTracker(
+                        playerSettings.gui.cameraTrackerListFlow,
+                        playerSettings.trackers,
+                        playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
+                    )
+                end
+
+                if camera.surfaceName == game.surfaces[1].name and camera.enabled then
+                    camera.enabled = false
+                    if playerSettings.gui ~= nil then
+                        GUI.updateCameraActions(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
+                    end
+                    game.players[player.index].print({"camera-surface-deleted", camera.name}, {r = 1, g = 0.5, b = 0})
+                end
+            end
+        end
     end
 end
 
@@ -677,6 +752,18 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     playerGUI.cameraInfo.add {type = "textfield", name = "camera-name", style = "tlbe_config_textfield"}
     playerGUI.cameraInfo.add {
         type = "label",
+        name = "camera-surface-label",
+        caption = {"gui.label-surface"},
+        style = "description_property_name_label"
+    }
+    playerGUI.cameraInfo.add {
+        type = "drop-down",
+        name = "camera-surface",
+        items = {},
+        style = "tlbe_config_dropdown"
+    }
+    playerGUI.cameraInfo.add {
+        type = "label",
         caption = {"gui.label-resolution"},
         style = "description_property_name_label"
     }
@@ -763,6 +850,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
         style = "tlbe_tracker_list"
     }
     GUI.createTrackerList(
+        cameras[guiPersist.selectedCamera],
         playerGUI.cameraTrackerList,
         guiPersist.selectedCameraTracker,
         cameras,
@@ -771,7 +859,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
         GUI.addCameraTrackerButtons
     )
 
-    GUI.createCameraAndTracker(playerGUI.cameraTrackerListFlow, trackers, cameras[guiPersist.selectedCamera].trackers)
+    GUI.createCameraAddTracker(playerGUI.cameraTrackerListFlow, trackers, cameras[guiPersist.selectedCamera])
 
     -- Tracker info
     playerGUI.cameraTrackerInfo = trackerBox.add {type = "table", column_count = 2}
@@ -823,6 +911,7 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, cameras, track
         style = "tlbe_tracker_list"
     }
     GUI.createTrackerList(
+        cameras[guiPersist.selectedCamera],
         playerGUI.trackerList,
         guiPersist.selectedTracker,
         cameras,
@@ -839,7 +928,14 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, cameras, track
     return flow
 end
 
-function GUI.createTrackerList(trackerList, selectedIndex, cameras, trackers, namePrefix, addTrackerButtons)
+function GUI.createTrackerList(
+    selectedCamera,
+    trackerList,
+    selectedIndex,
+    cameras,
+    trackers,
+    namePrefix,
+    addTrackerButtons)
     trackerList.clear()
 
     for index, tracker in pairs(trackers) do
@@ -855,7 +951,7 @@ function GUI.createTrackerList(trackerList, selectedIndex, cameras, trackers, na
             style = style
         }
 
-        addTrackerButtons(index, cameras, trackers, trackerRow)
+        addTrackerButtons(index, selectedCamera, cameras, trackers, trackerRow)
 
         trackerRow.add {
             type = "label",
@@ -868,6 +964,7 @@ end
 
 function GUI.createCameraTrackerList(playerSettings)
     GUI.createTrackerList(
+        playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
         playerSettings.gui.cameraTrackerList,
         playerSettings.guiPersist.selectedCameraTracker,
         playerSettings.cameras,
@@ -876,16 +973,16 @@ function GUI.createCameraTrackerList(playerSettings)
         GUI.addCameraTrackerButtons
     )
 
-    GUI.createCameraAndTracker(
+    GUI.createCameraAddTracker(
         playerSettings.gui.cameraTrackerListFlow,
         playerSettings.trackers,
-        playerSettings.cameras[playerSettings.guiPersist.selectedCamera].trackers
+        playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
     )
 end
 
-function GUI.addCameraTrackerButtons(index, _, trackers, trackerRow)
+function GUI.addCameraTrackerButtons(index, selectedCamera, _, trackers, trackerRow)
     local tracker = trackers[index]
-    local isActiveTracker = findActiveTracker(trackers) == tracker
+    local isActiveTracker = findActiveTracker(trackers, selectedCamera.surfaceName) == tracker
 
     local orderFlow = trackerRow.add {type = "flow", direction = "vertical"}
 
@@ -928,6 +1025,13 @@ function GUI.addCameraTrackerButtons(index, _, trackers, trackerRow)
             sprite = "utility/play",
             style = "tlbe_fancy_list_box_image"
         }
+    elseif tracker.surfaceName ~= selectedCamera.surfaceName then
+        trackerRow.add {
+            type = "sprite",
+            sprite = "utility/warning_icon",
+            style = "tlbe_fancy_list_box_image_reduce_size",
+            tooltip = {"tooltip.tracker-wrong-surface"}
+        }
     else
         trackerRow.add {
             type = "empty-widget",
@@ -936,7 +1040,7 @@ function GUI.addCameraTrackerButtons(index, _, trackers, trackerRow)
     end
 end
 
-function GUI.addTrackerButtons(index, cameras, trackers, trackerRow)
+function GUI.addTrackerButtons(index, _, cameras, trackers, trackerRow)
     local tracker = trackers[index]
     local style = "tlbe_tracker_button"
     if tracker.enabled then
@@ -992,17 +1096,20 @@ function GUI.addTrackerButtons(index, cameras, trackers, trackerRow)
     end
 end
 
-function GUI.createCameraAndTracker(parent, allTrackers, cameraTrackers)
+function GUI.createCameraAddTracker(parent, allTrackers, camera)
     if parent["tlbe-camera-add-tracker"] ~= nil then
         parent["tlbe-camera-add-tracker"].destroy()
     end
 
-    local availableTrackers = Utils.filterOut(allTrackers, cameraTrackers)
-    if #availableTrackers > 0 then
-        local availableTrackerNames = {}
-        for _, tracker in pairs(availableTrackers) do
+    local availableTrackers = Utils.filterOut(allTrackers, camera.trackers)
+    local availableTrackerNames = {}
+    for _, tracker in pairs(availableTrackers) do
+        if tracker.surfaceName == camera.surfaceName then
             table.insert(availableTrackerNames, tracker.name)
         end
+    end
+
+    if #availableTrackerNames > 0 then
         parent.add {
             type = "drop-down",
             selected_index = 1,
@@ -1078,6 +1185,8 @@ function GUI.updateCameraConfig(cameraInfo, camera)
         cameraInfo["camera-entity-info"].state = camera.entityInfo
         resolutionFlow["camera-resolution-x"].text = string.format("%d", camera.width)
         resolutionFlow["camera-resolution-y"].text = string.format("%d", camera.height)
+
+        GUI.updateSurfacesDropdown(cameraInfo["camera-surface"], cameraInfo["camera-surface-label"], camera.surfaceName)
     end
 end
 
@@ -1095,11 +1204,46 @@ function GUI.updateCameraInfo(cameraInfo, camera)
     end
 end
 
+-- Update surfaces down-down items and set selected
+function GUI.updateSurfacesDropdown(dropdown, label, surfaceName)
+    local surfaces = {}
+    local count = 0
+    local selectedItem = 1
+    for _, surface in pairs(game.surfaces) do
+        table.insert(surfaces, surface.name)
+        count = count + 1
+        if surface.name == surfaceName then
+            selectedItem = count
+        end
+    end
+    if #surfaces > 1 then
+        dropdown.items = surfaces
+        dropdown.selected_index = selectedItem
+        dropdown.visible = true
+        label.visible = true
+    else
+        dropdown.visible = false
+        label.visible = false
+    end
+end
+
 function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
     trackerInfo.clear()
 
     trackerInfo.add {type = "label", caption = {"gui.label-name"}, style = "description_property_name_label"}
     trackerInfo.add {type = "textfield", name = "tracker-name", style = "tlbe_config_textfield"}
+    trackerInfo.add {
+        type = "label",
+        name = "tracker-surface-label",
+        caption = {"gui.label-surface"},
+        style = "description_property_name_label"
+    }
+    trackerInfo.add {
+        type = "drop-down",
+        name = "tracker-surface",
+        items = {},
+        style = "tlbe_config_dropdown"
+    }
     trackerInfo.add {type = "empty-widget"}
     trackerInfo.add {
         type = "checkbox",
@@ -1205,6 +1349,11 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
         trackerInfo["tracker-smooth"].state = false
     else
         trackerInfo["tracker-name"].enabled = true
+        GUI.updateSurfacesDropdown(
+            trackerInfo["tracker-surface"],
+            trackerInfo["tracker-surface-label"],
+            tracker.surfaceName
+        )
         trackerInfo["tracker-name"].text = tracker.name
         trackerInfo["tracker-smooth"].enabled = true
         trackerInfo["tracker-smooth"].state = tracker.smooth
