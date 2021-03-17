@@ -174,6 +174,11 @@ function Main.get_base_bbox()
             goto NextEntity
         end
 
+        if entity.type == "car" then
+            -- Skip vehicle
+            goto NextEntity
+        end
+
         entityBBox = Utils.entityBBox(entity)
 
         if (entityBBox.left < minPos.x) then
