@@ -55,7 +55,8 @@ script.on_event(defines.events.on_surface_deleted, TLBE.GUI.onSurfacesUpdated)
 script.on_event(defines.events.on_surface_created, TLBE.GUI.onSurfacesUpdated)
 script.on_event(defines.events.on_surface_imported, TLBE.GUI.onSurfacesUpdated)
 script.on_event(defines.events.on_surface_renamed, TLBE.GUI.onSurfaceChanged)
-script.on_event(defines.events.on_built_entity, TLBE.Main.entity_built)
+script.on_event(defines.events.on_built_entity, TLBE.Main.entity_built,
+                {{filter = "vehicle", invert = true}})
 script.on_event(defines.events.on_rocket_launch_ordered, TLBE.Main.rocket_launch)
 script.on_event(defines.events.on_rocket_launched, TLBE.Main.rocket_launched)
 
