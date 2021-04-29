@@ -784,22 +784,26 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     playerGUI.cameraInfo.add {
         type = "label",
         caption = {"gui.label-framerate"},
+        tooltip = {"tooltip.camera-framerate"},
         style = "description_property_name_label"
     }
     playerGUI.cameraInfo.add {
         type = "textfield",
         name = "camera-frame-rate",
+        tooltip = {"tooltip.camera-framerate"},
         style = "tlbe_config_half_width_textfield",
         numeric = true
     }
     playerGUI.cameraInfo.add {
         type = "label",
         caption = {"gui.label-speedgain"},
+        tooltip = {"tooltip.camera-speedgain"},
         style = "description_property_name_label"
     }
     playerGUI.cameraInfo.add {
         type = "textfield",
         name = "camera-speed-gain",
+        tooltip = {"tooltip.camera-speedgain"},
         style = "tlbe_config_half_width_textfield",
         numeric = true,
         allow_decimal = true
@@ -807,11 +811,13 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     playerGUI.cameraInfo.add {
         type = "label",
         caption = {"gui.label-zoomperiod"},
+        tooltip = {"tooltip.camera-zoomperiod"},
         style = "description_property_name_label"
     }
     playerGUI.cameraInfo.add {
         type = "textfield",
         name = "camera-zoom-period",
+        tooltip = {"tooltip.camera-zoomperiod"},
         style = "tlbe_config_half_width_textfield",
         numeric = true,
         allow_decimal = true
