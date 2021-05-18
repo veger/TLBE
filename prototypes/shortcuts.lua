@@ -4,13 +4,13 @@ data:extend(
         {
             type = "custom-input",
             name = "tlbe-main-window-toggle",
-            key_sequence = "CONTROL+T",
+            key_sequence = "CONTROL + T",
             consuming = "none"
         },
         {
             type = "custom-input",
             name = "tlbe-pause-cameras",
-            key_sequence = "CONTROL+SHIFT+P",
+            key_sequence = "CONTROL + SHIFT + P",
             consuming = "none"
         },
         {

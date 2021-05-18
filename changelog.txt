@@ -3,6 +3,8 @@ Version: 1.4.2
 
   GUI:
     - Improve max-zoom message and add tooltops for camera settings.
+  Bugfixes:
+    - Fix (default) shotcut key sequence.
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.1
