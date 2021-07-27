@@ -42,7 +42,7 @@ function Main.tick()
             Tracker.tick(activeTracker, player)
 
             -- Move to tracker
-            Camera.followTracker(playerSettings, player, camera, activeTracker)
+            Camera.followTracker(playerSettings, player, camera, activeTracker, false)
 
             local screenshotNumber
             if playerSettings.sequentialNames then

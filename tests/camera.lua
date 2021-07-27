@@ -149,3 +149,34 @@ function TestCamera:TestRocketLaunch()
     lu.assertEquals(self.testCameraPlayer1.centerPos.y, 0, "expected to be back at entity center")
     lu.assertEquals(self.testCameraPlayer1.zoom, 1, "expected that zoom at max_zoom")
 end
+
+function TestCamera:TestResolutionChange()
+    -- Only keep base tracker (so it is the active tacker)
+    self.testCameraPlayer1.trackers = {self.testCameraPlayer1.trackers[3]}
+    local baseTracker = self.testCameraPlayer1.trackers[1];
+
+    TLBE.Main.entity_built(
+        {
+            created_entity = {
+                surface = game.surfaces[1],
+                bounding_box = {
+                    left_top = {x = -20, y = -20},
+                    right_bottom = {x = 20, y = 20}
+                }
+            }
+        }
+    )
+
+    -- force set camera position and zoom
+    TLBE.Camera.followTracker(nil, nil, self.testCameraPlayer1, baseTracker, true)
+    local oldZoom = self.testCameraPlayer1.zoom;
+    local oldCenterPos = self.testCameraPlayer1.centerPos;
+
+    TLBE.Camera.setWidth(self.testCameraPlayer1, self.testCameraPlayer1.width*2)
+    TLBE.Camera.setHeight(self.testCameraPlayer1, self.testCameraPlayer1.height*2)
+
+    lu.assertEquals(self.testCameraPlayer1.centerPos.x, oldCenterPos.x, "expected centerpos to be the same")
+    lu.assertEquals(self.testCameraPlayer1.centerPos.y, oldCenterPos.y, "expected centerpos to be the same")
+    lu.assertNotEquals(self.testCameraPlayer1.zoom, oldZoom, "expected that zoom has been changed")
+    lu.assertEquals(self.testCameraPlayer1.zoom, oldZoom * 2, "expected that zoom has doubled as resolution has been doubled")
+end

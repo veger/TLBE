@@ -2,9 +2,11 @@
 Version: 1.4.2
 
   GUI:
-    - Improve max-zoom message and add tooltops for camera settings.
+    - Improve max-zoom message and add tooltips for camera settings.
   Bugfixes:
-    - Fix (default) shotcut key sequence.
+    - Fix (default) shortcut key sequence.
+    - Make sure the zoom level is adjusted when resolution changes to keep the same area in the screenshots.
+      Note: Be careful when to change resolution, as this will abort/mess up any smooth camera movement that is active!
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.1

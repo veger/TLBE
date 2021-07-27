@@ -504,8 +504,10 @@ function GUI.onTextChanged(event)
         )
     elseif event.element.name == "camera-resolution-x" then
         Camera.setWidth(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
+        GUI.updateCameraInfo(playerSettings.gui.cameraInfo, playerSettings.cameras[playerSettings.guiPersist.selectedCamera])
     elseif event.element.name == "camera-resolution-y" then
         Camera.setHeight(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
+        GUI.updateCameraInfo(playerSettings.gui.cameraInfo, playerSettings.cameras[playerSettings.guiPersist.selectedCamera])
     elseif event.element.name == "camera-frame-rate" then
         Camera.setFrameRate(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
     elseif event.element.name == "camera-speed-gain" then

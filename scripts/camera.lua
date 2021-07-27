@@ -1,6 +1,7 @@
 local Camera = {}
 
 local Utils = require("scripts.utils")
+local Tracker = require("scripts.tracker")
 
 local maxZoom = 1
 local minZoom = 0.031250
@@ -68,12 +69,12 @@ function Camera.refreshConfig(camera)
     camera.speedGain = math.floor(speedGain * 100) / 100
 end
 
-function Camera.followTracker(playerSettings, player, camera, tracker)
+function Camera.followTracker(playerSettings, player, camera, tracker, forceZoom)
     if tracker.centerPos == nil then
         return
     end
 
-    if tracker.smooth then
+    if tracker.smooth and not forceZoom then
         Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
     else
         camera.centerPos = tracker.centerPos
@@ -137,11 +138,15 @@ function Camera.setWidth(camera, width)
         width = 320
     end
 
-    if width ~= camera.width then
-        -- Make sure to start (smooth) zooming to new width
-        camera.lastChange = game.tick
-    end
+    local requireUpdate = width ~= camera.width
     camera.width = width
+    if requireUpdate then
+        local _, activeTracker = Tracker.findActiveTracker(camera.trackers, camera.surfaceName)
+        if activeTracker ~= nil then
+            -- Force update zoom level to make sure the tracked area stays the same
+            Camera.followTracker(nil, nil, camera, activeTracker, true)
+        end
+    end
 end
 
 function Camera.setHeight(camera, height)
@@ -152,11 +157,15 @@ function Camera.setHeight(camera, height)
         height = 240
     end
 
-    if height ~= camera.height then
-        -- Make sure to start (smooth) zooming to new height
-        camera.lastChange = game.tick
-    end
+    local requireUpdate = height ~= camera.height
     camera.height = height
+    if requireUpdate then
+        local _, activeTracker = Tracker.findActiveTracker(camera.trackers, camera.surfaceName)
+        if activeTracker ~= nil then
+            -- Force update zoom level to make sure the tracked area stays the same
+            Camera.followTracker(nil, nil, camera, activeTracker, true)
+        end
+    end
 end
 
 function Camera.setFrameRate(camera, framerate)
