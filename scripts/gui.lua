@@ -1187,12 +1187,12 @@ function GUI.updateCameraConfig(cameraInfo, camera)
     if camera ~= nil then
         local resolutionFlow = cameraInfo["camera-resolution"]
         cameraInfo["camera-name"].text = camera.name
-        cameraInfo["camera-frame-rate"].text = string.format("%d", camera.frameRate) or "25"
-        cameraInfo["camera-speed-gain"].text = string.format("%d", camera.speedGain) or "60"
-        cameraInfo["camera-zoom-period"].text = string.format("%2.2f", camera.zoomPeriod) or "1.5"
+        cameraInfo["camera-frame-rate"].text = string.format("%d", camera.frameRate or 25)
+        cameraInfo["camera-speed-gain"].text = string.format("%d", camera.speedGain or 60)
+        cameraInfo["camera-zoom-period"].text = string.format("%2.2f", camera.zoomPeriod or 1.5)
         cameraInfo["camera-entity-info"].state = camera.entityInfo
-        resolutionFlow["camera-resolution-x"].text = string.format("%d", camera.width)
-        resolutionFlow["camera-resolution-y"].text = string.format("%d", camera.height)
+        resolutionFlow["camera-resolution-x"].text = string.format("%d", camera.width or 1920)
+        resolutionFlow["camera-resolution-y"].text = string.format("%d", camera.height or 1080)
 
         GUI.updateSurfacesDropdown(cameraInfo["camera-surface"], cameraInfo["camera-surface-label"], camera.surfaceName)
     end
@@ -1362,7 +1362,7 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
             trackerInfo["tracker-surface-label"],
             tracker.surfaceName
         )
-        trackerInfo["tracker-name"].text = tracker.name
+        trackerInfo["tracker-name"].text = tracker.name or "<unknown tracker>"
         trackerInfo["tracker-smooth"].enabled = true
         trackerInfo["tracker-smooth"].state = tracker.smooth
 

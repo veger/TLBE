@@ -7,6 +7,7 @@ Version: 1.4.2
     - Fix (default) shortcut key sequence.
     - Make sure the zoom level is adjusted when resolution changes to keep the same area in the screenshots.
       Note: Be careful when to change resolution, as this will abort/mess up any smooth camera movement that is active!
+    - Fix crash when camera information is (partially) missing.
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.1
