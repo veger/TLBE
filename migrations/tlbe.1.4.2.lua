@@ -2,7 +2,10 @@ if global.playerSettings == nil then
     goto SkipMigration
 end
 
--- Set camera and tracker surfaces to the default surface
+local Camera = require("scripts.camera")
+local Tracker = require("scripts.tracker")
+
+-- Update camera with current active tracker to prevent possible (zooming) issues
 for player_index, _ in pairs(game.players) do
     local playerSettings = global.playerSettings[player_index]
     if playerSettings == nil then
@@ -10,11 +13,8 @@ for player_index, _ in pairs(game.players) do
     end
 
     for _, camera in pairs(playerSettings.cameras) do
-        camera.surfaceName = game.surfaces[1].name
-    end
-
-    for _, tracker in pairs(playerSettings.trackers) do
-        tracker.surfaceName = game.surfaces[1].name
+       local _, activeTracker =  Tracker.findActiveTracker(camera.trackers, camera.surfaceName)
+        Camera.SetActiveTracker(camera, activeTracker)
     end
 
     ::NextPlayer::

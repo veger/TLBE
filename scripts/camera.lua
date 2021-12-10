@@ -69,6 +69,10 @@ function Camera.refreshConfig(camera)
     camera.speedGain = math.floor(speedGain * 100) / 100
 end
 
+function Camera.SetActiveTracker(camera, tracker)
+    camera.lastKnownActiveTracker = tracker
+end
+
 function Camera.followTracker(playerSettings, player, camera, tracker, forceZoom)
     if tracker.centerPos == nil then
         return

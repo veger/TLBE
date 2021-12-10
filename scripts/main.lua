@@ -24,10 +24,12 @@ function Main.tick()
                 goto nextCamera
             end
 
-            if previousTracker ~= nil then
-                -- Need a transition to activeTracker
-                -- TODO Only if smooth camera following is enabled
-                activeTracker.lastChange = game.tick
+            if previousTracker ~= nil or camera.lastKnownActiveTracker ~= activeTracker then
+                if activeTracker.smooth then
+                    -- Need a transition to activeTracker
+                    activeTracker.lastChange = game.tick
+                end
+                Camera.SetActiveTracker(camera, activeTracker)
             end
 
             -- Check if a screenshot needs to be taken
