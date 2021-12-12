@@ -1,6 +1,15 @@
-local Tracker = {}
-
 local Utils = require("scripts.utils")
+
+--- @class Tracker
+--- @field enabled boolean
+--- @field lastChange number Tick where the tracker got changed last time
+--- @field name string
+--- @field realtimeCamera boolean
+--- @field smooth boolean
+--- @field surfaceName string
+--- @field type string
+--- @field userCanEnable boolean
+local Tracker = {}
 
 function Tracker.newTracker(trackerType, trackerList)
     local nameIndex = 1
@@ -10,6 +19,7 @@ function Tracker.newTracker(trackerType, trackerList)
         trackerName = trackerType .. "-" .. nameIndex
     end
 
+    --- @class Tracker
     local newTracker = {
         name = trackerName,
         type = trackerType,

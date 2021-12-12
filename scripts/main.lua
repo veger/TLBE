@@ -60,7 +60,7 @@ function Main.tick()
                 position = camera.centerPos,
                 resolution = {camera.width, camera.height},
                 zoom = camera.zoom,
-                path = string.format("%s/%08d-%s.png", playerSettings.saveFolder, screenshotNumber, camera.name),
+                path = string.format("%s/%s/%08d-%s.png", playerSettings.saveFolder, camera.saveFolder, screenshotNumber, camera.saveName),
                 show_entity_info = camera.entityInfo,
                 allow_in_replay = true,
                 daytime = 0 -- take screenshot at full light

@@ -1,7 +1,28 @@
-local Camera = {}
-
 local Utils = require("scripts.utils")
 local Tracker = require("scripts.tracker")
+
+--- @class Camera
+--- @field centerPos table
+--- @field enabled boolean
+--- @field entityInfo boolean Show entity info in the screenshots
+--- @field frameRate number
+--- @field height number
+--- @field lastKnownActiveTracker Tracker
+--- @field name string
+--- @field realtimeInterval number
+--- @field saveFolder string
+--- @field saveName string
+--- @field screenshotInterval number
+--- @field speedGain number
+--- @field surfaceName string
+--- @field trackers Tracker[]
+--- @field width number
+--- @field zoom number
+--- @field zoomPeriod number
+--- @field zoomTicks number
+--- @field zoomTicksRealtime number
+
+local Camera = {}
 
 local maxZoom = 1
 local minZoom = 0.031250
@@ -16,8 +37,8 @@ function Camera.newCamera(player, cameraList)
         cameraName = "new camera-" .. nameIndex
     end
 
+    --- @class Camera
     local camera = {
-        name = cameraName,
         enabled = false,
         surfaceName = game.surfaces[1].name,
         entityInfo = false,
@@ -33,6 +54,7 @@ function Camera.newCamera(player, cameraList)
     }
 
     Camera.updateConfig(camera)
+    Camera.setName(camera, cameraName);
 
     return camera
 end
@@ -42,6 +64,16 @@ function Camera.updateConfig(camera)
     camera.zoomTicks = math.max(math.floor(ticks_per_second * camera.zoomPeriod * camera.speedGain), 1)
     camera.realtimeInterval = math.max(math.floor(ticks_per_second / camera.frameRate), 1)
     camera.zoomTicksRealtime = math.max(math.floor(ticks_per_second * camera.zoomPeriod), 1)
+end
+
+---Update the name of the Camera and its save folder and name.
+---@param camera Camera
+---@param newName string
+function Camera.setName(camera, newName)
+    local path, name = string.match(newName, "(.-)([^\\/]-)$")
+    camera.name = newName
+    camera.saveFolder = path
+    camera.saveName = name
 end
 
 function Camera.refreshConfig(camera)

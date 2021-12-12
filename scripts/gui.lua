@@ -471,8 +471,7 @@ end
 function GUI.onTextChanged(event)
     local playerSettings = global.playerSettings[event.player_index]
     if event.element.name == "camera-name" then
-        playerSettings.cameras[playerSettings.guiPersist.selectedCamera].name = event.element.text
-
+        Camera.setName(playerSettings.cameras[playerSettings.guiPersist.selectedCamera],  event.element.text)
         GUI.updateCameraList(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
     elseif event.element.name == "tracker-name" then
         playerSettings.trackers[playerSettings.guiPersist.selectedTracker].name = event.element.text
