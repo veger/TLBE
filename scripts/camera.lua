@@ -147,8 +147,8 @@ function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
 
         if camera.zoom < minZoom then
             if playerSettings.noticeMaxZoom == nil then
-                player.print({"max-zoom"}, {r = 1})
-                player.print({"msg-once"})
+                player.print({ "max-zoom" }, { r = 1 })
+                player.print({ "msg-once" })
                 playerSettings.noticeMaxZoom = true
             end
 

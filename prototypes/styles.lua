@@ -10,7 +10,7 @@ local tab_width = 560
 -- 'borrowed' from core
 local function default_glow(tint_value, scale_value)
     return {
-        position = {200, 128},
+        position = { 200, 128 },
         corner_size = 8,
         tint = tint_value,
         scale = scale_value,
@@ -20,7 +20,7 @@ end
 
 local function rounded_corners_glow(tint_value)
     return {
-        position = {240, 783},
+        position = { 240, 783 },
         corner_size = 16,
         tint = tint_value,
         top_outer_border_shift = 4,
@@ -31,8 +31,8 @@ local function rounded_corners_glow(tint_value)
     }
 end
 
-local red_button_glow_color = {254, 90, 90, 128}
-local default_dirt_color = {15, 7, 3, 100}
+local red_button_glow_color = { 254, 90, 90, 128 }
+local default_dirt_color = { 15, 7, 3, 100 }
 local default_dirt = default_glow(default_dirt_color, 0.5)
 local textbox_dirt = rounded_corners_glow(default_dirt_color)
 
@@ -57,7 +57,7 @@ default_gui["tlbe_fancy_list_box_item_selected"] = {
     type = "frame_style",
     parent = "tlbe_fancy_list_box_item",
     graphical_set = {
-        base = {position = {34, 17}, corner_size = 8}
+        base = { position = { 34, 17 }, corner_size = 8 }
     }
 }
 
@@ -110,13 +110,13 @@ default_gui["tlbe_frame_action_button_selected"] = {
     parent = "frame_action_button",
     -- From frame_action_button.selected_graphical_set
     default_graphical_set = {
-        base = {position = {272, 169}, corner_size = 8},
-        shadow = {position = {440, 24}, corner_size = 8, draw_type = "outer"}
+        base = { position = { 272, 169 }, corner_size = 8 },
+        shadow = { position = { 440, 24 }, corner_size = 8, draw_type = "outer" }
     },
     -- From frame_action_button.selected_hovered_graphical_set
     hovered_graphical_set = {
-        base = {position = {369, 17}, corner_size = 8},
-        shadow = {position = {440, 24}, corner_size = 8, draw_type = "outer"}
+        base = { position = { 369, 17 }, corner_size = 8 },
+        shadow = { position = { 440, 24 }, corner_size = 8, draw_type = "outer" }
     }
 }
 
@@ -125,12 +125,12 @@ default_gui["tlbe_tool_button_selected"] = {
     parent = "tool_button",
     -- From button.selected_graphical_set
     default_graphical_set = {
-        base = {position = {225, 17}, corner_size = 8},
+        base = { position = { 225, 17 }, corner_size = 8 },
         shadow = default_dirt
     },
     -- From button.selected_hovered_graphical_set
     hovered_graphical_set = {
-        base = {position = {369, 17}, corner_size = 8},
+        base = { position = { 369, 17 }, corner_size = 8 },
         shadow = default_dirt
     }
 }
@@ -162,16 +162,16 @@ default_gui["tble_tracker_add_dropdown"] = {
 -- Default button that glows red on hover/select
 default_gui["tlbe_tracker_remove_button"] = {
     type = "button_style",
-    size = {15, 28}, -- extra height to align (more) nicely with order buttons
+    size = { 15, 28 }, -- extra height to align (more) nicely with order buttons
     parent = "tlbe_fancy_list_box_button",
     -- from red_button
     hovered_graphical_set = {
-        base = {position = {170, 17}, corner_size = 8},
+        base = { position = { 170, 17 }, corner_size = 8 },
         shadow = default_dirt,
         glow = default_glow(red_button_glow_color, 0.5)
     },
     clicked_graphical_set = {
-        base = {position = {187, 17}, corner_size = 8},
+        base = { position = { 187, 17 }, corner_size = 8 },
         shadow = default_dirt
     }
 }
@@ -186,12 +186,12 @@ default_gui["tlbe_tracker_button_selected"] = {
     parent = "tlbe_fancy_list_box_button",
     -- From button.selected_graphical_set
     default_graphical_set = {
-        base = {position = {225, 17}, corner_size = 8},
+        base = { position = { 225, 17 }, corner_size = 8 },
         shadow = default_dirt
     },
     -- From button.selected_hovered_graphical_set
     hovered_graphical_set = {
-        base = {position = {369, 17}, corner_size = 8},
+        base = { position = { 369, 17 }, corner_size = 8 },
         shadow = default_dirt
     }
 }
@@ -201,72 +201,72 @@ default_gui["tlbe_tracker_button_red"] = {
     parent = "tlbe_fancy_list_box_button",
     -- From red_button
     default_graphical_set = {
-        base = {position = {136, 17}, corner_size = 8},
+        base = { position = { 136, 17 }, corner_size = 8 },
         shadow = default_dirt
     },
     hovered_graphical_set = {
-        base = {position = {170, 17}, corner_size = 8},
+        base = { position = { 170, 17 }, corner_size = 8 },
         shadow = default_dirt,
         glow = default_glow(red_button_glow_color, 0.5)
     },
     clicked_graphical_set = {
-        base = {position = {187, 17}, corner_size = 8},
+        base = { position = { 187, 17 }, corner_size = 8 },
         shadow = default_dirt
     },
     disabled_graphical_set = {
-        base = {position = {153, 17}, corner_size = 8},
+        base = { position = { 153, 17 }, corner_size = 8 },
         shadow = default_dirt
     }
 }
 
 default_gui["tlbe_order_up_button"] = {
     type = "button_style",
-    size = {12, 12},
+    size = { 12, 12 },
     -- from column_ordering_ascending_button_style
     default_graphical_set = {
         filename = "__core__/graphics/arrows/table-header-sort-arrow-up-active.png",
-        size = {16, 16},
+        size = { 16, 16 },
         scale = 0.5
     },
     hovered_graphical_set = {
         filename = "__core__/graphics/arrows/table-header-sort-arrow-up-hover.png",
-        size = {16, 16},
+        size = { 16, 16 },
         scale = 0.5
     },
     clicked_graphical_set = {
         filename = "__core__/graphics/arrows/table-header-sort-arrow-up-active.png",
-        size = {16, 16},
+        size = { 16, 16 },
         scale = 0.5
     },
     disabled_graphical_set = {
         filename = "__core__/graphics/arrows/table-header-sort-arrow-up-white.png",
-        size = {16, 16},
+        size = { 16, 16 },
         scale = 0.5
     }
 }
 
 default_gui["tlbe_order_down_button"] = {
     type = "button_style",
-    size = {12, 12},
+    size = { 12, 12 },
     -- from column_ordering_descending_button_style
     default_graphical_set = {
         filename = "__core__/graphics/arrows/table-header-sort-arrow-down-active.png",
-        size = {16, 16},
+        size = { 16, 16 },
         scale = 0.5
     },
     hovered_graphical_set = {
         filename = "__core__/graphics/arrows/table-header-sort-arrow-down-hover.png",
-        size = {16, 16},
+        size = { 16, 16 },
         scale = 0.5
     },
     clicked_graphical_set = {
         filename = "__core__/graphics/arrows/table-header-sort-arrow-down-active.png",
-        size = {16, 16},
+        size = { 16, 16 },
         scale = 0.5
     },
     disabled_graphical_set = {
         filename = "__core__/graphics/arrows/table-header-sort-arrow-down-white.png",
-        size = {16, 16},
+        size = { 16, 16 },
         scale = 0.5
     }
 }
@@ -303,11 +303,11 @@ default_gui["tlbe_config_half_width_textfield_invalid"] = {
     parent = "tlbe_config_half_width_textfield",
     -- from invalid_value_textfield
     default_background = {
-        base = {position = {0, 913}, corner_size = 8},
+        base = { position = { 0, 913 }, corner_size = 8 },
         shadow = textbox_dirt
     },
     active_background = {
-        base = {position = {0, 913}, corner_size = 8},
+        base = { position = { 0, 913 }, corner_size = 8 },
         shadow = textbox_dirt
     }
 }
@@ -315,7 +315,7 @@ default_gui["tlbe_config_half_width_textfield_invalid"] = {
 -- aligns 2 tlbe_config_half_width_textfield styles textfields with a single tlbe_config_textfield
 default_gui["tlbe_config_half_width_label"] = {
     type = "label_style",
-    size = {12, 28}, -- textbox height
+    size = { 12, 28 }, -- textbox height
     horizontal_align = "center",
     vertical_align = "center"
 }

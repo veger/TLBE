@@ -13,14 +13,15 @@ TestTrackerBase = {}
 function TestTrackerBase:SetUp()
     -- mock Factorio provided globals
     global = {}
+    -- luacheck: globals game
     game = {
         tick = 0,
-        surfaces = {{name = "nauvis"}, {name = "other-surface"}}
+        surfaces = { { name = "nauvis" }, { name = "other-surface" } }
     }
 
     -- mock TLBE tables
     global.playerSettings = {
-        TLBE.Config.newPlayerSettings({position = {x = 0, y = 0}})
+        TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 } })
     }
 
     -- Update base tracker with our test settings
@@ -34,6 +35,7 @@ function TestTrackerBase:SetUp()
     end
 end
 
+-- luacheck: globals game
 function TestTrackerBase:TestDisabledTracker()
     game.tick = 10
     self.baseTracker.enabled = false
@@ -42,8 +44,8 @@ function TestTrackerBase:TestDisabledTracker()
             created_entity = {
                 surface = game.surfaces[1],
                 bounding_box = {
-                    left_top = {x = 1, y = 3},
-                    right_bottom = {x = 3, y = 4}
+                    left_top = { x = 1, y = 3 },
+                    right_bottom = { x = 3, y = 4 }
                 }
             }
         }
@@ -54,6 +56,7 @@ function TestTrackerBase:TestDisabledTracker()
     lu.assertIsNil(self.baseTracker.size, "expected to be at old value")
 end
 
+-- luacheck: globals game
 function TestTrackerBase:TestBuildOnOtherSurface()
     game.tick = 10
     TLBE.Main.entity_built(
@@ -61,8 +64,8 @@ function TestTrackerBase:TestBuildOnOtherSurface()
             created_entity = {
                 surface = game.surfaces[2],
                 bounding_box = {
-                    left_top = {x = 1, y = 3},
-                    right_bottom = {x = 3, y = 4}
+                    left_top = { x = 1, y = 3 },
+                    right_bottom = { x = 3, y = 4 }
                 }
             }
         }
@@ -73,6 +76,7 @@ function TestTrackerBase:TestBuildOnOtherSurface()
     lu.assertIsNil(self.baseTracker.size, "expected to be at old value")
 end
 
+-- luacheck: globals game
 function TestTrackerBase:TestSingleEntityBuilt()
     game.tick = 10
     TLBE.Main.entity_built(
@@ -80,8 +84,8 @@ function TestTrackerBase:TestSingleEntityBuilt()
             created_entity = {
                 surface = game.surfaces[1],
                 bounding_box = {
-                    left_top = {x = 1, y = 3},
-                    right_bottom = {x = 3, y = 4}
+                    left_top = { x = 1, y = 3 },
+                    right_bottom = { x = 3, y = 4 }
                 }
             }
         }
@@ -102,6 +106,7 @@ function TestTrackerBase:TestSingleEntityBuilt()
     )
 end
 
+-- luacheck: globals game
 function TestTrackerBase:TestMultipleEntitiesBuilt()
     game.tick = 10
     TLBE.Main.entity_built(
@@ -109,8 +114,8 @@ function TestTrackerBase:TestMultipleEntitiesBuilt()
             created_entity = {
                 surface = game.surfaces[1],
                 bounding_box = {
-                    left_top = {x = 1, y = 3},
-                    right_bottom = {x = 3, y = 4}
+                    left_top = { x = 1, y = 3 },
+                    right_bottom = { x = 3, y = 4 }
                 }
             }
         }
@@ -124,8 +129,8 @@ function TestTrackerBase:TestMultipleEntitiesBuilt()
             created_entity = {
                 surface = game.surfaces[1],
                 bounding_box = {
-                    left_top = {x = -2, y = 5},
-                    right_bottom = {x = 0, y = 8}
+                    left_top = { x = -2, y = 5 },
+                    right_bottom = { x = 0, y = 8 }
                 }
             }
         }

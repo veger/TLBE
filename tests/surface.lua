@@ -11,18 +11,19 @@ TestSurfaceEvents = {}
 function TestSurfaceEvents:SetUp()
     -- mock Factorio provided globals
     global = {}
+    -- luacheck: globals game
     game = {
         tick = 0,
-        surfaces = {{name = "nauvis"},{name = "active-surface"},{name = "inactive-surface"}},
+        surfaces = { { name = "nauvis" }, { name = "active-surface" }, { name = "inactive-surface" } },
     }
 
     -- mock TLBE tables
     global.playerSettings = {
-        TLBE.Config.newPlayerSettings({position = {x = 0, y = 0}}),
+        TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 } }),
     }
 
     game.players = {
-        {index = 1},
+        { index = 1 },
     }
 
     -- Make camera easier to test
@@ -32,7 +33,7 @@ end
 
 function TestSurfaceEvents:TestDeleteUnusedSurface()
     -- send event that inactive-surface will be deleted
-    TLBE.GUI.onSurfaceChanged({surface_index = 3})
+    TLBE.GUI.onSurfaceChanged({ surface_index = 3 })
 
     lu.assertEquals(self.testCamera.surfaceName, "active-surface", "expected surface to be unchanged")
 end
@@ -46,7 +47,7 @@ function TestSurfaceEvents:TestDeleteUsedSurface()
     end
 
     -- send event that active-surface will be deleted
-    TLBE.GUI.onSurfaceChanged({surface_index = 2})
+    TLBE.GUI.onSurfaceChanged({ surface_index = 2 })
 
     lu.assertEquals(self.testCamera.surfaceName, "nauvis", "expected surface to be changed")
     lu.assertFalse(self.testCamera.enabled, "expected for the camera to be disabled")
@@ -54,13 +55,13 @@ function TestSurfaceEvents:TestDeleteUsedSurface()
 end
 
 function TestSurfaceEvents:TestRenameUnusedSurface()
-    TLBE.GUI.onSurfaceChanged({old_name = "inactive-surface", new_name="changed-surface"})
+    TLBE.GUI.onSurfaceChanged({ old_name = "inactive-surface", new_name = "changed-surface" })
 
     lu.assertEquals(self.testCamera.surfaceName, "active-surface", "expected surface to be unchanged")
 end
 
 function TestSurfaceEvents:TestRenameUsedSurface()
-    TLBE.GUI.onSurfaceChanged({old_name = "active-surface", new_name="changed-surface"})
+    TLBE.GUI.onSurfaceChanged({ old_name = "active-surface", new_name = "changed-surface" })
 
     lu.assertEquals(self.testCamera.surfaceName, "changed-surface", "expected surface to be changed")
 end

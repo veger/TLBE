@@ -20,6 +20,7 @@ function Tracker.newTracker(trackerType, trackerList)
     end
 
     --- @class Tracker
+    --- @field centerPos {x: integer, y: integer }
     local newTracker = {
         name = trackerName,
         type = trackerType,
@@ -32,11 +33,11 @@ function Tracker.newTracker(trackerType, trackerList)
 
     -- Add tracker specific details
     if trackerType == "area" then
-        newTracker.minPos = {x = -5, y = -5}
-        newTracker.maxPos = {x = 5, y = 5}
+        newTracker.minPos = { x = -5, y = -5 }
+        newTracker.maxPos = { x = 5, y = 5 }
         Tracker.updateCenterAndSize(newTracker)
     elseif trackerType == "player" then
-        newTracker.size = {x = 1, y = 1}
+        newTracker.size = { x = 1, y = 1 }
         newTracker.untilBuild = true
         newTracker.smooth = false
     elseif trackerType == "rocket" then
@@ -51,10 +52,9 @@ end
 -- Update tracker state (if needed)
 function Tracker.tick(tracker, player)
     if tracker.type == "player" and tracker.surfaceName == player.surface.name then
-        if
-            tracker.centerPos == nil or tracker.centerPos.x ~= player.position.x or
-                tracker.centerPos.y ~= player.position.y
-         then
+        if tracker.centerPos == nil or tracker.centerPos.x ~= player.position.x or
+            tracker.centerPos.y ~= player.position.y
+        then
             tracker.lastChange = game.tick
         end
 
@@ -120,12 +120,11 @@ function Tracker.updateCenterAndSize(tracker)
         y = tracker.minPos.y + size.y / 2
     }
 
-    if
-        tracker.centerPos == nil or tracker.size == nil or centerPos.x ~= tracker.centerPos.x or
-            centerPos.y ~= tracker.centerPos.y or
-            size.x ~= tracker.size.x or
-            size.y ~= tracker.size.y
-     then
+    if tracker.centerPos == nil or tracker.size == nil or centerPos.x ~= tracker.centerPos.x or
+        centerPos.y ~= tracker.centerPos.y or
+        size.x ~= tracker.size.x or
+        size.y ~= tracker.size.y
+    then
         -- Tracker dimensions changed, so need to recenter camera
         tracker.lastChange = game.tick
     end

@@ -19,7 +19,7 @@ data:extend(
             toggleable = true,
             order = "a[mod]-tlbe",
             action = "lua",
-            localised_name = {"shortcut.tlbe"},
+            localised_name = { "shortcut.tlbe" },
             associated_control_input = "tlbe-main-window-toggle",
             icon = {
                 -- tlbe-logo
@@ -27,9 +27,9 @@ data:extend(
                 priority = "extra-high-no-scale",
                 width = 64,
                 height = 50,
-                position = {0, 0},
+                position = { 0, 0 },
                 scale = 1,
-                flags = {"icon"}
+                flags = { "icon" }
             },
             small_icon = {
                 -- tlbe-logo
@@ -37,9 +37,9 @@ data:extend(
                 priority = "extra-high-no-scale",
                 width = 64,
                 height = 50,
-                position = {0, 0},
+                position = { 0, 0 },
                 scale = 1,
-                flags = {"icon"}
+                flags = { "icon" }
             },
             disabled_small_icon = {
                 -- tlbe-logo-white
@@ -47,9 +47,9 @@ data:extend(
                 priority = "extra-high-no-scale",
                 width = 64,
                 height = 50,
-                position = {65, 0},
+                position = { 65, 0 },
                 scale = 1,
-                flags = {"icon"}
+                flags = { "icon" }
             }
         },
         {
@@ -58,7 +58,7 @@ data:extend(
             toggleable = true,
             order = "a[mod]-tlbe",
             action = "lua",
-            localised_name = {"shortcut.tlbe-pause"},
+            localised_name = { "shortcut.tlbe-pause" },
             associated_control_input = "tlbe-pause-cameras",
             icon = {
                 -- tlbe-logo
@@ -66,9 +66,9 @@ data:extend(
                 priority = "extra-high-no-scale",
                 width = 64,
                 height = 64,
-                position = {0, 0},
+                position = { 0, 0 },
                 scale = 1,
-                flags = {"icon"}
+                flags = { "icon" }
             },
             small_icon = {
                 -- tlbe-logo
@@ -76,9 +76,9 @@ data:extend(
                 priority = "extra-high-no-scale",
                 width = 64,
                 height = 64,
-                position = {0, 0},
+                position = { 0, 0 },
                 scale = 1,
-                flags = {"icon"}
+                flags = { "icon" }
             },
             disabled_small_icon = {
                 -- tlbe-logo-white
@@ -86,9 +86,9 @@ data:extend(
                 priority = "extra-high-no-scale",
                 width = 64,
                 height = 50,
-                position = {65, 0},
+                position = { 65, 0 },
                 scale = 1,
-                flags = {"icon"}
+                flags = { "icon" }
             }
         }
     }

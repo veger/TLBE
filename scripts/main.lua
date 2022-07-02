@@ -58,9 +58,10 @@ function Main.tick()
                 by_player = player,
                 surface = camera.surfaceName or game.surfaces[1],
                 position = camera.centerPos,
-                resolution = {camera.width, camera.height},
+                resolution = { camera.width, camera.height },
                 zoom = camera.zoom,
-                path = string.format("%s/%s/%08d-%s.png", playerSettings.saveFolder, camera.saveFolder, screenshotNumber, camera.saveName),
+                path = string.format("%s/%s/%08d-%s.png", playerSettings.saveFolder, camera.saveFolder, screenshotNumber
+                    , camera.saveName),
                 show_entity_info = camera.entityInfo,
                 allow_in_replay = true,
                 daytime = 0 -- take screenshot at full light
@@ -95,8 +96,8 @@ function Main.entity_built(event)
 
                 if tracker.size == nil then
                     -- Set start point of base
-                    tracker.minPos = {x = newEntityBBox.left, y = newEntityBBox.bottom}
-                    tracker.maxPos = {x = newEntityBBox.right, y = newEntityBBox.top}
+                    tracker.minPos = { x = newEntityBBox.left, y = newEntityBBox.bottom }
+                    tracker.maxPos = { x = newEntityBBox.right, y = newEntityBBox.top }
                 else
                     -- Recalculate base boundary
                     if (newEntityBBox.left < tracker.minPos.x) then
@@ -131,7 +132,7 @@ function Main.rocket_launch(event)
             if tracker.enabled == false then
                 tracker.enabled = true
                 tracker.centerPos = event.rocket_silo.position
-                tracker.size = {x = 1, y = 1} -- don't care about size, it will fit with maxZoom
+                tracker.size = { x = 1, y = 1 } -- don't care about size, it will fit with maxZoom
 
                 tracker.lastChange = game.tick
             end
@@ -159,7 +160,7 @@ function Main.rocket_launched(event)
 end
 
 function Main.get_base_bbox()
-    local entities = game.surfaces[1].find_entities_filtered {force = "player"}
+    local entities = game.surfaces[1].find_entities_filtered { force = "player" }
 
     if #entities == 0 then
         return nil
@@ -167,8 +168,8 @@ function Main.get_base_bbox()
 
     -- Find an initial bbox within the base
     local entityBBox = Utils.entityBBox(entities[1])
-    local minPos = {x = entityBBox.left, y = entityBBox.bottom}
-    local maxPos = {x = entityBBox.right, y = entityBBox.top}
+    local minPos = { x = entityBBox.left, y = entityBBox.bottom }
+    local maxPos = { x = entityBBox.right, y = entityBBox.top }
 
     for _, entity in ipairs(entities) do
         if entity.type == "character" then

@@ -6,6 +6,7 @@ local lu = require("luaunit")
 TestGetBaseBBox = {}
 
 function TestGetBaseBBox.TestNoEntities()
+    -- luacheck: globals game
     game = {
         surfaces = {
             {
@@ -21,7 +22,9 @@ function TestGetBaseBBox.TestNoEntities()
     lu.assertIsNil(bbox, "expected nil with empty base")
 end
 
+---@diagnostic disable: need-check-nil
 function TestGetBaseBBox.TestSingleEntity()
+    -- luacheck: globals game
     game = {
         surfaces = {
             {
@@ -29,8 +32,8 @@ function TestGetBaseBBox.TestSingleEntity()
                     return {
                         {
                             bounding_box = {
-                                left_top = {x = 1, y = 3},
-                                right_bottom = {x = 3, y = 4}
+                                left_top = { x = 1, y = 3 },
+                                right_bottom = { x = 3, y = 4 }
                             }
                         }
                     }
@@ -48,7 +51,9 @@ function TestGetBaseBBox.TestSingleEntity()
     lu.assertEquals(bbox.maxPos.y, 4 + Utils.boundarySize)
 end
 
+---@diagnostic disable: need-check-nil
 function TestGetBaseBBox.TestMultipleEntities()
+    -- luacheck: globals game
     game = {
         surfaces = {
             {
@@ -56,27 +61,27 @@ function TestGetBaseBBox.TestMultipleEntities()
                     return {
                         {
                             bounding_box = {
-                                left_top = {x = 1, y = 3},
-                                right_bottom = {x = 3, y = 4} -- top most value
+                                left_top = { x = 1, y = 3 },
+                                right_bottom = { x = 3, y = 4 } -- top most value
                             }
                         },
                         {
                             bounding_box = {
-                                left_top = {x = -1, y = 0}, -- left and bottom most values
-                                right_bottom = {x = 2, y = 2}
+                                left_top = { x = -1, y = 0 }, -- left and bottom most values
+                                right_bottom = { x = 2, y = 2 }
                             }
                         },
                         {
                             bounding_box = {
-                                left_top = {x = 4, y = 2},
-                                right_bottom = {x = 6, y = 3} -- right most value
+                                left_top = { x = 4, y = 2 },
+                                right_bottom = { x = 6, y = 3 } -- right most value
                             }
                         },
                         {
                             type = "character",
                             bounding_box = {
-                                left_top = {x = 4, y = 2},
-                                right_bottom = {x = 20, y = 3} -- actual right most value (but skipped)
+                                left_top = { x = 4, y = 2 },
+                                right_bottom = { x = 20, y = 3 } -- actual right most value (but skipped)
                             }
                         }
                     }

@@ -33,11 +33,11 @@ function Config.newPlayerSettings(player)
 
     local camera = Camera.newCamera(player, {})
     camera.name = "main"
-    camera.trackers = {trackers[1], trackers[2], trackers[3]}
+    camera.trackers = { trackers[1], trackers[2], trackers[3] }
 
     return {
         -- Setup a default camera and attach trackers to it
-        cameras = {camera},
+        cameras = { camera },
         trackers = trackers
     }
 end

@@ -1,11 +1,12 @@
 package.path = package.path .. ";../?.lua"
-local TLBE = {Camera = require("scripts.camera")}
+local TLBE = { Camera = require("scripts.camera") }
 
 local lu = require("luaunit")
 
 local tileSize = 32
 local MAX_TICKS = 100
 
+-- luacheck: globals game
 local function ConvergenceTester(playerSettings, player, camera, tracker)
     local startTick = game.tick
     local currentX = camera.centerPos.x
@@ -35,27 +36,27 @@ TestCameraFollowTracker = {}
 
 function TestCameraFollowTracker:SetUp()
     -- mock Factorio provided globals
-    game = {tick = 0}
+    game = { tick = 0 }
 
     self.testCamera = {
         width = 20 * tileSize,
         height = 15 * tileSize,
-        centerPos = {x = 0, y = 0},
+        centerPos = { x = 0, y = 0 },
         screenshotInterval = 1,
         zoom = 1,
         zoomTicks = 15
     }
 
     self.testTracker = {
-        centerPos = {x = 0, y = 0},
-        size = {x = 1, y = 1},
+        centerPos = { x = 0, y = 0 },
+        size = { x = 1, y = 1 },
         smooth = true,
         lastChange = 0
     }
 end
 
 function TestCameraFollowTracker:TestInitialUpRight()
-    self.testTracker.centerPos = {x = 1, y = 1}
+    self.testTracker.centerPos = { x = 1, y = 1 }
 
     TLBE.Camera.followTracker({}, {}, self.testCamera, self.testTracker)
 
@@ -65,7 +66,7 @@ function TestCameraFollowTracker:TestInitialUpRight()
 end
 
 function TestCameraFollowTracker:TestInitialBottomLeft()
-    self.testTracker.centerPos = {x = -1, y = -1}
+    self.testTracker.centerPos = { x = -1, y = -1 }
 
     TLBE.Camera.followTracker({}, {}, self.testCamera, self.testTracker)
 
@@ -76,7 +77,7 @@ end
 
 function TestCameraFollowTracker:TestNotSmooth()
     self.testTracker.smooth = false
-    self.testTracker.centerPos = {x = 10, y = 6}
+    self.testTracker.centerPos = { x = 10, y = 6 }
 
     local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
 
@@ -87,7 +88,7 @@ function TestCameraFollowTracker:TestNotSmooth()
 end
 
 function TestCameraFollowTracker:TestZoom()
-    self.testTracker.size = {x = self.testCamera.width / tileSize * 2, y = self.testCamera.height / tileSize * 2}
+    self.testTracker.size = { x = self.testCamera.width / tileSize * 2, y = self.testCamera.height / tileSize * 2 }
 
     local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
 
@@ -99,7 +100,7 @@ function TestCameraFollowTracker:TestZoom()
 end
 
 function TestCameraFollowTracker:TestConvergenceDiagonal()
-    self.testTracker.centerPos = {x = 10, y = 6}
+    self.testTracker.centerPos = { x = 10, y = 6 }
 
     local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
 

@@ -10,10 +10,10 @@ local function on_init()
 
     for index, player in pairs(game.players) do
         -- initialize player(s) when mod is loaded into existing game
-        TLBE.Config.reload({player_index = index})
+        TLBE.Config.reload({ player_index = index })
 
-        player.print({"mod-loaded"}, {r = 1, g = 0.5, b = 0})
-        player.print({"mod-loaded2"})
+        player.print({ "mod-loaded" }, { r = 1, g = 0.5, b = 0 })
+        player.print({ "mod-loaded2" })
     end
 
     local baseBBox = TLBE.Main.get_base_bbox()
@@ -33,7 +33,7 @@ local function on_player_created(event)
     -- Initialize playerSettings
     TLBE.Config.reload(event)
 
-    game.players[event.player_index].print({"mod-loaded2"}, {r = 1, g = 0.5, b = 0})
+    game.players[event.player_index].print({ "mod-loaded2" }, { r = 1, g = 0.5, b = 0 })
 end
 
 local function on_tick()
@@ -56,7 +56,7 @@ script.on_event(defines.events.on_surface_created, TLBE.GUI.onSurfacesUpdated)
 script.on_event(defines.events.on_surface_imported, TLBE.GUI.onSurfacesUpdated)
 script.on_event(defines.events.on_surface_renamed, TLBE.GUI.onSurfaceChanged)
 script.on_event(defines.events.on_built_entity, TLBE.Main.entity_built,
-                {{filter = "vehicle", invert = true}})
+    { { filter = "vehicle", invert = true } })
 script.on_event(defines.events.on_rocket_launch_ordered, TLBE.Main.rocket_launch)
 script.on_event(defines.events.on_rocket_launched, TLBE.Main.rocket_launched)
 

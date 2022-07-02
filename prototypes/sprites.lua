@@ -8,9 +8,9 @@ data:extend(
             priority = "extra-high-no-scale",
             width = 64,
             height = 50,
-            position = {0, 0},
+            position = { 0, 0 },
             scale = 0.5,
-            flags = {"gui-icon"}
+            flags = { "gui-icon" }
         },
         {
             type = "sprite",
@@ -19,9 +19,9 @@ data:extend(
             priority = "extra-high-no-scale",
             width = 64,
             height = 50,
-            position = {65, 0},
+            position = { 65, 0 },
             scale = 0.5,
-            flags = {"gui-icon"}
+            flags = { "gui-icon" }
         },
         {
             type = "sprite",
@@ -30,9 +30,9 @@ data:extend(
             priority = "extra-high-no-scale",
             width = 64,
             height = 64,
-            position = {0, 0},
+            position = { 0, 0 },
             scale = 0.5,
-            flags = {"gui-icon"}
+            flags = { "gui-icon" }
         },
         {
             type = "sprite",
@@ -43,7 +43,7 @@ data:extend(
             height = 32,
             mipmap_count = 2,
             scale = 0.5,
-            flags = {"gui-icon"}
+            flags = { "gui-icon" }
         },
         {
             type = "sprite",
@@ -53,7 +53,7 @@ data:extend(
             width = 32,
             height = 32,
             mipmap_count = 2,
-            flags = {"gui-icon"}
+            flags = { "gui-icon" }
         }
     }
 )

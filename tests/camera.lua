@@ -12,13 +12,13 @@ local tileSize = 32
 TestNewCamera = {}
 
 function TestNewCamera.TestUniqueName()
-    local camera1 = TLBE.Camera.newCamera({postion = {0, 0}}, {})
+    local camera1 = TLBE.Camera.newCamera({ postion = { 0, 0 } }, {})
     lu.assertEquals(camera1.name, "new camera", "with empty list no index is needed")
 
-    local camera2 = TLBE.Camera.newCamera({postion = {0, 0}}, {camera1})
+    local camera2 = TLBE.Camera.newCamera({ postion = { 0, 0 } }, { camera1 })
     lu.assertEquals(camera2.name, "new camera-2", "with camera 'new camera' already in the list, add '-2' to the name")
 
-    local camera3 = TLBE.Camera.newCamera({postion = {0, 0}}, {camera1, camera2})
+    local camera3 = TLBE.Camera.newCamera({ postion = { 0, 0 } }, { camera1, camera2 })
     lu.assertEquals(
         camera3.name,
         "new camera-3",
@@ -28,6 +28,7 @@ end
 
 TestCamera = {}
 
+-- luacheck: globals game
 local function nextTick()
     TLBE.Main.tick()
     game.tick = game.tick + 1
@@ -38,20 +39,20 @@ function TestCamera:SetUp()
     global = {}
     game = {
         tick = 0,
-        surfaces = {{name = "nauvis"}},
+        surfaces = { { name = "nauvis" } },
         take_screenshot = function()
         end
     }
 
     -- mock TLBE tables
     global.playerSettings = {
-        TLBE.Config.newPlayerSettings({position = {x = 0, y = 0}}),
-        TLBE.Config.newPlayerSettings({position = {x = 0, y = 0}})
+        TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 } }),
+        TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 } })
     }
 
     game.players = {
-        {index = 1, surface = game.surfaces[1]},
-        {index = 2, surface = game.surfaces[1]}
+        { index = 1, surface = game.surfaces[1] },
+        { index = 2, surface = game.surfaces[1] }
     }
 
     -- Enable player1 camera
@@ -79,7 +80,7 @@ function TestCamera:SetUp()
 end
 
 function TestCamera:TestTransitionFromPlayerToBaseTracker()
-    game.players[1].position = {x = 5, y = 4}
+    game.players[1].position = { x = 5, y = 4 }
 
     nextTick()
 
@@ -88,14 +89,14 @@ function TestCamera:TestTransitionFromPlayerToBaseTracker()
     lu.assertEquals(self.testCameraPlayer1.zoom, 1, "expected that zoom at max_zoom")
 
     -- Move player and build entity
-    game.players[1].position = {x = 2, y = 2}
+    game.players[1].position = { x = 2, y = 2 }
     TLBE.Main.entity_built(
         {
             created_entity = {
                 surface = game.surfaces[1],
                 bounding_box = {
-                    left_top = {x = 1, y = 3},
-                    right_bottom = {x = 3, y = 4}
+                    left_top = { x = 1, y = 3 },
+                    right_bottom = { x = 3, y = 4 }
                 }
             }
         }
@@ -113,7 +114,7 @@ end
 
 function TestCamera:TestRocketLaunch()
     -- center camera at 0,0
-    self.testCameraPlayer1.centerPos = {x = 0, y = 0}
+    self.testCameraPlayer1.centerPos = { x = 0, y = 0 }
     self.testCameraPlayer1.zoom = 1
 
     -- Initialize base tracker
@@ -122,8 +123,8 @@ function TestCamera:TestRocketLaunch()
             created_entity = {
                 surface = game.surfaces[1],
                 bounding_box = {
-                    left_top = {x = -1, y = -1},
-                    right_bottom = {x = 1, y = 1}
+                    left_top = { x = -1, y = -1 },
+                    right_bottom = { x = 1, y = 1 }
                 }
             }
         }
@@ -134,7 +135,7 @@ function TestCamera:TestRocketLaunch()
     lu.assertEquals(self.testCameraPlayer1.zoom, 1, "expected that zoom at max_zoom")
 
     -- Launch rocket
-    TLBE.Main.rocket_launch({rocket_silo = {surface = game.surfaces[1], position = {x = 10, y = 10}}})
+    TLBE.Main.rocket_launch({ rocket_silo = { surface = game.surfaces[1], position = { x = 10, y = 10 } } })
     nextTick()
 
     lu.assertEquals(self.testCameraPlayer1.centerPos.x, 10, "expected to be at rocket_silo position")
@@ -142,7 +143,7 @@ function TestCamera:TestRocketLaunch()
     lu.assertEquals(self.testCameraPlayer1.zoom, 1, "expected that zoom at max_zoom")
 
     -- Rocket launched (return back to base)
-    TLBE.Main.rocket_launched({rocket_silo = {surface = game.surfaces[1]}})
+    TLBE.Main.rocket_launched({ rocket_silo = { surface = game.surfaces[1] } })
     nextTick()
 
     lu.assertEquals(self.testCameraPlayer1.centerPos.x, 0, "expected to be back at entity center")
@@ -152,7 +153,7 @@ end
 
 function TestCamera:TestResolutionChange()
     -- Only keep base tracker (so it is the active tacker)
-    self.testCameraPlayer1.trackers = {self.testCameraPlayer1.trackers[3]}
+    self.testCameraPlayer1.trackers = { self.testCameraPlayer1.trackers[3] }
     local baseTracker = self.testCameraPlayer1.trackers[1];
 
     TLBE.Main.entity_built(
@@ -160,8 +161,8 @@ function TestCamera:TestResolutionChange()
             created_entity = {
                 surface = game.surfaces[1],
                 bounding_box = {
-                    left_top = {x = -20, y = -20},
-                    right_bottom = {x = 20, y = 20}
+                    left_top = { x = -20, y = -20 },
+                    right_bottom = { x = 20, y = 20 }
                 }
             }
         }
@@ -172,11 +173,12 @@ function TestCamera:TestResolutionChange()
     local oldZoom = self.testCameraPlayer1.zoom;
     local oldCenterPos = self.testCameraPlayer1.centerPos;
 
-    TLBE.Camera.setWidth(self.testCameraPlayer1, self.testCameraPlayer1.width*2)
-    TLBE.Camera.setHeight(self.testCameraPlayer1, self.testCameraPlayer1.height*2)
+    TLBE.Camera.setWidth(self.testCameraPlayer1, self.testCameraPlayer1.width * 2)
+    TLBE.Camera.setHeight(self.testCameraPlayer1, self.testCameraPlayer1.height * 2)
 
     lu.assertEquals(self.testCameraPlayer1.centerPos.x, oldCenterPos.x, "expected centerpos to be the same")
     lu.assertEquals(self.testCameraPlayer1.centerPos.y, oldCenterPos.y, "expected centerpos to be the same")
     lu.assertNotEquals(self.testCameraPlayer1.zoom, oldZoom, "expected that zoom has been changed")
-    lu.assertEquals(self.testCameraPlayer1.zoom, oldZoom * 2, "expected that zoom has doubled as resolution has been doubled")
+    lu.assertEquals(self.testCameraPlayer1.zoom, oldZoom * 2,
+        "expected that zoom has doubled as resolution has been doubled")
 end
