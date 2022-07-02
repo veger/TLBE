@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.4
-
+Date: 03-07-2022
   Minor Features:
     - Store screenshots in a sub-directory if the camera name contains a slash.
   Bugfixes:
