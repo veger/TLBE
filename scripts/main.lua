@@ -48,8 +48,8 @@ function Main.tick()
 
             local screenshotNumber
             if playerSettings.sequentialNames then
-                screenshotNumber = playerSettings.screenshotNumber
-                playerSettings.screenshotNumber = playerSettings.screenshotNumber + 1
+                screenshotNumber = camera.screenshotNumber
+                camera.screenshotNumber = camera.screenshotNumber + 1
             else
                 screenshotNumber = game.tick
             end

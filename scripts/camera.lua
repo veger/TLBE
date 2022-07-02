@@ -45,6 +45,7 @@ function Camera.newCamera(player, cameraList)
         trackers = {},
         centerPos = player.position,
         zoom = 1,
+        screenshotNumber = 1,
         -- settings/defaults
         width = 1920,
         height = 1080,
