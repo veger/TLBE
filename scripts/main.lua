@@ -54,6 +54,13 @@ function Main.tick()
                 screenshotNumber = game.tick
             end
 
+            -- over-ride the daytime if we are always day, otherwise leave it unaltered
+            if camera.alwaysDay then
+                alwaysDay = 0
+            else
+                alwaysDay = nil
+            end
+
             game.take_screenshot {
                 by_player = player,
                 surface = camera.surfaceName or game.surfaces[1],
@@ -64,7 +71,7 @@ function Main.tick()
                     , camera.saveName),
                 show_entity_info = camera.entityInfo,
                 allow_in_replay = true,
-                daytime = 0 -- take screenshot at full light
+                daytime = alwaysDay
             }
 
             ::nextCamera::
