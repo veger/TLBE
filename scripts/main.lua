@@ -55,6 +55,7 @@ function Main.tick()
             end
 
             -- over-ride the daytime if we are always day, otherwise leave it unaltered
+            local alwaysDay
             if camera.alwaysDay then
                 alwaysDay = 0
             else
