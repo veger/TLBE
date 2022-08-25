@@ -1,10 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.4.5
+Date: 25-08-2022
+  Minor Features:
+    - Added an always daylight toggle to cameras. (Thanks drdozer)
+    - Optionally keep player tracker enabled when building.
+
+---------------------------------------------------------------------------------------------------
 Version: 1.4.4
 Date: 03-07-2022
   Minor Features:
     - Store screenshots in a sub-directory if the camera name contains a slash.
-    - Added an always daylight toggle to cameras. (Thanks drdozer)
-    - Optionally keep player tracker enabled when building.
   Bugfixes:
     - Each camera must have its own sequential numbering when enabled.
 
