@@ -8,6 +8,7 @@ local Utils = require("scripts.utils")
 --- @field smooth boolean
 --- @field surfaceName string
 --- @field type string
+--- @field untilBuild boolean
 --- @field userCanEnable boolean
 local Tracker = {}
 
@@ -28,6 +29,7 @@ function Tracker.newTracker(trackerType, trackerList)
         userCanEnable = true,
         enabled = true,
         smooth = true,
+        untilBuild = false,
         lastChange = 0
     }
 

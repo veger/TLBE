@@ -95,8 +95,7 @@ function Main.entity_built(event)
                 goto nextTracker
             end
 
-            if tracker.type == "player" then
-                -- TODO only when tracker has setting set
+            if tracker.untilBuild then
                 Tracker.moveToNextTracker(tracker)
             elseif tracker.type == "base" then
                 if tracker.surfaceName ~= event.created_entity.surface.name then

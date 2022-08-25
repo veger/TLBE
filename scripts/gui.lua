@@ -584,6 +584,8 @@ function GUI.onStateChanged(event)
         playerSettings.cameras[playerSettings.guiPersist.selectedCamera].alwaysDay = event.element.state
     elseif event.element.name == "tracker-smooth" then
         playerSettings.trackers[playerSettings.guiPersist.selectedTracker].smooth = event.element.state
+    elseif event.element.name == "tracker-untilbuild" then
+        playerSettings.trackers[playerSettings.guiPersist.selectedTracker].untilBuild = event.element.state
     end
 end
 
@@ -1286,75 +1288,86 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
         state = false
     }
 
-    if tracker ~= nil and tracker.type == "area" then
-        trackerInfo.add {
-            type = "label",
-            caption = { "gui.label-top-right" },
-            style = "description_property_name_label"
-        }
-        local trFlow = trackerInfo.add { type = "flow", name = "tracker-tr" }
-        trFlow.add {
-            type = "textfield",
-            name = "tlbe-tracker-top",
-            style = "tlbe_config_half_width_textfield",
-            numeric = true,
-            allow_negative = true
-        }
-        trFlow.add { type = "label", caption = "/", style = "tlbe_config_half_width_label" }
-        trFlow.add {
-            type = "textfield",
-            name = "tlbe-tracker-right",
-            style = "tlbe_config_half_width_textfield",
-            numeric = true,
-            allow_negative = true
-        }
-        trFlow.add {
-            type = "sprite-button",
-            name = "tlbe-tracker-tr-player",
-            tooltip = { "tooltip.tracker-area-player" },
-            sprite = "utility/show_player_names_in_map_view_black",
-            style = "tlbe_config_button"
-        }
-        trFlow.add {
-            type = "sprite-button",
-            name = "tlbe-tracker-tr-map",
-            tooltip = { "tooltip.tracker-area-map", tracker.name .. "-tr" },
-            sprite = "utility/station_name",
-            style = "tlbe_config_button"
-        }
+    if tracker ~= nil then
+        if tracker.type == "area" then
+            trackerInfo.add {
+                type = "label",
+                caption = { "gui.label-top-right" },
+                style = "description_property_name_label"
+            }
+            local trFlow = trackerInfo.add { type = "flow", name = "tracker-tr" }
+            trFlow.add {
+                type = "textfield",
+                name = "tlbe-tracker-top",
+                style = "tlbe_config_half_width_textfield",
+                numeric = true,
+                allow_negative = true
+            }
+            trFlow.add { type = "label", caption = "/", style = "tlbe_config_half_width_label" }
+            trFlow.add {
+                type = "textfield",
+                name = "tlbe-tracker-right",
+                style = "tlbe_config_half_width_textfield",
+                numeric = true,
+                allow_negative = true
+            }
+            trFlow.add {
+                type = "sprite-button",
+                name = "tlbe-tracker-tr-player",
+                tooltip = { "tooltip.tracker-area-player" },
+                sprite = "utility/show_player_names_in_map_view_black",
+                style = "tlbe_config_button"
+            }
+            trFlow.add {
+                type = "sprite-button",
+                name = "tlbe-tracker-tr-map",
+                tooltip = { "tooltip.tracker-area-map", tracker.name .. "-tr" },
+                sprite = "utility/station_name",
+                style = "tlbe_config_button"
+            }
 
-        trackerInfo.add { type = "label", caption = { "gui.label-bottom-left" },
-            style = "description_property_name_label" }
-        local blFlow = trackerInfo.add { type = "flow", name = "tracker-bl" }
-        blFlow.add {
-            type = "textfield",
-            name = "tlbe-tracker-bottom",
-            style = "tlbe_config_half_width_textfield",
-            numeric = true,
-            allow_negative = true
-        }
-        blFlow.add { type = "label", caption = "/", style = "tlbe_config_half_width_label" }
-        blFlow.add {
-            type = "textfield",
-            name = "tlbe-tracker-left",
-            style = "tlbe_config_half_width_textfield",
-            numeric = true,
-            allow_negative = true
-        }
-        blFlow.add {
-            type = "sprite-button",
-            name = "tlbe-tracker-bl-player",
-            tooltip = { "tooltip.tracker-area-player" },
-            sprite = "utility/show_player_names_in_map_view_black",
-            style = "tlbe_config_button"
-        }
-        blFlow.add {
-            type = "sprite-button",
-            name = "tlbe-tracker-bl-map",
-            tooltip = { "tooltip.tracker-area-map", tracker.name .. "-bl" },
-            sprite = "utility/station_name",
-            style = "tlbe_config_button"
-        }
+            trackerInfo.add { type = "label", caption = { "gui.label-bottom-left" },
+                style = "description_property_name_label" }
+            local blFlow = trackerInfo.add { type = "flow", name = "tracker-bl" }
+            blFlow.add {
+                type = "textfield",
+                name = "tlbe-tracker-bottom",
+                style = "tlbe_config_half_width_textfield",
+                numeric = true,
+                allow_negative = true
+            }
+            blFlow.add { type = "label", caption = "/", style = "tlbe_config_half_width_label" }
+            blFlow.add {
+                type = "textfield",
+                name = "tlbe-tracker-left",
+                style = "tlbe_config_half_width_textfield",
+                numeric = true,
+                allow_negative = true
+            }
+            blFlow.add {
+                type = "sprite-button",
+                name = "tlbe-tracker-bl-player",
+                tooltip = { "tooltip.tracker-area-player" },
+                sprite = "utility/show_player_names_in_map_view_black",
+                style = "tlbe_config_button"
+            }
+            blFlow.add {
+                type = "sprite-button",
+                name = "tlbe-tracker-bl-map",
+                tooltip = { "tooltip.tracker-area-map", tracker.name .. "-bl" },
+                sprite = "utility/station_name",
+                style = "tlbe_config_button"
+            }
+        elseif tracker.type == "player" then
+            trackerInfo.add { type = "empty-widget" }
+            trackerInfo.add {
+                type = "checkbox",
+                name = "tracker-untilbuild",
+                caption = { "gui.label-until-build" },
+                tooltip = { "tooltip.tracker-until-build" },
+                state = tracker.untilBuild
+            }
+        end
     end
 
     trackerInfo.add {
@@ -1414,6 +1427,8 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
             end
             trFlow["tlbe-tracker-right"].style = style
             blFlow["tlbe-tracker-left"].style = style
+        elseif tracker.type == "player" then
+            trackerInfo["tracker-untilbuild"].state = tracker.untilBuild
         end
     end
 end

@@ -3,6 +3,7 @@ if global.playerSettings == nil then
 end
 
 -- Set camera alwaysDay to true for backwards compability
+-- Make tracker untilBuild available for all trackers
 for player_index, _ in pairs(game.players) do
     local playerSettings = global.playerSettings[player_index]
     if playerSettings == nil then
@@ -11,6 +12,10 @@ for player_index, _ in pairs(game.players) do
 
     for _, camera in pairs(playerSettings.cameras) do
         camera.alwaysDay = true
+
+        for _, tracker in pairs(camera.trackers) do
+            tracker.untilBuild = tracker.type == "player"
+        end
     end
 
     ::NextPlayer::
