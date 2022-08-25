@@ -3,6 +3,7 @@ Version: 1.4.4
 Date: 03-07-2022
   Minor Features:
     - Store screenshots in a sub-directory if the camera name contains a slash.
+    - Added an always daylight toggle to cameras  (Thanks drdozer)
   Bugfixes:
     - Each camera must have its own sequential numbering when enabled.
 

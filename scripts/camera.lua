@@ -5,6 +5,7 @@ local Tracker = require("scripts.tracker")
 --- @field centerPos table
 --- @field enabled boolean
 --- @field entityInfo boolean Show entity info in the screenshots
+--- @field alwaysDay boolean Render screenshot in daylight
 --- @field frameRate number
 --- @field height number
 --- @field lastKnownActiveTracker Tracker
@@ -42,6 +43,7 @@ function Camera.newCamera(player, cameraList)
         enabled = false,
         surfaceName = game.surfaces[1].name,
         entityInfo = false,
+        alwaysDay = true,
         trackers = {},
         centerPos = player.position,
         zoom = 1,

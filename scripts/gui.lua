@@ -580,6 +580,8 @@ function GUI.onStateChanged(event)
     local playerSettings = global.playerSettings[event.player_index]
     if event.element.name == "camera-entity-info" then
         playerSettings.cameras[playerSettings.guiPersist.selectedCamera].entityInfo = event.element.state
+    elseif event.element.name == "camera-always-day" then
+        playerSettings.cameras[playerSettings.guiPersist.selectedCamera].alwaysDay = event.element.state
     elseif event.element.name == "tracker-smooth" then
         playerSettings.trackers[playerSettings.guiPersist.selectedTracker].smooth = event.element.state
     end
@@ -847,6 +849,14 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
         caption = { "gui.label-entity-info" },
         tooltip = { "tooltip.camera-entity-info" },
         state = false
+    }
+    playerGUI.cameraInfo.add { type = "empty-widget" }
+    playerGUI.cameraInfo.add {
+        type = "checkbox",
+        name = "camera-always-day",
+        caption = { "gui.label-always-day" },
+        tooltip = { "tooltip.camera-always-day" },
+        state = true
     }
     playerGUI.cameraInfo.add {
         type = "label",
@@ -1205,6 +1215,7 @@ function GUI.updateCameraConfig(cameraInfo, camera)
         cameraInfo["camera-speed-gain"].text = string.format("%d", camera.speedGain or 60)
         cameraInfo["camera-zoom-period"].text = string.format("%2.2f", camera.zoomPeriod or 1.5)
         cameraInfo["camera-entity-info"].state = camera.entityInfo
+        cameraInfo["camera-always-day"].state = camera.alwaysDay
         resolutionFlow["camera-resolution-x"].text = string.format("%d", camera.width or 1920)
         resolutionFlow["camera-resolution-y"].text = string.format("%d", camera.height or 1080)
 
