@@ -2,7 +2,7 @@ if global.playerSettings == nil then
     goto SkipMigration
 end
 
--- Set new camera setting to its previous (default) value
+-- Set camera alwaysDay to true for backwards compability
 for player_index, _ in pairs(game.players) do
     local playerSettings = global.playerSettings[player_index]
     if playerSettings == nil then

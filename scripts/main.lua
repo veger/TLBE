@@ -54,9 +54,10 @@ function Main.tick()
                 screenshotNumber = game.tick
             end
 
-            -- over-ride the daytime if we are always day, otherwise leave it unaltered
+            -- override the daytime if we are always day, otherwise leave it unaltered
             local alwaysDay
             if camera.alwaysDay then
+                -- take screenshot at full light
                 alwaysDay = 0
             else
                 alwaysDay = nil
