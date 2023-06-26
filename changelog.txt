@@ -1,8 +1,9 @@
 ---------------------------------------------------------------------------------------------------
-Version: 1.4.6
+Version: 1.5.0
 
   Changes:
     - Use 10 digits for screenshot numbers.
+    - Fix camera transition issue, caused when camera is paused during transition (active transitions will be BROKEN)
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.5
@@ -124,7 +125,7 @@ Date: 01-09-2020
 Version: 0.1.2
 Date: 08-07-2020
   Minor Features:
-    - Inform player when TBLE starts to take screenshots. (instead of a notification per screenshot)
+    - Inform player when TLBE starts to take screenshots. (instead of a notification per screenshot)
   Ease of use:
     - Warn that base dimensions are unknown if TLBE is loaded into an existing game.
     - Changed "speed increase" default to take one screenshot per minute.

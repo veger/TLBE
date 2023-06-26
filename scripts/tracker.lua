@@ -1,17 +1,27 @@
 local Utils = require("scripts.utils")
 
---- @class Tracker
---- @field enabled boolean
---- @field lastChange number Tick where the tracker got changed last time
+local Tracker = {}
+
+--- @class Tracker.tracker
+--- @field enabled boolean True when the tracker is enabled/active
 --- @field name string
 --- @field realtimeCamera boolean
---- @field smooth boolean
+--- @field smooth boolean When true, smooth transitions are enabled/required for this tracker
 --- @field surfaceName string
 --- @field type string
 --- @field untilBuild boolean
---- @field userCanEnable boolean
-local Tracker = {}
+--- @field userCanEnable boolean When true, the user can enabled/disable the tracker, otherwise the tracker is controlled by TBLE
+--- @field moveToNextTracker boolean Disables the tracker after the cameras are processed (end of game tick)
+--- @field changeId integer Incremented on each position/size change of the tracker
+--- @field centerPos MapPosition.0 Center position of the tracker area (Calculated from minPos and maxPos)
+--- @field size MapPosition.0 Size of the tracker area (Calculated from minPos and maxPos)
+--- @field minPos MapPosition.0 Bottom/Left of tracker area
+--- @field maxPos MapPosition.0 TopRight of tracker area
 
+--- Create and setup a new tracker
+--- @param trackerType string Type of the new tracker
+--- @param trackerList Tracker.tracker[]|nil When provided the generated name will be unique
+--- @return Tracker.tracker
 function Tracker.newTracker(trackerType, trackerList)
     local nameIndex = 1
     local trackerName = trackerType
@@ -20,8 +30,7 @@ function Tracker.newTracker(trackerType, trackerList)
         trackerName = trackerType .. "-" .. nameIndex
     end
 
-    --- @class Tracker
-    --- @field centerPos {x: integer, y: integer }
+    --- @type Tracker.tracker
     local newTracker = {
         name = trackerName,
         type = trackerType,
@@ -30,7 +39,7 @@ function Tracker.newTracker(trackerType, trackerList)
         enabled = true,
         smooth = true,
         untilBuild = false,
-        lastChange = 0
+        changeId = 0
     }
 
     -- Add tracker specific details
@@ -52,15 +61,20 @@ function Tracker.newTracker(trackerType, trackerList)
 end
 
 -- Update tracker state (if needed)
+--- @param tracker Tracker.tracker
+--- @param player LuaPlayer
 function Tracker.tick(tracker, player)
     if tracker.type == "player" and tracker.surfaceName == player.surface.name then
         if tracker.centerPos == nil or tracker.centerPos.x ~= player.position.x or
             tracker.centerPos.y ~= player.position.y
         then
-            tracker.lastChange = game.tick
+            Tracker.changed(tracker)
         end
 
-        tracker.centerPos = player.position
+        tracker.centerPos = {
+            x = player.position.x,
+            y = player.position.y
+        }
     end
 end
 
@@ -69,6 +83,7 @@ function Tracker.moveToNextTracker(tracker)
     tracker.moveToNextTracker = true
 end
 
+--- @param trackers Tracker.tracker[]
 function Tracker.MoveToNextTrackerFinished(trackers)
     for _, tracker in pairs(trackers) do
         if tracker.moveToNextTracker then
@@ -111,6 +126,7 @@ function Tracker.areaUpdateCenterAndSize(tracker)
     end
 end
 
+--- @param tracker Tracker.tracker
 function Tracker.updateCenterAndSize(tracker)
     local size = {
         x = tracker.maxPos.x - tracker.minPos.x,
@@ -127,12 +143,16 @@ function Tracker.updateCenterAndSize(tracker)
         size.x ~= tracker.size.x or
         size.y ~= tracker.size.y
     then
-        -- Tracker dimensions changed, so need to recenter camera
-        tracker.lastChange = game.tick
+        Tracker.changed(tracker)
     end
 
     tracker.size = size
     tracker.centerPos = centerPos
+end
+
+--- @param tracker Tracker.tracker
+function Tracker.changed(tracker)
+    tracker.changeId = tracker.changeId + 1
 end
 
 return Tracker

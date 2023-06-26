@@ -3,6 +3,14 @@ local Config = {}
 local Camera = require("scripts.camera")
 local Tracker = require("scripts.tracker")
 
+--- @class playerSettings
+--- @field cameras Camera.camera[]
+--- @field trackers Tracker.tracker[]
+--- @field pauseCameras boolean When true, pause all player cameras
+--- @field saveFolder string
+--- @field sequentialNames boolean
+--- @field noticeMaxZoom boolean When true the warning about the max zoom is already raised
+
 --- (re)loads the mod settings and initializes player settings if needed
 function Config.reload(event)
     if event.player_index == nil then
@@ -19,10 +27,13 @@ function Config.reload(event)
         global.playerSettings[event.player_index] = playerSettings
     end
 
+    ---@diagnostic disable: assign-type-mismatch
     playerSettings.saveFolder = guiSettings["tlbe-save-folder"].value
+    ---@diagnostic disable: assign-type-mismatch
     playerSettings.sequentialNames = guiSettings["tlbe-sequential-names"].value
 end
 
+--- @return playerSettings
 function Config.newPlayerSettings(player)
     -- Setup some default trackers
     local trackers = {

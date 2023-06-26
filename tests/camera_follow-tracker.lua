@@ -8,13 +8,13 @@ local MAX_TICKS = 100
 
 -- luacheck: globals game
 local function ConvergenceTester(playerSettings, player, camera, tracker)
-    local startTick = game.tick
+    local tick = 0
     local currentX = camera.centerPos.x
     local currentY = camera.centerPos.y
     local currentZoom = camera.zoom
 
     repeat
-        game.tick = game.tick + 1
+        tick = tick + 1
         local lastX = currentX
         local lastY = currentY
         local lastZoom = currentZoom
@@ -24,23 +24,20 @@ local function ConvergenceTester(playerSettings, player, camera, tracker)
         currentX = camera.centerPos.x
         currentY = camera.centerPos.y
         currentZoom = camera.zoom
-    until (game.tick - startTick) == MAX_TICKS or
-        (math.abs(lastX - currentX) < 0.0001 and math.abs(lastY - currentY) < 0.0001 and
+    until tick == MAX_TICKS or (math.abs(lastX - currentX) < 0.0001 and math.abs(lastY - currentY) < 0.0001 and
             math.abs(lastZoom - currentZoom) < 0.0001)
 
     -- Last tick validated the camera reached convergence so it does not count
-    return game.tick - startTick - 1
+    return tick - 1
 end
 
 TestCameraFollowTracker = {}
 
 function TestCameraFollowTracker:SetUp()
-    -- mock Factorio provided globals
-    game = { tick = 0 }
-
     self.testCamera = {
         width = 20 * tileSize,
         height = 15 * tileSize,
+        changeId = 0,
         centerPos = { x = 0, y = 0 },
         screenshotInterval = 1,
         zoom = 1,
@@ -50,8 +47,8 @@ function TestCameraFollowTracker:SetUp()
     self.testTracker = {
         centerPos = { x = 0, y = 0 },
         size = { x = 1, y = 1 },
+        changeId = 1,
         smooth = true,
-        lastChange = 0
     }
 end
 
@@ -92,7 +89,7 @@ function TestCameraFollowTracker:TestZoom()
 
     local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
 
-    lu.assertEquals(ticks, 14, "couldn't converge in expected 14 ticks")
+    lu.assertEquals(ticks, self.testCamera.zoomTicks, "couldn't converge in expected 14 ticks")
 
     lu.assertEquals(self.testCamera.centerPos.x, 0, "expected to stay in same place")
     lu.assertEquals(self.testCamera.centerPos.y, 0, "expected to stay in same place")
@@ -104,7 +101,7 @@ function TestCameraFollowTracker:TestConvergenceDiagonal()
 
     local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
 
-    lu.assertEquals(ticks, 14, "couldn't converge in expected 14 ticks")
+    lu.assertEquals(ticks, self.testCamera.zoomTicks, "couldn't converge in expected 14 ticks")
 
     lu.assertIsTrue(self.testCamera.centerPos.x == 10, "expected move to new center")
     lu.assertIsTrue(self.testCamera.centerPos.y == 6, "expected move to new center")
@@ -116,7 +113,7 @@ function TestCameraFollowTracker:TestConvergenceHorizontal()
 
     local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
 
-    lu.assertEquals(ticks, 14, "couldn't converge in expected 14 ticks")
+    lu.assertEquals(ticks, self.testCamera.zoomTicks, "couldn't converge in expected 14 ticks")
 
     lu.assertIsTrue(self.testCamera.centerPos.x == 10, "expected move to new center")
     lu.assertIsTrue(self.testCamera.centerPos.y == 0, "expected move to new center")
@@ -129,7 +126,7 @@ function TestCameraFollowTracker:TestConvergenceHorizontalBigJump()
 
     local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
 
-    lu.assertEquals(ticks, 14, "couldn't converge in expected 14 ticks")
+    lu.assertEquals(ticks, self.testCamera.zoomTicks, "couldn't converge in expected 14 ticks")
 
     lu.assertIsTrue(self.testCamera.centerPos.x == 123, "expected move to new center")
     lu.assertIsTrue(self.testCamera.centerPos.y == 0, "expected move to new center")
@@ -142,7 +139,7 @@ function TestCameraFollowTracker:TestConvergenceVertical()
 
     local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
 
-    lu.assertEquals(ticks, 14, "couldn't converge in expected 14 ticks")
+    lu.assertEquals(ticks, self.testCamera.zoomTicks, "couldn't converge in expected 14 ticks")
 
     lu.assertIsTrue(self.testCamera.centerPos.x == 0, "expected move to new center")
     lu.assertIsTrue(self.testCamera.centerPos.y == 10, "expected move to new center")
@@ -155,7 +152,7 @@ function TestCameraFollowTracker:TestConvergenceVerticalBigJump()
 
     local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
 
-    lu.assertEquals(ticks, 14, "couldn't converge in expected 14 ticks")
+    lu.assertEquals(ticks, self.testCamera.zoomTicks, "couldn't converge in expected 14 ticks")
 
     lu.assertIsTrue(self.testCamera.centerPos.x == 0, "expected move to new center")
     lu.assertIsTrue(self.testCamera.centerPos.y == 142, "expected move to new center")

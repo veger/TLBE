@@ -28,7 +28,6 @@ end
 
 TestCamera = {}
 
--- luacheck: globals game
 local function nextTick()
     TLBE.Main.tick()
     game.tick = game.tick + 1
@@ -68,9 +67,10 @@ function TestCamera:SetUp()
                     width = 20 * tileSize,
                     height = 15 * tileSize,
                     screenshotInterval = 1, -- do not skip any ticks for these tests
-                    realtimeInterval = 1, -- do not skip any ticks for these tests
-                    zoomTicks = 1, -- zoom immediately for these tests
-                    zoomTicksRealtime = 1 -- zoom immediately for these tests
+                    realtimeInterval = 1,   -- do not skip any ticks for these tests
+                    zoomTicks = 1,          -- zoom immediately for these tests
+                    zoomTicksRealtime = 1,  -- zoom immediately for these tests
+                    changeId = -1,          -- Make sure it is different than tracker.changeId
                 }
             ) do
                 camera[k] = v
@@ -169,6 +169,7 @@ function TestCamera:TestResolutionChange()
     )
 
     -- force set camera position and zoom
+    ---@diagnostic disable-next-line: param-type-mismatch player(Data) can be nil when disableSmooth is true
     TLBE.Camera.followTracker(nil, nil, self.testCameraPlayer1, baseTracker, true)
     local oldZoom = self.testCameraPlayer1.zoom;
     local oldCenterPos = self.testCameraPlayer1.centerPos;
