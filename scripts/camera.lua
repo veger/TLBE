@@ -48,6 +48,7 @@ function Camera.newCamera(player, cameraList)
         centerPos = player.position,
         zoom = 1,
         screenshotNumber = 1,
+        chart_tags = {},
         -- settings/defaults
         width = 1920,
         height = 1080,
@@ -119,6 +120,8 @@ function Camera.followTracker(playerSettings, player, camera, tracker, forceZoom
         camera.centerPos = tracker.centerPos
         camera.zoom = Camera.zoom(camera, tracker)
     end
+
+    Camera.updateChartTags(player, camera)
 end
 
 function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
@@ -241,6 +244,36 @@ function Camera.setZoomPeriod(camera, zoomPeriod)
 
     camera.zoomPeriod = zoomPeriod
     Camera.updateConfig(camera)
+end
+
+function Camera.updateChartTags(player, camera)
+    local x = camera.centerPos.x
+    local y = camera.centerPos.y
+    local halfwidth = 60   -- fixme
+    local halfheight = 60  -- fixme
+
+
+    local function modifyTag(name, pos, txt)
+        local tag = camera.chart_tags[name]
+        if tag ~= nil then
+            tag.destroy()
+        end
+
+        camera.chart_tags[name] = player.force.add_chart_tag(player.surface, {
+            position = pos,
+            text = txt,
+        })
+    end
+
+    modifyTag('center', {x, y}, "┼")
+    modifyTag('north-east', {x+halfwidth, y-halfheight}, "┐")
+    modifyTag('east', {x+halfwidth, y}, "│")
+    modifyTag('south-east', {x+halfwidth,y+halfheight}, "┘")
+    modifyTag('south', {x,y+halfheight}, "─")
+    modifyTag('south-west', {x-halfheight,y+halfheight}, "└")
+    modifyTag('west', {x-halfheight,y}, "│")
+    modifyTag('north-west', {x-halfheight,y-halfheight}, "┌")
+    modifyTag('north', {x,y-halfheight}, "─")
 end
 
 return Camera
