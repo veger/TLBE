@@ -26,6 +26,22 @@ function TestNewCamera.TestUniqueName()
     )
 end
 
+function TestNewCamera.TestConfig()
+    local camera = TLBE.Camera.newCamera({ postion = { 0, 0 } }, {})
+
+    camera.frameRate = 10       -- 10 frames / second
+    camera.transitionPeriod = 2 -- 2 seconds
+    camera.speedGain = 5        -- 5 times speed up
+    TLBE.Camera.updateConfig(camera)
+
+    lu.assertEquals(camera.transitionTicks, 10 * 2,
+        "Expected transitionTicks to be 10 fps * 2 seconds of transition = 20 frames (ticks)")
+    lu.assertEquals(camera.screenshotInterval, 60 * 5 / 10,
+        "Expected screenshotInterval to be 60 ticks/second * 5 (speed gain) / 10 fps = 30 ticks / frame")
+    lu.assertEquals(camera.screenshotIntervalRealtime, 60 / 10,
+        "Expected screenshotIntervalRealtime (no speedGain) to be 60 ticks/second / 10 fps = 30 ticks / frame")
+end
+
 TestCamera = {}
 
 local function nextTick()
@@ -66,11 +82,10 @@ function TestCamera:SetUp()
                 {
                     width = 20 * tileSize,
                     height = 15 * tileSize,
-                    screenshotInterval = 1,      -- do not skip any ticks for these tests
-                    realtimeInterval = 1,        -- do not skip any ticks for these tests
-                    transitionTicks = 1,         -- zoom immediately for these tests
-                    transitionTicksRealtime = 1, -- zoom immediately for these tests
-                    changeId = -1,               -- Make sure it is different than tracker.changeId
+                    screenshotInterval = 1,         -- do not skip any ticks for these tests
+                    screenshotIntervalRealtime = 1, -- do not skip any ticks for these tests
+                    transitionTicks = 1,            -- zoom immediately for these tests
+                    changeId = -1,                  -- Make sure it is different than tracker.changeId
                 }
             ) do
                 camera[k] = v

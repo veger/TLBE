@@ -30,7 +30,7 @@ function Main.tick()
 
             -- Check if a screenshot needs to be taken
             if activeTracker.realtimeCamera then
-                if game.tick % camera.realtimeInterval ~= 0 then
+                if game.tick % camera.screenshotIntervalRealtime ~= 0 then
                     goto nextCamera
                 end
             elseif game.tick % camera.screenshotInterval ~= 0 then

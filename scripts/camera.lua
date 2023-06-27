@@ -15,15 +15,14 @@ local Tracker = require("scripts.tracker")
 --- @field saveName string
 --- @field screenshotNumber integer Number for the next screenshot (when sequentialNames is set in player settings)
 --- @field screenshotInterval number Interval (game ticks) between two screenshots  (calculated from speedGain and frameRate)
---- @field realtimeInterval number Interval (game ticks) between two screeenshots for realtime transitions (calculated from frameRate)
+--- @field screenshotIntervalRealtime number Interval (game ticks) between two screeenshots for realtime transitions (calculated from frameRate)
 --- @field speedGain number
 --- @field surfaceName string
 --- @field trackers Tracker.tracker[]
 --- @field width number
 --- @field zoom number
 --- @field transitionPeriod number Time (in seconds) a transition should take
---- @field transitionTicks number Time (in ticks) a transition should take (calculated from transitionPeriod and speedGain)
---- @field transitionTicksRealtime number Time (in ticks) a transition should take as if there was no speedGain (calculated from transitionPeriod)
+--- @field transitionTicks number Time (in ticks) a transition should take (calculated from transitionPeriod)
 --- @field transitionData Camera.cameraTransition|nil When set, a transtion is active
 
 local Camera = {}
@@ -84,9 +83,8 @@ end
 ---@param camera Camera.camera
 function Camera.updateConfig(camera)
     camera.screenshotInterval = math.max(math.floor((ticks_per_second * camera.speedGain) / camera.frameRate), 1)
-    camera.transitionTicks = math.max(math.floor(ticks_per_second * camera.transitionPeriod * camera.speedGain), 1)
-    camera.realtimeInterval = math.max(math.floor(ticks_per_second / camera.frameRate), 1)
-    camera.transitionTicksRealtime = math.max(math.floor(ticks_per_second * camera.transitionPeriod), 1)
+    camera.screenshotIntervalRealtime = math.max(math.floor(ticks_per_second / camera.frameRate), 1)
+    camera.transitionTicks = math.max(math.floor(camera.frameRate * camera.transitionPeriod), 1)
 end
 
 ---Update the name of the Camera and its save folder and name.
@@ -104,10 +102,10 @@ function Camera.refreshConfig(camera)
     local transitionPeriod, frameRate, speedGain
     if camera.speedGain == nil then
         -- Try to recover as good as possible...
-        transitionPeriod = camera.transitionTicksRealtime / ticks_per_second
-        frameRate = ticks_per_second / camera.realtimeInterval
+        transitionPeriod = camera.transitionTicks / ticks_per_second
+        frameRate = ticks_per_second / camera.screenshotIntervalRealtime
 
-        local speedGain1 = camera.transitionTicks / (ticks_per_second * transitionPeriod)
+        local speedGain1 = 1 -- camera.transitionTicks / (ticks_per_second * transitionPeriod)
         local speedGain2 = (camera.screenshotInterval * frameRate) / ticks_per_second
         speedGain = (speedGain1 + speedGain2) / 2
     else
@@ -156,14 +154,13 @@ end
 --- @param tracker Tracker.tracker
 function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
     if camera.changeId ~= tracker.changeId then
-        local ticks = Camera.getTranstionTicks(camera, tracker)
         camera.transitionData = Camera.cameraTransition:new({
             startPosition = camera.centerPos,
             startZoom = camera.zoom,
             endPosition = tracker.centerPos,
             endZoom = Camera.zoom(camera, tracker),
-            ticks = ticks,
-            transitionTicksLeft = ticks
+            ticks = camera.transitionTicks,
+            transitionTicksLeft = camera.transitionTicks
         })
         camera.changeId = tracker.changeId
     end
@@ -291,16 +288,6 @@ function Camera.setTransitionPeriod(camera, transitionPeriod)
 
     camera.transitionPeriod = transitionPeriod
     Camera.updateConfig(camera)
-end
-
---- @param camera Camera.camera
---- @param tracker Tracker.tracker
-function Camera.getTranstionTicks(camera, tracker)
-    if tracker.realtimeCamera then
-        return camera.transitionTicksRealtime
-    else
-        return camera.transitionTicks
-    end
 end
 
 return Camera
