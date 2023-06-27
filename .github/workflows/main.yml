@@ -10,15 +10,16 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Install lua5.2
       run: sudo apt-get install lua5.2
 
     - name: lint
-      uses: Roang-zero1/factorio-mod-luacheck@v1.1.0
+      uses: mrcjkb/lua-typecheck-action@v0.2.0
       with:
-          luacheckrc_url: https://raw.githubusercontent.com/Nexela/Factorio-luacheckrc/master/.luacheckrc
+        checkLevel: Error
+        configpath: ".luarc.json"
     
     - name: unit test
       run: lua test-suite.lua -v
