@@ -102,8 +102,10 @@ function Camera.refreshConfig(camera)
     local transitionPeriod, frameRate, speedGain
     if camera.speedGain == nil then
         -- Try to recover as good as possible...
-        transitionPeriod = camera.transitionTicks / ticks_per_second
-        frameRate = ticks_per_second / camera.screenshotIntervalRealtime
+        ---@diagnostic disable-next-line: undefined-field camera.zoomTicks is the old field (old migrations use this function as well)
+        transitionPeriod = (camera.transitionTicks or camera.zoomTicks) / ticks_per_second
+        ---@diagnostic disable-next-line: undefined-field camera.realtimeInterval is the old field (old migrations use this function as well)
+        frameRate = ticks_per_second / (camera.screenshotIntervalRealtime or camera.realtimeInterval)
 
         local speedGain1 = 1 -- camera.transitionTicks / (ticks_per_second * transitionPeriod)
         local speedGain2 = (camera.screenshotInterval * frameRate) / ticks_per_second
@@ -165,11 +167,11 @@ function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
         camera.changeId = tracker.changeId
     end
 
-    local transtionData = camera.transitionData
-    if transtionData ~= nil then
-        transtionData.transitionTicksLeft = transtionData.transitionTicksLeft - 1
+    local transitionData = camera.transitionData
+    if transitionData ~= nil then
+        transitionData.transitionTicksLeft = transitionData.transitionTicksLeft - 1
 
-        camera.centerPos, camera.zoom = transtionData:lerp()
+        camera.centerPos, camera.zoom = transitionData:lerp()
 
         if camera.zoom < minZoom then
             if playerSettings.noticeMaxZoom == nil then
@@ -184,7 +186,7 @@ function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
             playerSettings.noticeMaxZoom = nil
         end
 
-        if transtionData.transitionTicksLeft <= 0 then
+        if transitionData.transitionTicksLeft <= 0 then
             -- Transition finished
             camera.transitionData = nil
         end
