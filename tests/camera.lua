@@ -26,9 +26,24 @@ function TestNewCamera.TestUniqueName()
     )
 end
 
+function TestNewCamera.TestConfig()
+    local camera = TLBE.Camera.newCamera({ postion = { 0, 0 } }, {})
+
+    camera.frameRate = 10       -- 10 frames / second
+    camera.transitionPeriod = 2 -- 2 seconds
+    camera.speedGain = 5        -- 5 times speed up
+    TLBE.Camera.updateConfig(camera)
+
+    lu.assertEquals(camera.transitionTicks, 10 * 2,
+        "Expected transitionTicks to be 10 fps * 2 seconds of transition = 20 frames (ticks)")
+    lu.assertEquals(camera.screenshotInterval, 60 * 5 / 10,
+        "Expected screenshotInterval to be 60 ticks/second * 5 (speed gain) / 10 fps = 30 ticks / frame")
+    lu.assertEquals(camera.screenshotIntervalRealtime, 60 / 10,
+        "Expected screenshotIntervalRealtime (no speedGain) to be 60 ticks/second / 10 fps = 30 ticks / frame")
+end
+
 TestCamera = {}
 
--- luacheck: globals game
 local function nextTick()
     TLBE.Main.tick()
     game.tick = game.tick + 1
@@ -67,10 +82,10 @@ function TestCamera:SetUp()
                 {
                     width = 20 * tileSize,
                     height = 15 * tileSize,
-                    screenshotInterval = 1, -- do not skip any ticks for these tests
-                    realtimeInterval = 1, -- do not skip any ticks for these tests
-                    zoomTicks = 1, -- zoom immediately for these tests
-                    zoomTicksRealtime = 1 -- zoom immediately for these tests
+                    screenshotInterval = 1,         -- do not skip any ticks for these tests
+                    screenshotIntervalRealtime = 1, -- do not skip any ticks for these tests
+                    transitionTicks = 1,            -- zoom immediately for these tests
+                    changeId = -1,                  -- Make sure it is different than tracker.changeId
                 }
             ) do
                 camera[k] = v
@@ -112,7 +127,7 @@ function TestCamera:TestTransitionFromPlayerToBaseTracker()
     lu.assertEquals(self.testCameraPlayer2.centerPos.y, 0, "expected disabled camera to be unchanged")
 end
 
-function TestCamera:TestRocketLaunch()
+function TestCamera:TestRocketLaunch1()
     -- center camera at 0,0
     self.testCameraPlayer1.centerPos = { x = 0, y = 0 }
     self.testCameraPlayer1.zoom = 1
@@ -169,6 +184,7 @@ function TestCamera:TestResolutionChange()
     )
 
     -- force set camera position and zoom
+    ---@diagnostic disable-next-line: param-type-mismatch player(Data) can be nil when disableSmooth is true
     TLBE.Camera.followTracker(nil, nil, self.testCameraPlayer1, baseTracker, true)
     local oldZoom = self.testCameraPlayer1.zoom;
     local oldCenterPos = self.testCameraPlayer1.centerPos;

@@ -25,16 +25,12 @@ function Main.tick()
             end
 
             if previousTracker ~= nil or camera.lastKnownActiveTracker ~= activeTracker then
-                if activeTracker.smooth then
-                    -- Need a transition to activeTracker
-                    activeTracker.lastChange = game.tick
-                end
                 Camera.SetActiveTracker(camera, activeTracker)
             end
 
             -- Check if a screenshot needs to be taken
             if activeTracker.realtimeCamera then
-                if game.tick % camera.realtimeInterval ~= 0 then
+                if game.tick % camera.screenshotIntervalRealtime ~= 0 then
                     goto nextCamera
                 end
             elseif game.tick % camera.screenshotInterval ~= 0 then
@@ -70,7 +66,7 @@ function Main.tick()
                 resolution = { camera.width, camera.height },
                 zoom = camera.zoom,
                 path = string.format("%s/%s/%010d-%s.png", playerSettings.saveFolder, camera.saveFolder, screenshotNumber
-                    , camera.saveName),
+                , camera.saveName),
                 show_entity_info = camera.entityInfo,
                 allow_in_replay = true,
                 daytime = alwaysDay
@@ -142,7 +138,7 @@ function Main.rocket_launch(event)
                 tracker.centerPos = event.rocket_silo.position
                 tracker.size = { x = 1, y = 1 } -- don't care about size, it will fit with maxZoom
 
-                tracker.lastChange = game.tick
+                Tracker.changed(tracker)
             end
 
             ::nextTracker::

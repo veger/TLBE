@@ -472,12 +472,14 @@ function GUI.onSelected(event)
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         )
     elseif event.element.name == "camera-surface" then
-        playerSettings.cameras[playerSettings.guiPersist.selectedCamera].surfaceName = event.element.get_item(event.element
+        playerSettings.cameras[playerSettings.guiPersist.selectedCamera].surfaceName = event.element.get_item(event
+            .element
             .selected_index)
 
         GUI.createCameraTrackerList(playerSettings)
     elseif event.element.name == "tracker-surface" then
-        playerSettings.trackers[playerSettings.guiPersist.selectedTracker].surfaceName = event.element.get_item(event.element
+        playerSettings.trackers[playerSettings.guiPersist.selectedTracker].surfaceName = event.element.get_item(event
+            .element
             .selected_index)
 
         GUI.createCameraTrackerList(playerSettings)
@@ -529,8 +531,8 @@ function GUI.onTextChanged(event)
         Camera.setFrameRate(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
     elseif event.element.name == "camera-speed-gain" then
         Camera.setSpeedGain(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
-    elseif event.element.name == "camera-zoom-period" then
-        Camera.setZoomPeriod(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
+    elseif event.element.name == "camera-transtion-period" then
+        Camera.setTransitionPeriod(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
     elseif event.element.name == "tlbe-tracker-top" then
         local value = tonumber(event.element.text)
         if value ~= nil then
@@ -832,14 +834,14 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     }
     playerGUI.cameraInfo.add {
         type = "label",
-        caption = { "gui.label-zoomperiod" },
-        tooltip = { "tooltip.camera-zoomperiod" },
+        caption = { "gui.label-transitionperiod" },
+        tooltip = { "tooltip.camera-transitionperiod" },
         style = "description_property_name_label"
     }
     playerGUI.cameraInfo.add {
         type = "textfield",
-        name = "camera-zoom-period",
-        tooltip = { "tooltip.camera-zoomperiod" },
+        name = "camera-transtion-period",
+        tooltip = { "tooltip.camera-transitionperiod" },
         style = "tlbe_config_half_width_textfield",
         numeric = true,
         allow_decimal = true
@@ -979,11 +981,11 @@ function GUI.createTrackerList(
         end
 
         local trackerRow =
-        trackerList.add {
-            type = "frame",
-            name = namePrefix .. index,
-            style = style
-        }
+            trackerList.add {
+                type = "frame",
+                name = namePrefix .. index,
+                style = style
+            }
 
         addTrackerButtons(index, selectedCamera, cameras, trackers, trackerRow)
 
@@ -1101,12 +1103,12 @@ function GUI.addTrackerButtons(index, _, cameras, trackers, trackerRow)
 
     if #trackers > 1 then
         local button =
-        trackerRow.add {
-            type = "sprite-button",
-            name = "tracker_" .. index .. "_delete",
-            sprite = "utility/trash",
-            style = "tlbe_tracker_button_red"
-        }
+            trackerRow.add {
+                type = "sprite-button",
+                name = "tracker_" .. index .. "_delete",
+                sprite = "utility/trash",
+                style = "tlbe_tracker_button_red"
+            }
 
         if Tracker.inUse(tracker, cameras) then
             button.enabled = false
@@ -1215,7 +1217,7 @@ function GUI.updateCameraConfig(cameraInfo, camera)
         cameraInfo["camera-name"].text = camera.name
         cameraInfo["camera-frame-rate"].text = string.format("%d", camera.frameRate or 25)
         cameraInfo["camera-speed-gain"].text = string.format("%d", camera.speedGain or 60)
-        cameraInfo["camera-zoom-period"].text = string.format("%2.2f", camera.zoomPeriod or 1.5)
+        cameraInfo["camera-transtion-period"].text = string.format("%2.2f", camera.transitionPeriod or 1.5)
         cameraInfo["camera-entity-info"].state = camera.entityInfo
         cameraInfo["camera-always-day"].state = camera.alwaysDay
         resolutionFlow["camera-resolution-x"].text = string.format("%d", camera.width or 1920)
