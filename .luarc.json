@@ -1,0 +1,16 @@
+{
+    "runtime.version": "Lua 5.2",
+    "workspace.ignoreDir": [
+        ".vscode",
+        "luaunit.lua"
+    ],
+    "hint.enable": false,
+    "diagnostics.globals": [
+        "settings",
+        "script",
+        "defines",
+        "game",
+        "global",
+        "os"
+    ]
+}
