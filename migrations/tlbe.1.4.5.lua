@@ -3,6 +3,7 @@ if global.playerSettings == nil then
 end
 
 local Camera = require("scripts.camera")
+local GUI = require("scripts.gui")
 
 -- Convert to new Camera transitionData
 for player_index, player in pairs(game.players) do
@@ -11,6 +12,16 @@ for player_index, player in pairs(game.players) do
     if playerSettings == nil then
         goto NextPlayer
     end
+
+    -- Just make sure it is here
+    if playerSettings.guiPersist == nil then
+        playerSettings.guiPersist = {
+            selectedCamera = 1,
+            selectedTracker = 1,
+            selectedCameraTracker = 1
+        }
+    end
+    GUI.updateTakeScreenshotButton(player, playerSettings)
 
     local warned = false
     for _, camera in pairs(playerSettings.cameras) do

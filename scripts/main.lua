@@ -39,38 +39,7 @@ function Main.tick()
 
             Tracker.tick(activeTracker, player)
 
-            -- Move to tracker
-            Camera.followTracker(playerSettings, player, camera, activeTracker, false)
-
-            local screenshotNumber
-            if playerSettings.sequentialNames then
-                screenshotNumber = camera.screenshotNumber
-                camera.screenshotNumber = camera.screenshotNumber + 1
-            else
-                screenshotNumber = game.tick
-            end
-
-            -- override the daytime if we are always day, otherwise leave it unaltered
-            local alwaysDay
-            if camera.alwaysDay then
-                -- take screenshot at full light
-                alwaysDay = 0
-            else
-                alwaysDay = nil
-            end
-
-            game.take_screenshot {
-                by_player = player,
-                surface = camera.surfaceName or game.surfaces[1],
-                position = camera.centerPos,
-                resolution = { camera.width, camera.height },
-                zoom = camera.zoom,
-                path = string.format("%s/%s/%010d-%s.png", playerSettings.saveFolder, camera.saveFolder, screenshotNumber
-                , camera.saveName),
-                show_entity_info = camera.entityInfo,
-                allow_in_replay = true,
-                daytime = alwaysDay
-            }
+            Main.takeScreenshot(player, playerSettings, camera, activeTracker)
 
             ::nextCamera::
         end
@@ -161,6 +130,48 @@ function Main.rocket_launched(event)
             ::nextTracker::
         end
     end
+end
+
+-- Update camera position (if activeTracker is provided) and take a screenshot
+---@param player LuaPlayer
+---@param playerSettings playerSettings
+---@param camera Camera.camera
+---@param activeTracker Tracker.tracker|nil
+function Main.takeScreenshot(player, playerSettings, camera, activeTracker)
+    if activeTracker ~= nil then
+        -- Move to tracker
+        Camera.followTracker(playerSettings, player, camera, activeTracker, false)
+    end
+
+    local screenshotNumber
+    if playerSettings.sequentialNames then
+        screenshotNumber = camera.screenshotNumber
+        camera.screenshotNumber = camera.screenshotNumber + 1
+    else
+        screenshotNumber = game.tick
+    end
+
+    -- override the daytime if always day is selected, otherwise leave it unaltered
+    local alwaysDay
+    if camera.alwaysDay then
+        -- take screenshot at full light
+        alwaysDay = 0
+    else
+        alwaysDay = nil
+    end
+
+    game.take_screenshot {
+        by_player = player,
+        surface = camera.surfaceName or game.surfaces[1],
+        position = camera.centerPos,
+        resolution = { camera.width, camera.height },
+        zoom = camera.zoom,
+        path = string.format("%s/%s/%010d-%s.png", playerSettings.saveFolder, camera.saveFolder, screenshotNumber
+        , camera.saveName),
+        show_entity_info = camera.entityInfo,
+        allow_in_replay = true,
+        daytime = alwaysDay
+    }
 end
 
 function Main.get_base_bbox()

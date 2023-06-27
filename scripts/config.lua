@@ -10,6 +10,12 @@ local Tracker = require("scripts.tracker")
 --- @field saveFolder string
 --- @field sequentialNames boolean
 --- @field noticeMaxZoom boolean When true the warning about the max zoom is already raised
+--- @field guiPersist persistedGUISettings
+
+--- @class persistedGUISettings
+--- @field selectedCamera integer Selected camera
+--- @field selectedTracker integer Selected tracker
+--- @field selectedCameraTracker integer Selected tracker of the selected camera
 
 --- (re)loads the mod settings and initializes player settings if needed
 function Config.reload(event)
@@ -49,7 +55,13 @@ function Config.newPlayerSettings(player)
     return {
         -- Setup a default camera and attach trackers to it
         cameras = { camera },
-        trackers = trackers
+        trackers = trackers,
+        guiPersist = {
+            selectedCamera = 1,
+            selectedTracker = 1,
+            selectedCameraTracker = 1
+        }
+
     }
 end
 

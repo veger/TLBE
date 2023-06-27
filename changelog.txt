@@ -1,6 +1,9 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.0
 
+  Features:
+    - Add toggle/shortcut to take a screenshot (on paused active camera)
+
   Changes:
     - Use 10 digits for screenshot numbers.
     - Use 'transition' when mentioning camera movement (instead of zoom)

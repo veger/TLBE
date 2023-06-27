@@ -32,6 +32,13 @@ local function findActiveTracker(trackers, surfaceName)
     end
 end
 
+-- Initialize the GUI for a new player
+---@param player LuaPlayer
+---@param playerSettings playerSettings
+function GUI.initialize(player, playerSettings)
+    GUI.updateTakeScreenshotButton(player, playerSettings)
+end
+
 function GUI.tick()
     if game.tick % ticks_per_half_second ~= 0 then
         return
@@ -101,9 +108,10 @@ function GUI.onClick(event)
         selectedCamera.enabled = not selectedCamera.enabled
 
         GUI.updateCameraActions(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
+        GUI.updateTakeScreenshotButton(player, playerSettings)
     elseif event.element.name == "tlbe_camera_add" then
         table.insert(playerSettings.cameras, Camera.newCamera(player, playerSettings.cameras))
-        playerSettings.guiPersist.selectedCamera = #playerSettings.cameras
+        GUI.setSelectedCamera(player, playerSettings, #playerSettings.cameras)
 
         GUI.updateCameraList(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
         GUI.updateCameraActions(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
@@ -125,7 +133,7 @@ function GUI.onClick(event)
         table.remove(playerSettings.cameras, playerSettings.guiPersist.selectedCamera)
 
         if playerSettings.guiPersist.selectedCamera > #playerSettings.cameras then
-            playerSettings.guiPersist.selectedCamera = #playerSettings.cameras
+            GUI.setSelectedCamera(player, playerSettings, #playerSettings.cameras)
         end
 
         GUI.updateCameraList(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
@@ -390,11 +398,13 @@ function GUI.onClick(event)
     end
 end
 
+--- @param event  EventData.on_gui_selection_state_changed
 function GUI.onSelected(event)
+    local player = game.players[event.player_index]
     local playerSettings = global.playerSettings[event.player_index]
 
     if event.element.name == "tlbe-cameras-list" then
-        playerSettings.guiPersist.selectedCamera = event.element.selected_index
+        GUI.setSelectedCamera(player, playerSettings, event.element.selected_index)
         playerSettings.guiPersist.selectedCameraTracker = 1
 
         GUI.updateCameraActions(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
@@ -531,7 +541,7 @@ function GUI.onTextChanged(event)
         Camera.setFrameRate(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
     elseif event.element.name == "camera-speed-gain" then
         Camera.setSpeedGain(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
-    elseif event.element.name == "camera-transtion-period" then
+    elseif event.element.name == "camera-transition-period" then
         Camera.setTransitionPeriod(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
     elseif event.element.name == "tlbe-tracker-top" then
         local value = tonumber(event.element.text)
@@ -591,16 +601,33 @@ function GUI.onStateChanged(event)
     end
 end
 
+--- @param event EventData.on_lua_shortcut
 function GUI.onShortcut(event)
     if event.prototype_name == "tlbe-shortcut" then
         GUI.toggleMainWindow(event)
     elseif event.prototype_name == "tlbe-pause-shortcut" then
         GUI.togglePauseCameras(event)
+    elseif event.prototype_name == "tlbe-screenshot-shortcut" then
+        GUI.takeScreenshot(event)
+    end
+end
+
+--- @param event EventData.on_lua_shortcut
+function GUI.takeScreenshot(event)
+    local player = game.players[event.player_index]
+    local active = player.is_shortcut_available("tlbe-screenshot-shortcut")
+    if active then
+        ---@type playerSettings
+        local playerSettings = global.playerSettings[event.player_index]
+        local camera = playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
+        local _, activeTracker = Tracker.findActiveTracker(camera.trackers, camera.surfaceName)
+
+        Main.takeScreenshot(player, playerSettings, camera, activeTracker)
     end
 end
 
 function GUI.onSurfacesUpdated()
-    -- Surface list got udpated so refresh GUI
+    -- Surface list got updated so refresh GUI
     for _, player in pairs(game.players) do
         local playerSettings = global.playerSettings[player.index]
         if playerSettings.gui ~= nil then
@@ -685,14 +712,6 @@ function GUI.toggleMainWindow(event)
         -- Create frame without caption (we have our own title_bar)
         local mainWindow = player.gui.screen.add { type = "frame", name = "tlbe-main-window", direction = "vertical" }
         playerSettings.gui = {}
-        if playerSettings.guiPersist == nil then
-            playerSettings.guiPersist = {
-                -- initialize persisting gui configurations
-                selectedCamera = 1,
-                selectedCameraTracker = 1,
-                selectedTracker = 1
-            }
-        end
 
         -- Add title bar
         local title_bar = mainWindow.add { type = "flow" }
@@ -840,7 +859,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     }
     playerGUI.cameraInfo.add {
         type = "textfield",
-        name = "camera-transtion-period",
+        name = "camera-transition-period",
         tooltip = { "tooltip.camera-transitionperiod" },
         style = "tlbe_config_half_width_textfield",
         numeric = true,
@@ -1217,7 +1236,7 @@ function GUI.updateCameraConfig(cameraInfo, camera)
         cameraInfo["camera-name"].text = camera.name
         cameraInfo["camera-frame-rate"].text = string.format("%d", camera.frameRate or 25)
         cameraInfo["camera-speed-gain"].text = string.format("%d", camera.speedGain or 60)
-        cameraInfo["camera-transtion-period"].text = string.format("%2.2f", camera.transitionPeriod or 1.5)
+        cameraInfo["camera-transition-period"].text = string.format("%2.2f", camera.transitionPeriod or 1.5)
         cameraInfo["camera-entity-info"].state = camera.entityInfo
         cameraInfo["camera-always-day"].state = camera.alwaysDay
         resolutionFlow["camera-resolution-x"].text = string.format("%d", camera.width or 1920)
@@ -1463,6 +1482,23 @@ function GUI.fancyListBoxSelectItem(fancyList, selectedIndex)
         end
         element.style = style
     end
+end
+
+---@param player LuaPlayer
+---@param playerSettings playerSettings
+---@param index integer
+function GUI.setSelectedCamera(player, playerSettings, index)
+    index = Utils.clamp(1, #playerSettings.cameras, index)
+    playerSettings.guiPersist.selectedCamera = index
+
+    GUI.updateTakeScreenshotButton(player, playerSettings)
+end
+
+---@param player LuaPlayer
+---@param playerSettings playerSettings
+function GUI.updateTakeScreenshotButton(player, playerSettings)
+    local available = playerSettings.cameras[playerSettings.guiPersist.selectedCamera].enabled == false
+    player.set_shortcut_available("tlbe-screenshot-shortcut", available)
 end
 
 return GUI
