@@ -121,7 +121,7 @@ function Camera.followTracker(playerSettings, player, camera, tracker, forceZoom
         camera.zoom = Camera.zoom(camera, tracker)
     end
 
-    Camera.updateChartTags(player, camera)
+    Camera.updateChartTags(player, camera, tracker)
 end
 
 function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
@@ -246,14 +246,17 @@ function Camera.setZoomPeriod(camera, zoomPeriod)
     Camera.updateConfig(camera)
 end
 
-function Camera.updateChartTags(player, camera)
+function Camera.updateChartTags(player, camera, tracker)
     local x = camera.centerPos.x
     local y = camera.centerPos.y
-    local halfwidth = 60   -- fixme
-    local halfheight = 60  -- fixme
+    local zoom = camera.zoom
+    local width = camera.width / (tileSize * zoom)
+    local height = camera.height / (tileSize * zoom)
+    local half_width = width / 2
+    local half_height = height / 2
 
 
-    local function modifyTag(name, pos, txt)
+    local function modifyTag(name, pos, icon, txt)
         local tag = camera.chart_tags[name]
         if tag ~= nil then
             tag.destroy()
@@ -261,19 +264,20 @@ function Camera.updateChartTags(player, camera)
 
         camera.chart_tags[name] = player.force.add_chart_tag(player.surface, {
             position = pos,
+            icon = icon,
             text = txt,
         })
     end
 
-    modifyTag('center', {x, y}, "┼")
-    modifyTag('north-east', {x+halfwidth, y-halfheight}, "┐")
-    modifyTag('east', {x+halfwidth, y}, "│")
-    modifyTag('south-east', {x+halfwidth,y+halfheight}, "┘")
-    modifyTag('south', {x,y+halfheight}, "─")
-    modifyTag('south-west', {x-halfheight,y+halfheight}, "└")
-    modifyTag('west', {x-halfheight,y}, "│")
-    modifyTag('north-west', {x-halfheight,y-halfheight}, "┌")
-    modifyTag('north', {x,y-halfheight}, "─")
+    -- modifyTag('center',     {x,             y},             nil, "┼")
+    modifyTag('north-east', {x+half_width,  y-half_height}, { name = "signal-box-north-east", type = "virtual"}, nil)
+    -- modifyTag('east',       {x+half_width,  y},             nil, "│")
+    modifyTag('south-east', {x+half_width,  y+half_height}, { name = "signal-box-south-east", type = "virtual"}, nil)
+    -- modifyTag('south',      {x,             y+half_height}, nil, "─")
+    modifyTag('south-west', {x-half_width,  y+half_height}, { name = "signal-box-south-west", type = "virtual"}, nil)
+    -- modifyTag('west',       {x-half_width,  y},             nil, "│")
+    modifyTag('north-west', {x-half_width,  y-half_height}, { name = "signal-box-north-west", type = "virtual"}, nil)
+    -- modifyTag('north',      {x,             y-half_height}, nil, "─")
 end
 
 return Camera
