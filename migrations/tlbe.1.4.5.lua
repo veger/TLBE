@@ -2,6 +2,8 @@ if global.playerSettings == nil then
     goto SkipMigration
 end
 
+local Camera = require("scripts.camera")
+
 -- Convert to new Camera transitionData
 for player_index, player in pairs(game.players) do
     ---@type playerSettings
@@ -19,8 +21,10 @@ for player_index, player in pairs(game.players) do
             ---@diagnostic disable-next-line: undefined-field
             local ticksLeft = activeTracker.lastChange - game.tick
             if activeTracker.realtimeCamera then
+                ---@diagnostic disable-next-line: undefined-field -- Renamed in v1.5.0
                 ticksLeft = ticksLeft + (camera.zoomTicksRealtime or 0)
             else
+                ---@diagnostic disable-next-line: undefined-field -- Renamed in v1.5.0
                 ticksLeft = ticksLeft + (camera.zoomTicks or 0)
             end
 
@@ -29,6 +33,15 @@ for player_index, player in pairs(game.players) do
                 player.print({ "migration-issue-transitiondata2" }, { r = 1, g = 0.5, b = 0 })
                 warned = true
             end
+
+            ---@diagnostic disable-next-line: undefined-field -- Renamed in v1.5.0
+            camera.transitionPeriod = camera.zoomPeriod
+            camera.changeId = 0 -- prevent initialzing an 'empty' transition
+            Camera.updateConfig(camera)
+
+            camera.zoomPeriod = nil
+            camera.zoomTicks = nil
+            camera.zoomTicksRealtime = nil
         end
     end
 

@@ -3,6 +3,7 @@ Version: 1.5.0
 
   Changes:
     - Use 10 digits for screenshot numbers.
+    - Use 'transition' when mentioning camera movement (instead of zoom)
     - Fix camera transition issue, caused when camera is paused during transition (active transitions will be BROKEN)
 
 ---------------------------------------------------------------------------------------------------

@@ -21,9 +21,9 @@ local Tracker = require("scripts.tracker")
 --- @field trackers Tracker.tracker[]
 --- @field width number
 --- @field zoom number
---- @field zoomPeriod number Time (in seconds) a transition should take
---- @field zoomTicks number Time (in ticks) a transition should take (calculated from zoomPeriod and speedGain)
---- @field zoomTicksRealtime number Time (in ticks) a transition should take as if there was no speedGain (calculated from zoomPeriod)
+--- @field transitionPeriod number Time (in seconds) a transition should take
+--- @field transitionTicks number Time (in ticks) a transition should take (calculated from transitionPeriod and speedGain)
+--- @field transitionTicksRealtime number Time (in ticks) a transition should take as if there was no speedGain (calculated from transitionPeriod)
 --- @field transitionData Camera.cameraTransition|nil When set, a transtion is active
 
 local Camera = {}
@@ -72,7 +72,7 @@ function Camera.newCamera(player, cameraList)
         height = 1080,
         frameRate = 25,
         speedGain = 60,
-        zoomPeriod = 1.5
+        transitionPeriod = 1.5
     }
 
     Camera.updateConfig(camera)
@@ -84,9 +84,9 @@ end
 ---@param camera Camera.camera
 function Camera.updateConfig(camera)
     camera.screenshotInterval = math.max(math.floor((ticks_per_second * camera.speedGain) / camera.frameRate), 1)
-    camera.zoomTicks = math.max(math.floor(ticks_per_second * camera.zoomPeriod * camera.speedGain), 1)
+    camera.transitionTicks = math.max(math.floor(ticks_per_second * camera.transitionPeriod * camera.speedGain), 1)
     camera.realtimeInterval = math.max(math.floor(ticks_per_second / camera.frameRate), 1)
-    camera.zoomTicksRealtime = math.max(math.floor(ticks_per_second * camera.zoomPeriod), 1)
+    camera.transitionTicksRealtime = math.max(math.floor(ticks_per_second * camera.transitionPeriod), 1)
 end
 
 ---Update the name of the Camera and its save folder and name.
@@ -101,26 +101,26 @@ end
 
 ---@param camera Camera.camera
 function Camera.refreshConfig(camera)
-    local zoomPeriod, frameRate, speedGain
+    local transitionPeriod, frameRate, speedGain
     if camera.speedGain == nil then
         -- Try to recover as good as possible...
-        zoomPeriod = camera.zoomTicksRealtime / ticks_per_second
+        transitionPeriod = camera.transitionTicksRealtime / ticks_per_second
         frameRate = ticks_per_second / camera.realtimeInterval
 
-        local speedGain1 = camera.zoomTicks / (ticks_per_second * zoomPeriod)
+        local speedGain1 = camera.transitionTicks / (ticks_per_second * transitionPeriod)
         local speedGain2 = (camera.screenshotInterval * frameRate) / ticks_per_second
         speedGain = (speedGain1 + speedGain2) / 2
     else
-        zoomPeriod = camera.zoomTicks / (camera.speedGain * ticks_per_second)
+        transitionPeriod = camera.transitionTicks / (camera.speedGain * ticks_per_second)
         frameRate = math.floor((ticks_per_second * camera.speedGain) / camera.screenshotInterval)
 
         -- Two ways to calculate speedGain, so take average
-        local speedGain1 = camera.zoomTicks / (ticks_per_second * camera.zoomPeriod)
+        local speedGain1 = camera.transitionTicks / (ticks_per_second * camera.transitionPeriod)
         local speedGain2 = (camera.screenshotInterval * camera.frameRate) / ticks_per_second
         speedGain = (speedGain1 + speedGain2) / 2
     end
 
-    camera.zoomPeriod = math.floor(zoomPeriod * 100) / 100
+    camera.transitionPeriod = math.floor(transitionPeriod * 100) / 100
     camera.frameRate = math.floor(frameRate + 0.5)
     camera.speedGain = math.floor(speedGain * 100) / 100
 end
@@ -279,15 +279,17 @@ function Camera.setSpeedGain(camera, speedGain)
     Camera.updateConfig(camera)
 end
 
-function Camera.setZoomPeriod(camera, zoomPeriod)
-    zoomPeriod = tonumber(zoomPeriod)
+--- @param camera Camera.camera
+--- @param transitionPeriod any
+function Camera.setTransitionPeriod(camera, transitionPeriod)
+    transitionPeriod = tonumber(transitionPeriod)
 
-    if zoomPeriod == nil or zoomPeriod < 0 then
+    if transitionPeriod == nil or transitionPeriod < 0 then
         -- keep minimum zoom period (0 = disabled)
-        zoomPeriod = 0
+        transitionPeriod = 0
     end
 
-    camera.zoomPeriod = zoomPeriod
+    camera.transitionPeriod = transitionPeriod
     Camera.updateConfig(camera)
 end
 
@@ -295,9 +297,9 @@ end
 --- @param tracker Tracker.tracker
 function Camera.getTranstionTicks(camera, tracker)
     if tracker.realtimeCamera then
-        return camera.zoomTicksRealtime
+        return camera.transitionTicksRealtime
     else
-        return camera.zoomTicks
+        return camera.transitionTicks
     end
 end
 

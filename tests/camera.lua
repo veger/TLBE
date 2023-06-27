@@ -66,11 +66,11 @@ function TestCamera:SetUp()
                 {
                     width = 20 * tileSize,
                     height = 15 * tileSize,
-                    screenshotInterval = 1, -- do not skip any ticks for these tests
-                    realtimeInterval = 1,   -- do not skip any ticks for these tests
-                    zoomTicks = 1,          -- zoom immediately for these tests
-                    zoomTicksRealtime = 1,  -- zoom immediately for these tests
-                    changeId = -1,          -- Make sure it is different than tracker.changeId
+                    screenshotInterval = 1,      -- do not skip any ticks for these tests
+                    realtimeInterval = 1,        -- do not skip any ticks for these tests
+                    transitionTicks = 1,         -- zoom immediately for these tests
+                    transitionTicksRealtime = 1, -- zoom immediately for these tests
+                    changeId = -1,               -- Make sure it is different than tracker.changeId
                 }
             ) do
                 camera[k] = v
@@ -112,7 +112,7 @@ function TestCamera:TestTransitionFromPlayerToBaseTracker()
     lu.assertEquals(self.testCameraPlayer2.centerPos.y, 0, "expected disabled camera to be unchanged")
 end
 
-function TestCamera:TestRocketLaunch()
+function TestCamera:TestRocketLaunch1()
     -- center camera at 0,0
     self.testCameraPlayer1.centerPos = { x = 0, y = 0 }
     self.testCameraPlayer1.zoom = 1

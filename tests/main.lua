@@ -153,7 +153,7 @@ function TestTick.tick()
 end
 
 function TestTick:TestFollowTracker()
-    self.camera.zoomTicks = 4         -- 4 ticks for a full transition
+    self.camera.transitionTicks = 4   -- 4 ticks for a full transition
     self.areaTracker.centerPos.x = 10 -- move 10 tiles
     self.tick()
     self.tick()
@@ -168,7 +168,7 @@ end
 
 function TestTick:TestPause()
     self.camera.enabled = false
-    self.camera.zoomTicks = 5        -- 10 ticks for a full transition
+    self.camera.transitionTicks = 5  -- 10 ticks for a full transition
     self.areaTracker.centerPos.x = 5 -- move 10 tiles, so we'd expect one tile movement per tick
 
     -- Let some ticks pass, while cmaera is paused (should not influence the result)
