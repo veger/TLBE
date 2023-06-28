@@ -329,7 +329,7 @@ function Camera.updateChartTags(player, camera)
         end
 
         camera.chart_tags[name] = player.force.add_chart_tag(
-            player.surface,
+            camera.surfaceName,
             { position = pos, icon = icon  })
     end
 
