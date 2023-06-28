@@ -5,6 +5,7 @@ local Tracker = require("scripts.tracker")
 --- @field centerPos table
 --- @field enabled boolean
 --- @field entityInfo boolean Show entity info in the screenshots
+--- @field showGUI boolean Show GUI in the screenshots
 --- @field alwaysDay boolean Render screenshot in daylight
 --- @field frameRate number
 --- @field height number
@@ -15,7 +16,7 @@ local Tracker = require("scripts.tracker")
 --- @field saveName string
 --- @field screenshotNumber integer Number for the next screenshot (when sequentialNames is set in player settings)
 --- @field screenshotInterval number Interval (game ticks) between two screenshots  (calculated from speedGain and frameRate)
---- @field screenshotIntervalRealtime number Interval (game ticks) between two screeenshots for realtime transitions (calculated from frameRate)
+--- @field screenshotIntervalRealtime number Interval (game ticks) between two screenshots for realtime transitions (calculated from frameRate)
 --- @field speedGain number
 --- @field surfaceName string
 --- @field trackers Tracker.tracker[]
@@ -23,12 +24,12 @@ local Tracker = require("scripts.tracker")
 --- @field zoom number
 --- @field transitionPeriod number Time (in seconds) a transition should take
 --- @field transitionTicks number Time (in ticks) a transition should take (calculated from transitionPeriod)
---- @field transitionData Camera.cameraTransition|nil When set, a transtion is active
+--- @field transitionData Camera.cameraTransition|nil When set, a transition is active
 
 local Camera = {}
 
 --- @class Camera.cameraTransition
---- @field ticks integer Number of ticks (screenshots) the transtions takes
+--- @field ticks integer Number of ticks (screenshots) the transitions takes
 --- @field transitionTicksLeft integer Number of ticks (screenshots) left of the transition
 --- @field startPosition MapPosition.0 (Center) position of the camera when the current transition started
 --- @field startZoom number Zoom factor of the camera when the current transition started
@@ -61,6 +62,7 @@ function Camera.newCamera(player, cameraList)
         enabled = false,
         surfaceName = game.surfaces[1].name,
         entityInfo = false,
+        showGUI = false,
         alwaysDay = true,
         trackers = {},
         centerPos = player.position,

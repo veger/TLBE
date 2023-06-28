@@ -169,6 +169,7 @@ function Main.takeScreenshot(player, playerSettings, camera, activeTracker)
         path = string.format("%s/%s/%010d-%s.png", playerSettings.saveFolder, camera.saveFolder, screenshotNumber
         , camera.saveName),
         show_entity_info = camera.entityInfo,
+        show_gui = camera.showGUI,
         allow_in_replay = true,
         daytime = alwaysDay
     }
