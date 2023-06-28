@@ -19,14 +19,14 @@ for player_index, player in pairs(game.players) do
         goto NextPlayer
     end
 
-    player.print {"migrated-camera"}
+    player.print { "migrated-camera" }
 
     local mainCamera = playerSettings.cameras[1]
 
     if mainCamera.zoomTicksRocket ~= nil then
         mainCamera.zoomTicksRealtime = mainCamera.zoomTicksRocket
     else
-        player.print({"migration-issue-zoomperiod"}, {r = 1, g = 0.5, b = 0})
+        player.print({ "migration-issue-zoomperiod" }, { r = 1, g = 0.5, b = 0 })
         mainCamera.zoomPeriod = 1.5
         mainCamera.zoomTicksRealtime = math.floor(ticks_per_second * mainCamera.zoomPeriod)
     end
@@ -36,7 +36,7 @@ for player_index, player in pairs(game.players) do
     else
         mainCamera.frameRate = 25
         mainCamera.realtimeInterval = math.floor(ticks_per_second / mainCamera.frameRate)
-        player.print({"migration-issue-framerate"}, {r = 1, g = 0.5, b = 0})
+        player.print({ "migration-issue-framerate" }, { r = 1, g = 0.5, b = 0 })
     end
 
     Camera.refreshConfig(mainCamera)
@@ -49,7 +49,7 @@ for player_index, player in pairs(game.players) do
     mainCamera.enabled = playerSettings.enabled
 
     -- Prepare base tracker
-    local baseBBox = Main.get_base_bbox()
+    local baseBBox = Main.getBaseBBox(game.surfaces[1].name) -- only v1.4.0 added support for surfaces
     if baseBBox ~= nil then
         local baseTracker = mainCamera.trackers[3]
         baseTracker.minPos = baseBBox.minPos
@@ -65,7 +65,7 @@ for player_index, player in pairs(game.players) do
         table.remove(mainCamera.trackers, 1)
     end
 
-    playerSettings.trackers = {table.unpack(mainCamera.trackers)}
+    playerSettings.trackers = { table.unpack(mainCamera.trackers) }
 
     -- Remove obsolete entries
     global.rocketLaunching = nil

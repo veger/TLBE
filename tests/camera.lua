@@ -11,6 +11,12 @@ local tileSize = 32
 
 TestNewCamera = {}
 
+function TestNewCamera:SetUp()
+    game = {
+        surfaces = { { name = "nauvis" } },
+    }
+end
+
 function TestNewCamera.TestUniqueName()
     local camera1 = TLBE.Camera.newCamera({ postion = { 0, 0 } }, {})
     lu.assertEquals(camera1.name, "new camera", "with empty list no index is needed")
@@ -27,7 +33,7 @@ function TestNewCamera.TestUniqueName()
 end
 
 function TestNewCamera.TestConfig()
-    local camera = TLBE.Camera.newCamera({ postion = { 0, 0 } }, {})
+    local camera = TLBE.Camera.newCamera({ position = { 0, 0 } }, {})
 
     camera.frameRate = 10       -- 10 frames / second
     camera.transitionPeriod = 2 -- 2 seconds

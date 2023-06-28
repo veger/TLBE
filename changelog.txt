@@ -9,6 +9,9 @@ Version: 1.5.0
     - Use 'transition' when mentioning camera movement (instead of zoom)
     - Fix camera transition issue, caused when camera is paused during transition (active transitions will be BROKEN)
 
+  Bugfixes:
+    - Recalculate base size for selected surface
+
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.5
 Date: 25-08-2022
@@ -33,7 +36,7 @@ Date: 11-12-2021
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.2
 Date: 27-07-2021
-  GUI:
+  Gui:
     - Improve max-zoom message and add tooltips for camera settings.
   Bugfixes:
     - Fix (default) shortcut key sequence.

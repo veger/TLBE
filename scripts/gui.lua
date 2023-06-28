@@ -92,8 +92,10 @@ function GUI.tick()
     end
 end
 
+---@param event EventData.on_gui_click
 function GUI.onClick(event)
     local player = game.players[event.player_index]
+    ---@type playerSettings
     local playerSettings = global.playerSettings[event.player_index]
 
     if event.element.name == "tlbe-main-window-close" then
@@ -214,6 +216,7 @@ function GUI.onClick(event)
         _, _, index = event.element.name:find("^camera_tracker_(%d+)$")
         if index ~= nil then
             index = tonumber(index)
+            ---@diagnostic disable-next-line: assign-type-mismatch Pattern only allows for integers
             playerSettings.guiPersist.selectedCameraTracker = index
             GUI.fancyListBoxSelectItem(playerSettings.gui.cameraTrackerList, index)
             GUI.updateTrackerInfo(
@@ -228,6 +231,7 @@ function GUI.onClick(event)
         _, _, index = event.element.name:find("^tracker_(%d+)$")
         if index ~= nil then
             index = tonumber(index)
+            ---@diagnostic disable-next-line: assign-type-mismatch Pattern only allows for integers
             playerSettings.guiPersist.selectedTracker = index
             GUI.fancyListBoxSelectItem(playerSettings.gui.trackerList, index)
             GUI.createTrackerConfigAndInfo(
@@ -382,7 +386,7 @@ function GUI.onClick(event)
         if index ~= nil then
             index = tonumber(index)
             local selectedTracker = playerSettings.trackers[index]
-            local baseBBox = Main.get_base_bbox()
+            local baseBBox = Main.getBaseBBox(selectedTracker.surfaceName)
             if baseBBox ~= nil then
                 selectedTracker.minPos = baseBBox.minPos
                 selectedTracker.maxPos = baseBBox.maxPos

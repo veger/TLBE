@@ -9,10 +9,9 @@ local lu = require("luaunit")
 TestGetBaseBBox = {}
 
 function TestGetBaseBBox.TestNoEntities()
-    -- luacheck: globals game
     game = {
         surfaces = {
-            {
+            test = {
                 find_entities_filtered = function()
                     return {}
                 end
@@ -20,17 +19,16 @@ function TestGetBaseBBox.TestNoEntities()
         }
     }
 
-    local bbox = Main.get_base_bbox()
+    local bbox = Main.getBaseBBox("test")
 
     lu.assertIsNil(bbox, "expected nil with empty base")
 end
 
 ---@diagnostic disable: need-check-nil
 function TestGetBaseBBox.TestSingleEntity()
-    -- luacheck: globals game
     game = {
         surfaces = {
-            {
+            test = {
                 find_entities_filtered = function()
                     return {
                         {
@@ -45,7 +43,7 @@ function TestGetBaseBBox.TestSingleEntity()
         }
     }
 
-    local bbox = Main.get_base_bbox()
+    local bbox = Main.getBaseBBox("test")
 
     lu.assertNotIsNil(bbox, "expected to have bbox filled in")
     lu.assertEquals(bbox.minPos.x, 1 - Utils.boundarySize)
@@ -56,10 +54,9 @@ end
 
 ---@diagnostic disable: need-check-nil
 function TestGetBaseBBox.TestMultipleEntities()
-    -- luacheck: globals game
     game = {
         surfaces = {
-            {
+            test = {
                 find_entities_filtered = function()
                     return {
                         {
@@ -93,7 +90,7 @@ function TestGetBaseBBox.TestMultipleEntities()
         }
     }
 
-    local bbox = Main.get_base_bbox()
+    local bbox = Main.getBaseBBox("test")
 
     lu.assertNotIsNil(bbox, "expected to have bbox filled in")
     lu.assertEquals(bbox.minPos.x, -1 - Utils.boundarySize)

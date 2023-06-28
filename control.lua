@@ -17,7 +17,7 @@ local function on_init()
         player.print({ "mod-loaded2" })
     end
 
-    local baseBBox = TLBE.Main.get_base_bbox()
+    local baseBBox = TLBE.Main.getBaseBBox(game.surfaces[1].name)
     if baseBBox ~= nil then
         -- Update base trackers of each player
         for index, _ in pairs(game.players) do
