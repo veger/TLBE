@@ -313,8 +313,8 @@ end
 --- @param player LuaPlayer
 --- @param camera Camera.camera
 function Camera.updateChartTags(player, camera)
-    -- we can't do this without a player or camera
-    if not player then
+    -- we can't do this without a player or force
+    if not player or not player.force then
         return
     end
     
