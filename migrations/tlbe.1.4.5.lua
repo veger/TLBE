@@ -57,7 +57,7 @@ for player_index, player in pairs(game.players) do
             camera.zoomTicks = nil
             camera.zoomTicksRealtime = nil
 
-            chart_tags = {}
+            camera.chart_tags = {}
         end
     end
 
