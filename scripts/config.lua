@@ -3,6 +3,20 @@ local Config = {}
 local Camera = require("scripts.camera")
 local Tracker = require("scripts.tracker")
 
+--- @class playerSettings
+--- @field cameras Camera.camera[]
+--- @field trackers Tracker.tracker[]
+--- @field pauseCameras boolean When true, pause all player cameras
+--- @field saveFolder string
+--- @field sequentialNames boolean
+--- @field noticeMaxZoom boolean When true the warning about the max zoom is already raised
+--- @field guiPersist persistedGUISettings
+
+--- @class persistedGUISettings
+--- @field selectedCamera integer Selected camera
+--- @field selectedTracker integer Selected tracker
+--- @field selectedCameraTracker integer Selected tracker of the selected camera
+
 --- (re)loads the mod settings and initializes player settings if needed
 function Config.reload(event)
     if event.player_index == nil then
@@ -19,10 +33,13 @@ function Config.reload(event)
         global.playerSettings[event.player_index] = playerSettings
     end
 
+    ---@diagnostic disable: assign-type-mismatch
     playerSettings.saveFolder = guiSettings["tlbe-save-folder"].value
+    ---@diagnostic disable: assign-type-mismatch
     playerSettings.sequentialNames = guiSettings["tlbe-sequential-names"].value
 end
 
+--- @return playerSettings
 function Config.newPlayerSettings(player)
     -- Setup some default trackers
     local trackers = {
@@ -38,7 +55,13 @@ function Config.newPlayerSettings(player)
     return {
         -- Setup a default camera and attach trackers to it
         cameras = { camera },
-        trackers = trackers
+        trackers = trackers,
+        guiPersist = {
+            selectedCamera = 1,
+            selectedTracker = 1,
+            selectedCameraTracker = 1
+        }
+
     }
 end
 

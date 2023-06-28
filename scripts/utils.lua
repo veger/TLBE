@@ -61,4 +61,11 @@ function Utils.findChartTag(tags, name)
     return nil
 end
 
+---@param min number
+---@param value number
+---@param max number
+function Utils.clamp(min, value, max)
+    return math.max(min, math.min(max, value))
+end
+
 return Utils

@@ -13,9 +13,7 @@ TestTrackerBase = {}
 function TestTrackerBase:SetUp()
     -- mock Factorio provided globals
     global = {}
-    -- luacheck: globals game
     game = {
-        tick = 0,
         surfaces = { { name = "nauvis" }, { name = "other-surface" } }
     }
 
@@ -28,14 +26,13 @@ function TestTrackerBase:SetUp()
     self.baseTracker = global.playerSettings[1].trackers[3]
     for k, v in pairs(
         {
-            lastChange = 1
+            changeId = 1
         }
     ) do
         self.baseTracker[k] = v
     end
 end
 
--- luacheck: globals game
 function TestTrackerBase:TestDisabledTracker()
     game.tick = 10
     self.baseTracker.enabled = false
@@ -51,14 +48,12 @@ function TestTrackerBase:TestDisabledTracker()
         }
     )
 
-    lu.assertEquals(self.baseTracker.lastChange, 1, "expected to be at old value")
+    lu.assertEquals(self.baseTracker.changeId, 1, "expected to be at old value")
     lu.assertIsNil(self.baseTracker.centerPos, "expected to be at old value")
     lu.assertIsNil(self.baseTracker.size, "expected to be at old value")
 end
 
--- luacheck: globals game
 function TestTrackerBase:TestBuildOnOtherSurface()
-    game.tick = 10
     TLBE.Main.entity_built(
         {
             created_entity = {
@@ -71,14 +66,12 @@ function TestTrackerBase:TestBuildOnOtherSurface()
         }
     )
 
-    lu.assertEquals(self.baseTracker.lastChange, 1, "expected to be at old value")
+    lu.assertEquals(self.baseTracker.changeId, 1, "expected to be at old value")
     lu.assertIsNil(self.baseTracker.centerPos, "expected to be at old value")
     lu.assertIsNil(self.baseTracker.size, "expected to be at old value")
 end
 
--- luacheck: globals game
 function TestTrackerBase:TestSingleEntityBuilt()
-    game.tick = 10
     TLBE.Main.entity_built(
         {
             created_entity = {
@@ -91,7 +84,7 @@ function TestTrackerBase:TestSingleEntityBuilt()
         }
     )
 
-    lu.assertEquals(self.baseTracker.lastChange, 10, "expected to be updated to game.tick")
+    lu.assertEquals(self.baseTracker.changeId, 2, "expected to be incremented")
     lu.assertEquals(self.baseTracker.centerPos.x, 1 + (3 - 1) / 2, "expected to center in middle of entity")
     lu.assertEquals(self.baseTracker.centerPos.y, 3 + (4 - 3) / 2, "expected to center in middle of entity")
     lu.assertEquals(
@@ -106,9 +99,7 @@ function TestTrackerBase:TestSingleEntityBuilt()
     )
 end
 
--- luacheck: globals game
 function TestTrackerBase:TestMultipleEntitiesBuilt()
-    game.tick = 10
     TLBE.Main.entity_built(
         {
             created_entity = {
@@ -121,9 +112,8 @@ function TestTrackerBase:TestMultipleEntitiesBuilt()
         }
     )
 
-    lu.assertEquals(self.baseTracker.lastChange, 10, "expected to be updated to game.tick")
+    lu.assertEquals(self.baseTracker.changeId, 2, "expected to be incremented")
 
-    game.tick = 15
     TLBE.Main.entity_built(
         {
             created_entity = {
@@ -136,7 +126,7 @@ function TestTrackerBase:TestMultipleEntitiesBuilt()
         }
     )
 
-    lu.assertEquals(self.baseTracker.lastChange, 15, "expected to be updated to game.tick")
+    lu.assertEquals(self.baseTracker.changeId, 3, "expected to be incremented")
     lu.assertEquals(self.baseTracker.centerPos.x, -2 + (3 - -2) / 2, "expected to center in middle of entity")
     lu.assertEquals(self.baseTracker.centerPos.y, 3 + (8 - 3) / 2, "expected to center in middle of entity")
     lu.assertEquals(

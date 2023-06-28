@@ -25,16 +25,12 @@ function Main.tick()
             end
 
             if previousTracker ~= nil or camera.lastKnownActiveTracker ~= activeTracker then
-                if activeTracker.smooth then
-                    -- Need a transition to activeTracker
-                    activeTracker.lastChange = game.tick
-                end
                 Camera.SetActiveTracker(camera, activeTracker)
             end
 
             -- Check if a screenshot needs to be taken
             if activeTracker.realtimeCamera then
-                if game.tick % camera.realtimeInterval ~= 0 then
+                if game.tick % camera.screenshotIntervalRealtime ~= 0 then
                     goto nextCamera
                 end
             elseif game.tick % camera.screenshotInterval ~= 0 then
@@ -43,38 +39,7 @@ function Main.tick()
 
             Tracker.tick(activeTracker, player)
 
-            -- Move to tracker
-            Camera.followTracker(playerSettings, player, camera, activeTracker, false)
-
-            local screenshotNumber
-            if playerSettings.sequentialNames then
-                screenshotNumber = camera.screenshotNumber
-                camera.screenshotNumber = camera.screenshotNumber + 1
-            else
-                screenshotNumber = game.tick
-            end
-
-            -- override the daytime if we are always day, otherwise leave it unaltered
-            local alwaysDay
-            if camera.alwaysDay then
-                -- take screenshot at full light
-                alwaysDay = 0
-            else
-                alwaysDay = nil
-            end
-
-            game.take_screenshot {
-                by_player = player,
-                surface = camera.surfaceName or game.surfaces[1],
-                position = camera.centerPos,
-                resolution = { camera.width, camera.height },
-                zoom = camera.zoom,
-                path = string.format("%s/%s/%010d-%s.png", playerSettings.saveFolder, camera.saveFolder, screenshotNumber
-                    , camera.saveName),
-                show_entity_info = camera.entityInfo,
-                allow_in_replay = true,
-                daytime = alwaysDay
-            }
+            Main.takeScreenshot(player, playerSettings, camera, activeTracker)
 
             ::nextCamera::
         end
@@ -142,7 +107,7 @@ function Main.rocket_launch(event)
                 tracker.centerPos = event.rocket_silo.position
                 tracker.size = { x = 1, y = 1 } -- don't care about size, it will fit with maxZoom
 
-                tracker.lastChange = game.tick
+                Tracker.changed(tracker)
             end
 
             ::nextTracker::
@@ -165,6 +130,48 @@ function Main.rocket_launched(event)
             ::nextTracker::
         end
     end
+end
+
+-- Update camera position (if activeTracker is provided) and take a screenshot
+---@param player LuaPlayer
+---@param playerSettings playerSettings
+---@param camera Camera.camera
+---@param activeTracker Tracker.tracker|nil
+function Main.takeScreenshot(player, playerSettings, camera, activeTracker)
+    if activeTracker ~= nil then
+        -- Move to tracker
+        Camera.followTracker(playerSettings, player, camera, activeTracker, false)
+    end
+
+    local screenshotNumber
+    if playerSettings.sequentialNames then
+        screenshotNumber = camera.screenshotNumber
+        camera.screenshotNumber = camera.screenshotNumber + 1
+    else
+        screenshotNumber = game.tick
+    end
+
+    -- override the daytime if always day is selected, otherwise leave it unaltered
+    local alwaysDay
+    if camera.alwaysDay then
+        -- take screenshot at full light
+        alwaysDay = 0
+    else
+        alwaysDay = nil
+    end
+
+    game.take_screenshot {
+        by_player = player,
+        surface = camera.surfaceName or game.surfaces[1],
+        position = camera.centerPos,
+        resolution = { camera.width, camera.height },
+        zoom = camera.zoom,
+        path = string.format("%s/%s/%010d-%s.png", playerSettings.saveFolder, camera.saveFolder, screenshotNumber
+        , camera.saveName),
+        show_entity_info = camera.entityInfo,
+        allow_in_replay = true,
+        daytime = alwaysDay
+    }
 end
 
 function Main.get_base_bbox()

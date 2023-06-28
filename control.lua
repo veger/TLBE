@@ -11,6 +11,7 @@ local function on_init()
     for index, player in pairs(game.players) do
         -- initialize player(s) when mod is loaded into existing game
         TLBE.Config.reload({ player_index = index })
+        TLBE.GUI.initialize(player, global.playerSettings[index])
 
         player.print({ "mod-loaded" }, { r = 1, g = 0.5, b = 0 })
         player.print({ "mod-loaded2" })
@@ -29,11 +30,15 @@ local function on_init()
 end
 
 -- A player got created (or joined the game)
+--- @param event EventData.on_player_created
 local function on_player_created(event)
     -- Initialize playerSettings
     TLBE.Config.reload(event)
 
-    game.players[event.player_index].print({ "mod-loaded2" }, { r = 1, g = 0.5, b = 0 })
+    local player = game.players[event.player_index]
+    player.print({ "mod-loaded2" }, { r = 1, g = 0.5, b = 0 })
+
+    TLBE.GUI.initialize(player, global.playerSettings[event.player_index])
 end
 
 local function on_tick()
@@ -62,6 +67,7 @@ script.on_event(defines.events.on_rocket_launched, TLBE.Main.rocket_launched)
 
 script.on_event("tlbe-main-window-toggle", TLBE.GUI.toggleMainWindow)
 script.on_event("tlbe-pause-cameras", TLBE.GUI.togglePauseCameras)
+script.on_event("tlbe-take-screenshot", TLBE.GUI.takeScreenshot)
 script.on_event(defines.events.on_lua_shortcut, TLBE.GUI.onShortcut)
 
 script.on_event(defines.events.on_tick, on_tick)
