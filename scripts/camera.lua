@@ -313,6 +313,11 @@ end
 --- @param player LuaPlayer
 --- @param camera Camera.camera
 function Camera.updateChartTags(player, camera)
+    -- we can't do this without a player or camera
+    if not player then
+        return
+    end
+    
     -- we have duplicated calculations for recovering tile coordinates from center/zoom
     -- if we had a third box, I think it would be worth extracting this logic/data somehow
 
