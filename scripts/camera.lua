@@ -1,6 +1,20 @@
 local Utils = require("scripts.utils")
 local Tracker = require("scripts.tracker")
 
+local capture_box = {
+    ne = { name = "signal-capture-north-east", type = "virtual" },
+    se = { name = "signal-capture-south-east", type = "virtual" },
+    sw = { name = "signal-capture-south-west", type = "virtual" },
+    nw = { name = "signal-capture-north-west", type = "virtual" },
+}
+
+local target_box = {
+    ne = { name = "signal-target-north-east", type = "virtual" },
+    se = { name = "signal-target-south-east", type = "virtual" },
+    sw = { name = "signal-target-south-west", type = "virtual" },
+    nw = { name = "signal-target-north-west", type = "virtual" },
+}
+
 --- @class Camera.camera
 --- @field centerPos table
 --- @field enabled boolean
@@ -19,6 +33,7 @@ local Tracker = require("scripts.tracker")
 --- @field speedGain number
 --- @field surfaceName string
 --- @field trackers Tracker.tracker[]
+--- @field chart_tags table Chart tags used to render viewfinder boxes on the map
 --- @field width number
 --- @field zoom number
 --- @field transitionPeriod number Time (in seconds) a transition should take
@@ -150,7 +165,7 @@ function Camera.followTracker(playerSettings, player, camera, tracker, disableSm
         camera.zoom = Camera.zoom(camera, tracker)
     end
 
-    Camera.updateChartTags(player, camera, tracker)
+    Camera.updateChartTags(player, camera)
 end
 
 --- @param playerSettings playerSettings
@@ -295,7 +310,42 @@ function Camera.setTransitionPeriod(camera, transitionPeriod)
     Camera.updateConfig(camera)
 end
 
-function Camera.updateChartTags(player, camera, tracker)
+--- @param player LuaPlayer
+--- @param camera Camera.camera
+function Camera.updateChartTags(player, camera)
+    -- we have duplicated calculations for recovering tile coordinates from center/zoom
+    -- if we had a third box, I think it would be worth extracting this logic/data somehow
+
+    --- do the work of deleting and reinstating the tag
+    local function modifyTag(name, pos, icon)
+        local tag = camera.chart_tags[name]
+        if tag ~= nil then
+            tag.destroy()
+        end
+
+        camera.chart_tags[name] = player.force.add_chart_tag(
+            player.surface,
+            { position = pos, icon = icon  })
+    end
+
+    -- we really should only be doing this once, not on every zoom step, but I don't see how
+    local transitionData = camera.transitionData
+    if transitionData ~= nil then
+        local x = transitionData.endPosition.x
+        local y = transitionData.endPosition.y
+        local zoom = transitionData.endZoom
+        local width = camera.width / (tileSize * zoom)
+        local height = camera.height / (tileSize * zoom)
+        local half_width = width / 2
+        local half_height = height / 2
+
+        modifyTag('target_ne', {x+half_width,  y-half_height}, target_box.ne)
+        modifyTag('target_se', {x+half_width,  y+half_height}, target_box.se)
+        modifyTag('target_sw', {x-half_width,  y+half_height}, target_box.sw)
+        modifyTag('target_nw', {x-half_width,  y-half_height}, target_box.nw)
+    end
+
+    -- the current capture target box, which may be moving
     local x = camera.centerPos.x
     local y = camera.centerPos.y
     local zoom = camera.zoom
@@ -304,29 +354,10 @@ function Camera.updateChartTags(player, camera, tracker)
     local half_width = width / 2
     local half_height = height / 2
 
-
-    local function modifyTag(name, pos, icon, txt)
-        local tag = camera.chart_tags[name]
-        if tag ~= nil then
-            tag.destroy()
-        end
-
-        camera.chart_tags[name] = player.force.add_chart_tag(player.surface, {
-            position = pos,
-            icon = icon,
-            text = txt,
-        })
-    end
-
-    -- modifyTag('center',     {x,             y},             nil, "┼")
-    modifyTag('north-east', {x+half_width,  y-half_height}, { name = "signal-box-north-east", type = "virtual"}, nil)
-    -- modifyTag('east',       {x+half_width,  y},             nil, "│")
-    modifyTag('south-east', {x+half_width,  y+half_height}, { name = "signal-box-south-east", type = "virtual"}, nil)
-    -- modifyTag('south',      {x,             y+half_height}, nil, "─")
-    modifyTag('south-west', {x-half_width,  y+half_height}, { name = "signal-box-south-west", type = "virtual"}, nil)
-    -- modifyTag('west',       {x-half_width,  y},             nil, "│")
-    modifyTag('north-west', {x-half_width,  y-half_height}, { name = "signal-box-north-west", type = "virtual"}, nil)
-    -- modifyTag('north',      {x,             y-half_height}, nil, "─")
+    modifyTag('capture_ne', {x+half_width,  y-half_height}, capture_box.ne)
+    modifyTag('capture_se', {x+half_width,  y+half_height}, capture_box.se)
+    modifyTag('capture_sw', {x-half_width,  y+half_height}, capture_box.sw)
+    modifyTag('capture_nw', {x-half_width,  y-half_height}, capture_box.nw)
 end
 
 return Camera

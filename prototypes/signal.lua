@@ -1,3 +1,6 @@
+local capture_tint = {0.9,0.9,0.9}
+local target_tint = {0.1,0.6,0.2}
+
 data:extend({
     {
         type = "item-subgroup",
@@ -7,11 +10,11 @@ data:extend({
     },
     {
         type = "virtual-signal",
-        name = "signal-box-north-west",
+        name = "signal-capture-north-west",
         icons = {
             {
                 icon = "__TLBE__/graphics/box-north-west.png",
-                tint = {1,1,1}
+                tint = capture_tint
             }
         },
         icon_size = 32,
@@ -21,11 +24,11 @@ data:extend({
     },
     {
         type = "virtual-signal",
-        name = "signal-box-south-west",
+        name = "signal-capture-south-west",
         icons = {
             {
                 icon = "__TLBE__/graphics/box-south-west.png",
-                tint = {0, 0, 1},
+                tint = capture_tint,
             }
         },
         icon_size = 32,
@@ -35,11 +38,11 @@ data:extend({
     },
     {
         type = "virtual-signal",
-        name = "signal-box-south-east",
+        name = "signal-capture-south-east",
         icons = {
             {
                 icon = "__TLBE__/graphics/box-south-east.png",
-                tint = {1,0,0}
+                tint = capture_tint
             }
         },
         icon_size = 32,
@@ -50,11 +53,68 @@ data:extend({
     },
     {
         type = "virtual-signal",
-        name = "signal-box-north-east",
+        name = "signal-capture-north-east",
         icons = {
             {
                 icon = "__TLBE__/graphics/box-north-east.png",
-                tint = {0, 1, 0},
+                tint = capture_tint,
+            }
+        },
+        icon_size = 32,
+        icon_mipmaps = 1,
+        subgroup = "virtual-signal-TLBE",
+        order = "d"
+    },
+    {
+        type = "virtual-signal",
+        name = "signal-target-north-west",
+        icons = {
+            {
+                icon = "__TLBE__/graphics/box-north-west.png",
+                tint = target_tint
+            }
+        },
+        icon_size = 32,
+        icon_mipmaps = 1,
+        subgroup = "virtual-signal-TLBE",
+        order = "a"
+    },
+    {
+        type = "virtual-signal",
+        name = "signal-target-south-west",
+        icons = {
+            {
+                icon = "__TLBE__/graphics/box-south-west.png",
+                tint = target_tint,
+            }
+        },
+        icon_size = 32,
+        icon_mipmaps = 1,
+        subgroup = "virtual-signal-TLBE",
+        order = "b"
+    },
+    {
+        type = "virtual-signal",
+        name = "signal-target-south-east",
+        icons = {
+            {
+                icon = "__TLBE__/graphics/box-south-east.png",
+                tint = target_tint
+            }
+        },
+        icon_size = 32,
+        tint = {0, 1, 0},
+        icon_mipmaps = 1,
+        subgroup = "virtual-signal-TLBE",
+        order = "c"
+    },
+    {
+        type = "virtual-signal",
+        name = "signal-target-north-east",
+        icons = {
+            {
+                icon = "__TLBE__/graphics/box-north-east.png",
+                tint = target_tint,
             }
         },
         icon_size = 32,
