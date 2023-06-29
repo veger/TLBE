@@ -77,7 +77,7 @@ data:extend({
         icon_size = 32,
         icon_mipmaps = 1,
         subgroup = "tlbe-virtual-signal",
-        order = "a"
+        order = "e"
     },
     {
         type = "virtual-signal",
@@ -91,7 +91,7 @@ data:extend({
         icon_size = 32,
         icon_mipmaps = 1,
         subgroup = "tlbe-virtual-signal",
-        order = "b"
+        order = "f"
     },
     {
         type = "virtual-signal",
@@ -106,7 +106,7 @@ data:extend({
         tint = {0, 1, 0},
         icon_mipmaps = 1,
         subgroup = "tlbe-virtual-signal",
-        order = "c"
+        order = "g"
     },
     {
         type = "virtual-signal",
@@ -120,6 +120,6 @@ data:extend({
         icon_size = 32,
         icon_mipmaps = 1,
         subgroup = "tlbe-virtual-signal",
-        order = "d"
+        order = "h"
     }
 })
