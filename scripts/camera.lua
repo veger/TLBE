@@ -331,7 +331,7 @@ function Camera.refreshChartTags(player, camera, iconSet, centerPos, zoom)
 
 
     local chartTags = camera.chartTags
-    local function modifyTag(icon, pos)
+    local function createTag(icon, pos)
         camera.chartTags[icon.name] = player.force.add_chart_tag(
             camera.surfaceName,
             { position = pos, icon = icon  })
@@ -354,10 +354,10 @@ function Camera.refreshChartTags(player, camera, iconSet, centerPos, zoom)
         local half_width = width / 2
         local half_height = height / 2
 
-        modifyTag(iconSet.ne, {x+half_width,  y-half_height})
-        modifyTag(iconSet.se, {x+half_width,  y+half_height})
-        modifyTag(iconSet.sw, {x-half_width,  y+half_height})
-        modifyTag(iconSet.nw, {x-half_width,  y-half_height})
+        createTag(iconSet.ne, {x+half_width,  y-half_height})
+        createTag(iconSet.se, {x+half_width,  y+half_height})
+        createTag(iconSet.sw, {x-half_width,  y+half_height})
+        createTag(iconSet.nw, {x-half_width,  y-half_height})
     end
 end
 
