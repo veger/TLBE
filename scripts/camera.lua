@@ -1,14 +1,14 @@
 local Utils = require("scripts.utils")
 local Tracker = require("scripts.tracker")
 
-local capture_box = {
+local captureBox = {
     ne = { name = "signal-capture-north-east", type = "virtual" },
     se = { name = "signal-capture-south-east", type = "virtual" },
     sw = { name = "signal-capture-south-west", type = "virtual" },
     nw = { name = "signal-capture-north-west", type = "virtual" },
 }
 
-local target_box = {
+local targetBox = {
     ne = { name = "signal-target-north-east", type = "virtual" },
     se = { name = "signal-target-south-east", type = "virtual" },
     sw = { name = "signal-target-south-west", type = "virtual" },
@@ -346,10 +346,10 @@ function Camera.updateChartTags(player, camera)
         local half_width = width / 2
         local half_height = height / 2
 
-        modifyTag('target_ne', {x+half_width,  y-half_height}, target_box.ne)
-        modifyTag('target_se', {x+half_width,  y+half_height}, target_box.se)
-        modifyTag('target_sw', {x-half_width,  y+half_height}, target_box.sw)
-        modifyTag('target_nw', {x-half_width,  y-half_height}, target_box.nw)
+        modifyTag('target_ne', {x+half_width,  y-half_height}, targetBox.ne)
+        modifyTag('target_se', {x+half_width,  y+half_height}, targetBox.se)
+        modifyTag('target_sw', {x-half_width,  y+half_height}, targetBox.sw)
+        modifyTag('target_nw', {x-half_width,  y-half_height}, targetBox.nw)
     end
 
     -- the current capture target box, which may be moving
@@ -361,10 +361,10 @@ function Camera.updateChartTags(player, camera)
     local half_width = width / 2
     local half_height = height / 2
 
-    modifyTag('capture_ne', {x+half_width,  y-half_height}, capture_box.ne)
-    modifyTag('capture_se', {x+half_width,  y+half_height}, capture_box.se)
-    modifyTag('capture_sw', {x-half_width,  y+half_height}, capture_box.sw)
-    modifyTag('capture_nw', {x-half_width,  y-half_height}, capture_box.nw)
+    modifyTag('capture_ne', {x+half_width,  y-half_height}, captureBox.ne)
+    modifyTag('capture_se', {x+half_width,  y+half_height}, captureBox.se)
+    modifyTag('capture_sw', {x-half_width,  y+half_height}, captureBox.sw)
+    modifyTag('capture_nw', {x-half_width,  y-half_height}, captureBox.nw)
 end
 
 return Camera
