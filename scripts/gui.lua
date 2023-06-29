@@ -1439,7 +1439,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
             local originFlow = trackerInfo.add { type = "flow", name = "cityblock-origin" }
             originFlow.add {
                 type = "textfield",
-                name = "tlbe-tracker-cityblock-origin-x",
+                name = "tlbe-tracker-cityblock-offset-x",
                 style = "tlbe_config_half_width_textfield",
                 numeric = true,
                 allow_negative = true
@@ -1447,7 +1447,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
             originFlow.add { type = "label", caption = "/", style = "tlbe_config_half_width_label" }
             originFlow.add {
                 type = "textfield",
-                name = "tlbe-tracker-cityblock-origin-y",
+                name = "tlbe-tracker-cityblock-offset-y",
                 style = "tlbe_config_half_width_textfield",
                 numeric = true,
                 allow_negative = true
