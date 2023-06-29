@@ -34,7 +34,7 @@ local target_box = {
 --- @field speedGain number
 --- @field surfaceName string
 --- @field trackers Tracker.tracker[]
---- @field chart_tags table Chart tags used to render viewfinder boxes on the map
+--- @field chartTags table Chart tags used to render viewfinder boxes on the map
 --- @field width number
 --- @field zoom number
 --- @field transitionPeriod number Time (in seconds) a transition should take
@@ -83,7 +83,7 @@ function Camera.newCamera(player, cameraList)
         centerPos = player.position,
         zoom = 1,
         screenshotNumber = 1,
-        chart_tags = {},
+        chartTags = {},
         -- settings/defaults
         width = 1920,
         height = 1080,
@@ -325,12 +325,12 @@ function Camera.updateChartTags(player, camera)
 
     --- do the work of deleting and reinstating the tag
     local function modifyTag(name, pos, icon)
-        local tag = camera.chart_tags[name]
+        local tag = camera.chartTags[name]
         if tag ~= nil then
             tag.destroy()
         end
 
-        camera.chart_tags[name] = player.force.add_chart_tag(
+        camera.chartTags[name] = player.force.add_chart_tag(
             camera.surfaceName,
             { position = pos, icon = icon  })
     end
