@@ -1,5 +1,5 @@
-local capture_tint = { 0.9, 0.9, 0.9 }
-local target_tint = { 0.1, 0.6, 0.2 }
+local captureTint = { 0.9, 0.9, 0.9 }
+local targetTint = { 0.1, 0.6, 0.2 }
 
 data:extend({
     {
@@ -14,7 +14,7 @@ data:extend({
         icons = {
             {
                 icon = "__TLBE__/graphics/box-north-west.png",
-                tint = capture_tint
+                tint = captureTint
             }
         },
         icon_size = 32,
@@ -28,7 +28,7 @@ data:extend({
         icons = {
             {
                 icon = "__TLBE__/graphics/box-south-west.png",
-                tint = capture_tint,
+                tint = captureTint,
             }
         },
         icon_size = 32,
@@ -42,7 +42,7 @@ data:extend({
         icons = {
             {
                 icon = "__TLBE__/graphics/box-south-east.png",
-                tint = capture_tint
+                tint = captureTint
             }
         },
         icon_size = 32,
@@ -57,7 +57,7 @@ data:extend({
         icons = {
             {
                 icon = "__TLBE__/graphics/box-north-east.png",
-                tint = capture_tint,
+                tint = captureTint,
             }
         },
         icon_size = 32,
@@ -71,7 +71,7 @@ data:extend({
         icons = {
             {
                 icon = "__TLBE__/graphics/box-north-west.png",
-                tint = target_tint
+                tint = targetTint
             }
         },
         icon_size = 32,
@@ -85,7 +85,7 @@ data:extend({
         icons = {
             {
                 icon = "__TLBE__/graphics/box-south-west.png",
-                tint = target_tint,
+                tint = targetTint,
             }
         },
         icon_size = 32,
@@ -99,11 +99,10 @@ data:extend({
         icons = {
             {
                 icon = "__TLBE__/graphics/box-south-east.png",
-                tint = target_tint
+                tint = targetTint
             }
         },
         icon_size = 32,
-        tint = { 0, 1, 0 },
         icon_mipmaps = 1,
         subgroup = "tlbe-virtual-signal",
         order = "g"
@@ -114,7 +113,7 @@ data:extend({
         icons = {
             {
                 icon = "__TLBE__/graphics/box-north-east.png",
-                tint = target_tint,
+                tint = targetTint,
             }
         },
         icon_size = 32,
