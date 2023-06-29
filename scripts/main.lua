@@ -169,13 +169,20 @@ function Main.takeScreenshot(player, playerSettings, camera, activeTracker)
         path = string.format("%s/%s/%010d-%s.png", playerSettings.saveFolder, camera.saveFolder, screenshotNumber
         , camera.saveName),
         show_entity_info = camera.entityInfo,
+        show_gui = camera.showGUI,
         allow_in_replay = true,
         daytime = alwaysDay
     }
 end
 
-function Main.get_base_bbox()
-    local entities = game.surfaces[1].find_entities_filtered { force = "player" }
+---@class BaseBBox
+---@field minPos MapPosition.0
+---@field maxPos MapPosition.0
+
+---@param surface string
+---@return BaseBBox|nil
+function Main.getBaseBBox(surface)
+    local entities = game.surfaces[surface].find_entities_filtered { force = "player" }
 
     if #entities == 0 then
         return nil

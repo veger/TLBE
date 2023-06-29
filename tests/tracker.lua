@@ -4,6 +4,12 @@ local lu = require("luaunit")
 
 TestNewTracker = {}
 
+function TestNewTracker:SetUp()
+    game = {
+        surfaces = { { name = "nauvis" } },
+    }
+end
+
 function TestNewTracker.TestUniqueName()
     local baseTracker = Tracker.newTracker("base")
     lu.assertEquals(baseTracker.name, "base", "with empty list use tracker type as name")

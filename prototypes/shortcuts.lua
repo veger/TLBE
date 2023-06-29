@@ -15,7 +15,7 @@ data:extend(
         {
             type = "custom-input",
             name = "tlbe-take-screenshot",
-            key_sequence = "CONTROL + SHIFT + S",
+            key_sequence = "PRINTSCREEN",
             consuming = "none"
         },
         {

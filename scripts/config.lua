@@ -10,7 +10,8 @@ local Tracker = require("scripts.tracker")
 --- @field saveFolder string
 --- @field sequentialNames boolean
 --- @field noticeMaxZoom boolean When true the warning about the max zoom is already raised
---- @field guiPersist persistedGUISettings
+--- @field gui table Contains all (volatile) GUI elements
+--- @field guiPersist persistedGUISettings Contains all persisted (between saves) GUI details
 
 --- @class persistedGUISettings
 --- @field selectedCamera integer Selected camera

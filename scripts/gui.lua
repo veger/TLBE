@@ -92,8 +92,10 @@ function GUI.tick()
     end
 end
 
+---@param event EventData.on_gui_click
 function GUI.onClick(event)
     local player = game.players[event.player_index]
+    ---@type playerSettings
     local playerSettings = global.playerSettings[event.player_index]
 
     if event.element.name == "tlbe-main-window-close" then
@@ -214,6 +216,7 @@ function GUI.onClick(event)
         _, _, index = event.element.name:find("^camera_tracker_(%d+)$")
         if index ~= nil then
             index = tonumber(index)
+            ---@diagnostic disable-next-line: assign-type-mismatch Pattern only allows for integers
             playerSettings.guiPersist.selectedCameraTracker = index
             GUI.fancyListBoxSelectItem(playerSettings.gui.cameraTrackerList, index)
             GUI.updateTrackerInfo(
@@ -228,6 +231,7 @@ function GUI.onClick(event)
         _, _, index = event.element.name:find("^tracker_(%d+)$")
         if index ~= nil then
             index = tonumber(index)
+            ---@diagnostic disable-next-line: assign-type-mismatch Pattern only allows for integers
             playerSettings.guiPersist.selectedTracker = index
             GUI.fancyListBoxSelectItem(playerSettings.gui.trackerList, index)
             GUI.createTrackerConfigAndInfo(
@@ -382,7 +386,7 @@ function GUI.onClick(event)
         if index ~= nil then
             index = tonumber(index)
             local selectedTracker = playerSettings.trackers[index]
-            local baseBBox = Main.get_base_bbox()
+            local baseBBox = Main.getBaseBBox(selectedTracker.surfaceName)
             if baseBBox ~= nil then
                 selectedTracker.minPos = baseBBox.minPos
                 selectedTracker.maxPos = baseBBox.maxPos
@@ -589,9 +593,12 @@ function GUI.onTextChanged(event)
 end
 
 function GUI.onStateChanged(event)
+    ---@type playerSettings
     local playerSettings = global.playerSettings[event.player_index]
     if event.element.name == "camera-entity-info" then
         playerSettings.cameras[playerSettings.guiPersist.selectedCamera].entityInfo = event.element.state
+    elseif event.element.name == "camera-show-gui" then
+        playerSettings.cameras[playerSettings.guiPersist.selectedCamera].showGUI = event.element.state
     elseif event.element.name == "camera-always-day" then
         playerSettings.cameras[playerSettings.guiPersist.selectedCamera].alwaysDay = event.element.state
     elseif event.element.name == "tracker-smooth" then
@@ -871,6 +878,14 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
         name = "camera-entity-info",
         caption = { "gui.label-entity-info" },
         tooltip = { "tooltip.camera-entity-info" },
+        state = false
+    }
+    playerGUI.cameraInfo.add { type = "empty-widget" }
+    playerGUI.cameraInfo.add {
+        type = "checkbox",
+        name = "camera-show-gui",
+        caption = { "gui.label-show-gui" },
+        tooltip = { "tooltip.camera-show-gui" },
         state = false
     }
     playerGUI.cameraInfo.add { type = "empty-widget" }
@@ -1229,6 +1244,8 @@ function GUI.updateCameraList(playerGUI, guiPersist, cameras)
     playerGUI.cameraSelector.selected_index = guiPersist.selectedCamera
 end
 
+---@param cameraInfo table
+---@param camera Camera.camera
 function GUI.updateCameraConfig(cameraInfo, camera)
     -- Paranoia check
     if camera ~= nil then
@@ -1238,6 +1255,7 @@ function GUI.updateCameraConfig(cameraInfo, camera)
         cameraInfo["camera-speed-gain"].text = string.format("%d", camera.speedGain or 60)
         cameraInfo["camera-transition-period"].text = string.format("%2.2f", camera.transitionPeriod or 1.5)
         cameraInfo["camera-entity-info"].state = camera.entityInfo
+        cameraInfo["camera-show-gui"].state = camera.showGUI
         cameraInfo["camera-always-day"].state = camera.alwaysDay
         resolutionFlow["camera-resolution-x"].text = string.format("%d", camera.width or 1920)
         resolutionFlow["camera-resolution-y"].text = string.format("%d", camera.height or 1080)
