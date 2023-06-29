@@ -1,11 +1,12 @@
 local GUI = {
-    allTrackers = { "area", "base", "player", "rocket" },
-    allTrackersLabels = { { "tracker-area" }, { "tracker-base" }, { "tracker-player" }, { "tracker-rocket" } },
+    allTrackers = { "area", "base", "player", "rocket", "cityblock" },
+    allTrackersLabels = { { "tracker-area" }, { "tracker-base" }, { "tracker-player" }, { "tracker-rocket" }, { "tracker-cityBlock" } },
     allTrackersLabelsMap = {
         area = { "tracker-area" },
         base = { "tracker-base" },
         player = { "tracker-player" },
-        rocket = { "tracker-rocket" }
+        rocket = { "tracker-rocket" },
+        cityBlock = { "tracker-cityBlock" },
     }
 }
 
@@ -1407,6 +1408,85 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 tooltip = { "tooltip.tracker-until-build" },
                 state = tracker.untilBuild
             }
+        elseif tracker.type == "cityblock" then
+            trackerInfo.add { 
+                type = "label",
+                caption = { "gui.label-cityblock-size" },
+                style = "description_property_name_label"
+            }
+            local sizeFlow = trackerInfo.add { type = "flow", name = "cityblock-size" }
+            sizeFlow.add {
+                type = "textfield",
+                name = "tlbe-tracker-cityblock-size-x",
+                style = "tlbe_config_half_width_textfield",
+                numeric = true,
+                allow_negative = true
+            }
+            sizeFlow.add { type = "label", caption = "/", style = "tlbe_config_half_width_label" }
+            sizeFlow.add {
+                type = "textfield",
+                name = "tlbe-tracker-cityblock-size-y",
+                style = "tlbe_config_half_width_textfield",
+                numeric = true,
+                allow_negative = true
+            }
+
+            trackerInfo.add { 
+                type = "label",
+                caption = { "gui.label-cityblock-offset" },
+                style = "description_property_name_label"
+            }
+            local originFlow = trackerInfo.add { type = "flow", name = "cityblock-origin" }
+            originFlow.add {
+                type = "textfield",
+                name = "tlbe-tracker-cityblock-origin-x",
+                style = "tlbe_config_half_width_textfield",
+                numeric = true,
+                allow_negative = true
+            }
+            originFlow.add { type = "label", caption = "/", style = "tlbe_config_half_width_label" }
+            originFlow.add {
+                type = "textfield",
+                name = "tlbe-tracker-cityblock-origin-y",
+                style = "tlbe_config_half_width_textfield",
+                numeric = true,
+                allow_negative = true
+            }
+
+            trackerInfo.add { 
+                type = "label",
+                caption = { "gui.label-cityblock-currentblock" },
+                style = "description_property_name_label"
+            }
+            local blockFlow = trackerInfo.add { type = "flow", name = "cityblock-block" }
+            blockFlow.add {
+                type = "textfield",
+                name = "tlbe-tracker-currentblock-x",
+                style = "tlbe_config_half_width_textfield",
+                numeric = true,
+                allow_negative = true
+            }
+            blockFlow.add { type = "label", caption = "/", style = "tlbe_config_half_width_label" }
+            blockFlow.add {
+                type = "textfield",
+                name = "tlbe-tracker-cityblock-y",
+                style = "tlbe_config_half_width_textfield",
+                numeric = true,
+                allow_negative = true
+            }
+
+            trackerInfo.add { 
+                type = "label",
+                caption = { "gui.label-cityblock-blockScale" },
+                style = "description_property_name_label"
+            }
+            trackerInfo.add {
+                type = "textfield",
+                name = "tlbe-tracker-cityblock-blockScale",
+                style = "tlbe_config_half_width_textfield",
+                numeric = true,
+                allow_negative = false
+            }
         end
     end
 
@@ -1428,6 +1508,9 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
     GUI.updateTrackerInfo(trackerInfo, tracker)
 end
 
+---comment
+---@param trackerInfo any
+---@param tracker Tracker.tracker
 function GUI.updateTrackerConfig(trackerInfo, tracker)
     if tracker == nil then
         trackerInfo["tracker-name"].enabled = false
@@ -1469,6 +1552,18 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
             blFlow["tlbe-tracker-left"].style = style
         elseif tracker.type == "player" then
             trackerInfo["tracker-untilbuild"].state = tracker.untilBuild
+        elseif tracker.type == "cityblock" then
+            local cityBlock = tracker.cityBlock
+            if cityBlock == nil then
+                return
+            end
+            trackerInfo["tlbe-tracker-cityblock-size-x"].text = string.format("%d", cityBlock.blockSize.x)
+            trackerInfo["tlbe-tracker-cityblock-size-y"].text = string.format("%d", cityBlock.blockSize.y)
+            trackerInfo["tlbe-tracker-cityblock-offset-x"].text = string.format("%d", cityBlock.blockOffset.x)
+            trackerInfo["tlbe-tracker-cityblock-offset-y"].text = string.format("%d", cityBlock.blockOffset.y)
+            trackerInfo["tlbe-tracker-cityblock-currentblock-x"].text = string.format("%d", cityBlock.currentBlock.x)
+            trackerInfo["tlbe-tracker-cityblock-currentblock-x"].text = string.format("%d", cityBlock.currentBlock.y)
+            trackerInfo["tlbe-tracker-cityblock-blockScale"].text = string.format("%d", cityBlock.blockScale)
         end
     end
 end

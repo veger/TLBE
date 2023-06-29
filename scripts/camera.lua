@@ -50,13 +50,7 @@ local Camera = {}
 --- @field startZoom number Zoom factor of the camera when the current transition started
 --- @field endPosition MapPosition.0 (Center) position of the tracker when the current transition started
 --- @field endZoom number Zoom factor of the tracker when the current transition started
-Camera.cameraTransition = {}
-function Camera.cameraTransition:new(o)
-    o = o or {}
-    setmetatable(o, self)
-    self.__index = self
-    return o
-end
+Camera.CameraTransition = {}
 
 local maxZoom = 1
 local minZoom = 0.031250
@@ -176,26 +170,25 @@ end
 --- @param tracker Tracker.tracker
 function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
     if camera.changeId ~= tracker.changeId then
-        camera.transitionData = Camera.cameraTransition:new({
+        camera.transitionData = {
             startPosition = camera.centerPos,
             startZoom = camera.zoom,
             endPosition = tracker.centerPos,
             endZoom = Camera.zoom(camera, tracker),
             ticks = camera.transitionTicks,
             transitionTicksLeft = camera.transitionTicks
-        })
+        }
         camera.changeId = tracker.changeId
         -- new transition target, so new tags
-        Camera.refreshChartTags(
-            player, camera, targetBox, 
-            camera.transitionData.endPosition, camera.transitionData.endZoom)
+        Camera.refreshChartTags(player, camera, targetBox, camera.transitionData.endPosition,
+            camera.transitionData.endZoom)
     end
 
     local transitionData = camera.transitionData
     if transitionData ~= nil then
         transitionData.transitionTicksLeft = transitionData.transitionTicksLeft - 1
 
-        camera.centerPos, camera.zoom = transitionData:lerp()
+        camera.centerPos, camera.zoom = Camera.CameraTransition.lerp(transitionData)
 
         if camera.zoom < minZoom then
             if playerSettings.noticeMaxZoom == nil then
@@ -220,15 +213,16 @@ function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
 end
 
 --- Linear interpolation for the Camera transition.
+--- @param transitionData Camera.cameraTransition
 --- @return MapPosition.0 centerPos Current center position for the camera
 --- @return number zoom Current zoom (factor) for the camera
-function Camera.cameraTransition:lerp()
-    local t = Utils.clamp(0, 1, (self.ticks - self.transitionTicksLeft) / self.ticks)
+function Camera.CameraTransition.lerp(transitionData)
+    local t = Utils.clamp(0, 1, (transitionData.ticks - transitionData.transitionTicksLeft) / transitionData.ticks)
     return {
-            x = self.startPosition.x + (self.endPosition.x - self.startPosition.x) * t,
-            y = self.startPosition.y + (self.endPosition.y - self.startPosition.y) * t
+            x = transitionData.startPosition.x + (transitionData.endPosition.x - transitionData.startPosition.x) * t,
+            y = transitionData.startPosition.y + (transitionData.endPosition.y - transitionData.startPosition.y) * t
         },
-        self.startZoom + (self.endZoom - self.startZoom) * t
+        transitionData.startZoom + (transitionData.endZoom - transitionData.startZoom) * t
 end
 
 -- Calculate desired zoom
@@ -329,12 +323,11 @@ function Camera.refreshChartTags(player, camera, iconSet, centerPos, zoom)
         return
     end
 
-
     local chartTags = camera.chartTags
     local function createTag(icon, pos)
         camera.chartTags[icon.name] = player.force.add_chart_tag(
             camera.surfaceName,
-            { position = pos, icon = icon  })
+            { position = pos, icon = icon })
     end
 
     -- remove all the old tags
@@ -354,10 +347,10 @@ function Camera.refreshChartTags(player, camera, iconSet, centerPos, zoom)
         local half_width = width / 2
         local half_height = height / 2
 
-        createTag(iconSet.ne, {x+half_width,  y-half_height})
-        createTag(iconSet.se, {x+half_width,  y+half_height})
-        createTag(iconSet.sw, {x-half_width,  y+half_height})
-        createTag(iconSet.nw, {x-half_width,  y-half_height})
+        createTag(iconSet.ne, { x + half_width, y - half_height })
+        createTag(iconSet.se, { x + half_width, y + half_height })
+        createTag(iconSet.sw, { x - half_width, y + half_height })
+        createTag(iconSet.nw, { x - half_width, y - half_height })
     end
 end
 
