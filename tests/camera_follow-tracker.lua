@@ -41,8 +41,7 @@ function TestCameraFollowTracker:SetUp()
         centerPos = { x = 0, y = 0 },
         screenshotInterval = 1,
         zoom = 1,
-        transitionTicks = 15,
-        chart_tags = {},
+        transitionTicks = 15
     }
 
     self.testTracker = {

@@ -1,5 +1,5 @@
-local capture_tint = {0.9,0.9,0.9}
-local target_tint = {0.1,0.6,0.2}
+local capture_tint = { 0.9, 0.9, 0.9 }
+local target_tint = { 0.1, 0.6, 0.2 }
 
 data:extend({
     {
@@ -46,7 +46,7 @@ data:extend({
             }
         },
         icon_size = 32,
-        tint = {0, 1, 0},
+        tint = { 0, 1, 0 },
         icon_mipmaps = 1,
         subgroup = "tlbe-virtual-signal",
         order = "c"
@@ -103,7 +103,7 @@ data:extend({
             }
         },
         icon_size = 32,
-        tint = {0, 1, 0},
+        tint = { 0, 1, 0 },
         icon_mipmaps = 1,
         subgroup = "tlbe-virtual-signal",
         order = "g"

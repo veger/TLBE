@@ -186,9 +186,8 @@ function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
         })
         camera.changeId = tracker.changeId
         -- new transition target, so new tags
-        Camera.refreshChartTags(
-            player, camera, targetBox, 
-            camera.transitionData.endPosition, camera.transitionData.endZoom)
+        Camera.refreshChartTags(player, camera, targetBox, camera.transitionData.endPosition,
+            camera.transitionData.endZoom)
     end
 
     local transitionData = camera.transitionData
@@ -329,12 +328,11 @@ function Camera.refreshChartTags(player, camera, iconSet, centerPos, zoom)
         return
     end
 
-
     local chartTags = camera.chartTags
     local function createTag(icon, pos)
         camera.chartTags[icon.name] = player.force.add_chart_tag(
             camera.surfaceName,
-            { position = pos, icon = icon  })
+            { position = pos, icon = icon })
     end
 
     -- remove all the old tags
@@ -354,10 +352,10 @@ function Camera.refreshChartTags(player, camera, iconSet, centerPos, zoom)
         local half_width = width / 2
         local half_height = height / 2
 
-        createTag(iconSet.ne, {x+half_width,  y-half_height})
-        createTag(iconSet.se, {x+half_width,  y+half_height})
-        createTag(iconSet.sw, {x-half_width,  y+half_height})
-        createTag(iconSet.nw, {x-half_width,  y-half_height})
+        createTag(iconSet.ne, { x + half_width, y - half_height })
+        createTag(iconSet.se, { x + half_width, y + half_height })
+        createTag(iconSet.sw, { x - half_width, y + half_height })
+        createTag(iconSet.nw, { x - half_width, y - half_height })
     end
 end
 
