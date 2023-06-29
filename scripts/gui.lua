@@ -132,7 +132,8 @@ function GUI.onClick(event)
             return
         end
 
-        table.remove(playerSettings.cameras, playerSettings.guiPersist.selectedCamera)
+        local deadCamera = table.remove(playerSettings.cameras, playerSettings.guiPersist.selectedCamera)
+        Camera.destroy(deadCamera)
 
         if playerSettings.guiPersist.selectedCamera > #playerSettings.cameras then
             GUI.setSelectedCamera(player, playerSettings, #playerSettings.cameras)

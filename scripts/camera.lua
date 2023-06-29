@@ -167,7 +167,7 @@ function Camera.followTracker(playerSettings, player, camera, tracker, disableSm
         camera.zoom = Camera.zoom(camera, tracker)
     end
 
-    Camera.updateChartTags(player, camera)
+    Camera.refreshChartTags(player, camera, captureBox, camera.centerPos, camera.zoom)
 end
 
 --- @param playerSettings playerSettings
@@ -185,6 +185,10 @@ function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
             transitionTicksLeft = camera.transitionTicks
         })
         camera.changeId = tracker.changeId
+        -- new transition target, so new tags
+        Camera.refreshChartTags(
+            player, camera, targetBox, 
+            camera.transitionData.endPosition, camera.transitionData.endZoom)
     end
 
     local transitionData = camera.transitionData
@@ -209,6 +213,8 @@ function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
         if transitionData.transitionTicksLeft <= 0 then
             -- Transition finished
             camera.transitionData = nil
+            -- delete target tags
+            Camera.refreshChartTags(player, camera, targetBox, nil, nil)
         end
     end
 end
@@ -312,59 +318,54 @@ function Camera.setTransitionPeriod(camera, transitionPeriod)
     Camera.updateConfig(camera)
 end
 
---- @param player LuaPlayer
---- @param camera Camera.camera
-function Camera.updateChartTags(player, camera)
+--- @param player       LuaPlayer
+--- @param camera       Camera.camera   the camera this box is for
+--- @param iconSet      table           corner icons
+--- @param centerPos    table?          x,y pair giving the center of the box, nil if deleting tags
+--- @param zoom         number?         zoom factor for the box, ignored if deleting tags
+function Camera.refreshChartTags(player, camera, iconSet, centerPos, zoom)
     -- we can't do this without a player or force
     if not player or not player.force then
         return
     end
-    
-    -- we have duplicated calculations for recovering tile coordinates from center/zoom
-    -- if we had a third box, I think it would be worth extracting this logic/data somehow
 
-    --- do the work of deleting and reinstating the tag
-    local function modifyTag(name, pos, icon)
-        local tag = camera.chartTags[name]
-        if tag ~= nil then
-            tag.destroy()
-        end
 
-        camera.chartTags[name] = player.force.add_chart_tag(
+    local chartTags = camera.chartTags
+    local function modifyTag(icon, pos)
+        camera.chartTags[icon.name] = player.force.add_chart_tag(
             camera.surfaceName,
             { position = pos, icon = icon  })
     end
 
-    -- we really should only be doing this once, not on every zoom step, but I don't see how
-    local transitionData = camera.transitionData
-    if transitionData ~= nil then
-        local x = transitionData.endPosition.x
-        local y = transitionData.endPosition.y
-        local zoom = transitionData.endZoom
+    -- remove all the old tags
+    for _, icon in pairs(iconSet) do
+        if chartTags[icon.name] then
+            chartTags[icon.name].destroy()
+            chartTags[icon.name] = nil
+        end
+    end
+
+    -- add new ones if we are given data
+    if centerPos then
+        local x = centerPos.x
+        local y = centerPos.y
         local width = camera.width / (tileSize * zoom)
         local height = camera.height / (tileSize * zoom)
         local half_width = width / 2
         local half_height = height / 2
 
-        modifyTag('target_ne', {x+half_width,  y-half_height}, targetBox.ne)
-        modifyTag('target_se', {x+half_width,  y+half_height}, targetBox.se)
-        modifyTag('target_sw', {x-half_width,  y+half_height}, targetBox.sw)
-        modifyTag('target_nw', {x-half_width,  y-half_height}, targetBox.nw)
+        modifyTag(iconSet.ne, {x+half_width,  y-half_height})
+        modifyTag(iconSet.se, {x+half_width,  y+half_height})
+        modifyTag(iconSet.sw, {x-half_width,  y+half_height})
+        modifyTag(iconSet.nw, {x-half_width,  y-half_height})
     end
+end
 
-    -- the current capture target box, which may be moving
-    local x = camera.centerPos.x
-    local y = camera.centerPos.y
-    local zoom = camera.zoom
-    local width = camera.width / (tileSize * zoom)
-    local height = camera.height / (tileSize * zoom)
-    local half_width = width / 2
-    local half_height = height / 2
-
-    modifyTag('capture_ne', {x+half_width,  y-half_height}, captureBox.ne)
-    modifyTag('capture_se', {x+half_width,  y+half_height}, captureBox.se)
-    modifyTag('capture_sw', {x-half_width,  y+half_height}, captureBox.sw)
-    modifyTag('capture_nw', {x-half_width,  y-half_height}, captureBox.nw)
+--- @param camera Camera.camera
+function Camera.destroy(camera)
+    for _, tag in pairs(camera.chartTags) do
+        tag.destroy()
+    end
 end
 
 return Camera
