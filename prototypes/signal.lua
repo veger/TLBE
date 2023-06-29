@@ -4,7 +4,7 @@ local target_tint = {0.1,0.6,0.2}
 data:extend({
     {
         type = "item-subgroup",
-        name = "virtual-signal-TLBE",
+        name = "tlbe-virtual-signal",
         group = "signals",
         order = "z",
     },
@@ -19,7 +19,7 @@ data:extend({
         },
         icon_size = 32,
         icon_mipmaps = 1,
-        subgroup = "virtual-signal-TLBE",
+        subgroup = "tlbe-virtual-signal",
         order = "a"
     },
     {
@@ -33,7 +33,7 @@ data:extend({
         },
         icon_size = 32,
         icon_mipmaps = 1,
-        subgroup = "virtual-signal-TLBE",
+        subgroup = "tlbe-virtual-signal",
         order = "b"
     },
     {
@@ -48,7 +48,7 @@ data:extend({
         icon_size = 32,
         tint = {0, 1, 0},
         icon_mipmaps = 1,
-        subgroup = "virtual-signal-TLBE",
+        subgroup = "tlbe-virtual-signal",
         order = "c"
     },
     {
@@ -62,7 +62,7 @@ data:extend({
         },
         icon_size = 32,
         icon_mipmaps = 1,
-        subgroup = "virtual-signal-TLBE",
+        subgroup = "tlbe-virtual-signal",
         order = "d"
     },
     {
@@ -76,7 +76,7 @@ data:extend({
         },
         icon_size = 32,
         icon_mipmaps = 1,
-        subgroup = "virtual-signal-TLBE",
+        subgroup = "tlbe-virtual-signal",
         order = "a"
     },
     {
@@ -90,7 +90,7 @@ data:extend({
         },
         icon_size = 32,
         icon_mipmaps = 1,
-        subgroup = "virtual-signal-TLBE",
+        subgroup = "tlbe-virtual-signal",
         order = "b"
     },
     {
@@ -105,7 +105,7 @@ data:extend({
         icon_size = 32,
         tint = {0, 1, 0},
         icon_mipmaps = 1,
-        subgroup = "virtual-signal-TLBE",
+        subgroup = "tlbe-virtual-signal",
         order = "c"
     },
     {
@@ -119,7 +119,7 @@ data:extend({
         },
         icon_size = 32,
         icon_mipmaps = 1,
-        subgroup = "virtual-signal-TLBE",
+        subgroup = "tlbe-virtual-signal",
         order = "d"
     }
 })
