@@ -1,6 +1,20 @@
 local Utils = require("scripts.utils")
 local Tracker = require("scripts.tracker")
 
+local captureBox = {
+    ne = { name = "signal-capture-north-east", type = "virtual" },
+    se = { name = "signal-capture-south-east", type = "virtual" },
+    sw = { name = "signal-capture-south-west", type = "virtual" },
+    nw = { name = "signal-capture-north-west", type = "virtual" },
+}
+
+local targetBox = {
+    ne = { name = "signal-target-north-east", type = "virtual" },
+    se = { name = "signal-target-south-east", type = "virtual" },
+    sw = { name = "signal-target-south-west", type = "virtual" },
+    nw = { name = "signal-target-north-west", type = "virtual" },
+}
+
 --- @class Camera.camera
 --- @field centerPos table
 --- @field enabled boolean
@@ -20,6 +34,7 @@ local Tracker = require("scripts.tracker")
 --- @field speedGain number
 --- @field surfaceName string
 --- @field trackers Tracker.tracker[]
+--- @field chartTags table Chart tags used to render viewfinder boxes on the map
 --- @field width number
 --- @field zoom number
 --- @field transitionPeriod number Time (in seconds) a transition should take
@@ -68,6 +83,7 @@ function Camera.newCamera(player, cameraList)
         centerPos = player.position,
         zoom = 1,
         screenshotNumber = 1,
+        chartTags = {},
         -- settings/defaults
         width = 1920,
         height = 1080,
@@ -150,6 +166,8 @@ function Camera.followTracker(playerSettings, player, camera, tracker, disableSm
         camera.centerPos = tracker.centerPos
         camera.zoom = Camera.zoom(camera, tracker)
     end
+
+    Camera.refreshChartTags(player, camera, captureBox, camera.centerPos, camera.zoom)
 end
 
 --- @param playerSettings playerSettings
@@ -167,6 +185,9 @@ function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
             transitionTicksLeft = camera.transitionTicks
         })
         camera.changeId = tracker.changeId
+        -- new transition target, so new tags
+        Camera.refreshChartTags(player, camera, targetBox, camera.transitionData.endPosition,
+            camera.transitionData.endZoom)
     end
 
     local transitionData = camera.transitionData
@@ -191,6 +212,8 @@ function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
         if transitionData.transitionTicksLeft <= 0 then
             -- Transition finished
             camera.transitionData = nil
+            -- delete target tags
+            Camera.refreshChartTags(player, camera, targetBox, nil, nil)
         end
     end
 end
@@ -292,6 +315,55 @@ function Camera.setTransitionPeriod(camera, transitionPeriod)
 
     camera.transitionPeriod = transitionPeriod
     Camera.updateConfig(camera)
+end
+
+--- @param player       LuaPlayer
+--- @param camera       Camera.camera   the camera this box is for
+--- @param iconSet      table           corner icons
+--- @param centerPos    table?          x,y pair giving the center of the box, nil if deleting tags
+--- @param zoom         number?         zoom factor for the box, ignored if deleting tags
+function Camera.refreshChartTags(player, camera, iconSet, centerPos, zoom)
+    -- we can't do this without a player or force
+    if not player or not player.force then
+        return
+    end
+
+    local chartTags = camera.chartTags
+    local function createTag(icon, pos)
+        camera.chartTags[icon.name] = player.force.add_chart_tag(
+            camera.surfaceName,
+            { position = pos, icon = icon })
+    end
+
+    -- remove all the old tags
+    for _, icon in pairs(iconSet) do
+        if chartTags[icon.name] then
+            chartTags[icon.name].destroy()
+            chartTags[icon.name] = nil
+        end
+    end
+
+    -- add new ones if we are given data
+    if centerPos then
+        local x = centerPos.x
+        local y = centerPos.y
+        local width = camera.width / (tileSize * zoom)
+        local height = camera.height / (tileSize * zoom)
+        local half_width = width / 2
+        local half_height = height / 2
+
+        createTag(iconSet.ne, { x + half_width, y - half_height })
+        createTag(iconSet.se, { x + half_width, y + half_height })
+        createTag(iconSet.sw, { x - half_width, y + half_height })
+        createTag(iconSet.nw, { x - half_width, y - half_height })
+    end
+end
+
+--- @param camera Camera.camera
+function Camera.destroy(camera)
+    for _, tag in pairs(camera.chartTags) do
+        tag.destroy()
+    end
 end
 
 return Camera
