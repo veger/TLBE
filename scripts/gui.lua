@@ -215,9 +215,7 @@ function GUI.onClick(event)
         end
     elseif event.element.name == "tlbe-tracker-cityblock-player" then
         local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
-        player.print("old city block: " .. selectedTracker.cityBlock.currentBlock.x .. "," .. selectedTracker.cityBlock.currentBlock.y)
         Tracker.focusCityBlock(selectedTracker, player.position)
-        player.print("new city block: " .. selectedTracker.cityBlock.currentBlock.x .. "," .. selectedTracker.cityBlock.currentBlock.y)
 
         GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
         GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
