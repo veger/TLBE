@@ -98,15 +98,17 @@ function Tracker.recalculateCityBlock(tracker)
 
     local width = cityBlock.blockSize.x
     local height = cityBlock.blockSize.y
-    local widthRad = width * cityBlock.blockScale / 2
-    local heightRad = height * cityBlock.blockScale / 2
+    local widthDiam = width * cityBlock.blockScale
+    local heightDiam = height * cityBlock.blockScale
+    local widthRad = widthDiam / 2
+    local heightRad = heightDiam / 2
 
     tracker.centerPos = {
         x = cityBlock.blockOffset.x + cityBlock.currentBlock.x * width + width / 2,
         y = cityBlock.blockOffset.y + cityBlock.currentBlock.y * height + height / 2
     }
 
-    tracker.size = { x = widthRad, y = heightRad }
+    tracker.size = { x = widthDiam, y = heightDiam }
 
     tracker.minPos = {
         x = tracker.centerPos.x - widthRad,
