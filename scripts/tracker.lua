@@ -33,7 +33,7 @@ function Tracker.cityBlock:new()
     cityBlock.blockSize    = { x=32, y=32 }
     cityBlock.blockOffset  = { x=0,  y=0 }
     cityBlock.currentBlock = { x=0,  y=0 }
-    cityBlock.blockScale   = 1.1
+    cityBlock.blockScale   = 1.5
     return cityBlock
 end
 
