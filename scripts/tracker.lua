@@ -19,12 +19,12 @@ local Tracker = {}
 --- @field maxPos MapPosition.0 TopRight of tracker area
 --- @field cityBlock Tracker.cityBlock? City block vital statistics, used when type="cityblock"
 
-Tracker.cityBlock = {}
 --- @class Tracker.cityBlock
 --- @field blockSize TilePosition The size of a single city block
 --- @field blockOffset TilePosition The offset where the "first" city block begins
 --- @field currentBlock TilePosition An abuse of the TilePosition type to number the blocks (1,4 is one block over and 4 blocks up)
 --- @field blockScale number How many blocks to hold in view (1=1 block, 1.5=1.5 blocks etc.)
+Tracker.cityBlock = {}
 
 ---@return Tracker.cityBlock
 function Tracker.cityBlock:new()

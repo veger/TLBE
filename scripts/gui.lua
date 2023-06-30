@@ -1436,16 +1436,16 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 caption = { "gui.label-cityblock-offset" },
                 style = "description_property_name_label"
             }
-            local originFlow = trackerInfo.add { type = "flow", name = "cityblock-origin" }
-            originFlow.add {
+            local offsetFlow = trackerInfo.add { type = "flow", name = "cityblock-offset" }
+            offsetFlow.add {
                 type = "textfield",
                 name = "tlbe-tracker-cityblock-offset-x",
                 style = "tlbe_config_half_width_textfield",
                 numeric = true,
                 allow_negative = true
             }
-            originFlow.add { type = "label", caption = "/", style = "tlbe_config_half_width_label" }
-            originFlow.add {
+            offsetFlow.add { type = "label", caption = "/", style = "tlbe_config_half_width_label" }
+            offsetFlow.add {
                 type = "textfield",
                 name = "tlbe-tracker-cityblock-offset-y",
                 style = "tlbe_config_half_width_textfield",
@@ -1461,7 +1461,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
             local blockFlow = trackerInfo.add { type = "flow", name = "cityblock-block" }
             blockFlow.add {
                 type = "textfield",
-                name = "tlbe-tracker-currentblock-x",
+                name = "tlbe-tracker-cityblock-currentblock-x",
                 style = "tlbe_config_half_width_textfield",
                 numeric = true,
                 allow_negative = true
@@ -1469,7 +1469,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
             blockFlow.add { type = "label", caption = "/", style = "tlbe_config_half_width_label" }
             blockFlow.add {
                 type = "textfield",
-                name = "tlbe-tracker-cityblock-y",
+                name = "tlbe-tracker-cityblock-currentblock-y",
                 style = "tlbe_config_half_width_textfield",
                 numeric = true,
                 allow_negative = true
@@ -1557,12 +1557,19 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
             if cityBlock == nil then
                 return
             end
-            trackerInfo["tlbe-tracker-cityblock-size-x"].text = string.format("%d", cityBlock.blockSize.x)
-            trackerInfo["tlbe-tracker-cityblock-size-y"].text = string.format("%d", cityBlock.blockSize.y)
-            trackerInfo["tlbe-tracker-cityblock-offset-x"].text = string.format("%d", cityBlock.blockOffset.x)
-            trackerInfo["tlbe-tracker-cityblock-offset-y"].text = string.format("%d", cityBlock.blockOffset.y)
-            trackerInfo["tlbe-tracker-cityblock-currentblock-x"].text = string.format("%d", cityBlock.currentBlock.x)
-            trackerInfo["tlbe-tracker-cityblock-currentblock-x"].text = string.format("%d", cityBlock.currentBlock.y)
+            
+            local sizeFlow = trackerInfo["cityblock-size"]
+            sizeFlow["tlbe-tracker-cityblock-size-x"].text = string.format("%d", cityBlock.blockSize.x)
+            sizeFlow["tlbe-tracker-cityblock-size-y"].text = string.format("%d", cityBlock.blockSize.y)
+
+            local offsetFlow = trackerInfo["cityblock-offset"]
+            offsetFlow["tlbe-tracker-cityblock-offset-x"].text = string.format("%d", cityBlock.blockOffset.x)
+            offsetFlow["tlbe-tracker-cityblock-offset-y"].text = string.format("%d", cityBlock.blockOffset.y)
+
+            local blockFlow = trackerInfo["cityblock-block"]
+            blockFlow["tlbe-tracker-cityblock-currentblock-x"].text = string.format("%d", cityBlock.currentBlock.x)
+            blockFlow["tlbe-tracker-cityblock-currentblock-y"].text = string.format("%d", cityBlock.currentBlock.y)
+
             trackerInfo["tlbe-tracker-cityblock-blockScale"].text = string.format("%d", cityBlock.blockScale)
         end
     end
