@@ -213,6 +213,55 @@ function GUI.onClick(event)
             GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
             GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
         end
+    elseif event.element.name == "tlbe-tracker-cityblock-size-x" then
+        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+        selectedTracker.cityBlock.blockSize.x = math.floor(tonumber(event.element.text))
+        Tracker.recalculateCityBlock(selectedTracker)
+
+        GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+        GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+    elseif event.element.name == "tlbe-tracker-cityblock-size-y" then
+        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+        selectedTracker.cityBlock.blockSize.y = math.floor(tonumber(event.element.text))
+        Tracker.recalculateCityBlock(selectedTracker)
+
+        GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+        GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+    elseif event.element.name == "tlbe-tracker-cityblock-offset-x" then
+        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+        selectedTracker.cityBlock.blockOffset.x = math.floor(tonumber(event.element.text))
+        Tracker.recalculateCityBlock(selectedTracker)
+
+        GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+        GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+    elseif event.element.name == "tlbe-tracker-cityblock-offset-y" then
+        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+        selectedTracker.cityBlock.blockOffset.y = math.floor(tonumber(event.element.text))
+        Tracker.recalculateCityBlock(selectedTracker)
+
+        GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+        GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+    elseif event.element.name == "tlbe-tracker-cityblock-currentblock-x" then
+        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+        selectedTracker.cityBlock.currentBlock.x = math.floor(tonumber(event.element.text))
+        Tracker.recalculateCityBlock(selectedTracker)
+
+        GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+        GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+    elseif event.element.name == "tlbe-tracker-cityblock-currentblock-y" then
+        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+        selectedTracker.cityBlock.currentBlock.y = math.floor(tonumber(event.element.text))
+        Tracker.recalculateCityBlock(selectedTracker)
+
+        GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+        GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+    elseif event.element.name == "tlbe-tracker-cityblock-blockScale" then
+        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+        selectedTracker.cityBlock.blockScale = tonumber(event.element.text)
+        Tracker.recalculateCityBlock(selectedTracker)
+
+        GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+        GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
     else
         local _, index
         _, _, index = event.element.name:find("^camera_tracker_(%d+)$")
@@ -1570,7 +1619,7 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
             blockFlow["tlbe-tracker-cityblock-currentblock-x"].text = string.format("%d", cityBlock.currentBlock.x)
             blockFlow["tlbe-tracker-cityblock-currentblock-y"].text = string.format("%d", cityBlock.currentBlock.y)
 
-            trackerInfo["tlbe-tracker-cityblock-blockScale"].text = string.format("%d", cityBlock.blockScale)
+            trackerInfo["tlbe-tracker-cityblock-blockScale"].text = string.format("%.1f", cityBlock.blockScale)
         end
     end
 end
