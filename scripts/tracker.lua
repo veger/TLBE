@@ -85,6 +85,23 @@ function Tracker.newTracker(trackerType, trackerList)
     return newTracker
 end
 
+---comment  find the city block containing the position and relocate to that one
+---@param tracker Tracker.tracker
+---@param pos MapPosition.0|MapPosition.1
+function Tracker.focusCityBlock(tracker, pos)
+    local cityBlock = tracker.cityBlock
+    if cityBlock == nil then
+        return
+    end
+
+    cityBlock.currentBlock = {
+        x = math.floor((pos.x - cityBlock.blockOffset.x) / cityBlock.blockSize.x),
+        y = math.floor((pos.y - cityBlock.blockOffset.y) / cityBlock.blockSize.y),
+    }
+
+    Tracker.recalculateCityBlock(tracker)
+end
+
 ---comment recalculates the tracker vital stats from the city block vital stats
 ---@param tracker Tracker.tracker
 function Tracker.recalculateCityBlock(tracker)

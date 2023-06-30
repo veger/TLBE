@@ -213,6 +213,14 @@ function GUI.onClick(event)
             GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
             GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
         end
+    elseif event.element.name == "tlbe-tracker-cityblock-player" then
+        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+        player.print("old city block: " .. selectedTracker.cityBlock.currentBlock.x .. "," .. selectedTracker.cityBlock.currentBlock.y)
+        Tracker.focusCityBlock(selectedTracker, player.position)
+        player.print("new city block: " .. selectedTracker.cityBlock.currentBlock.x .. "," .. selectedTracker.cityBlock.currentBlock.y)
+
+        GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+        GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
     else
         local _, index
         _, _, index = event.element.name:find("^camera_tracker_(%d+)$")
@@ -1534,6 +1542,19 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 style = "tlbe_config_half_width_textfield",
                 numeric = true,
                 allow_negative = false
+            }
+
+            trackerInfo.add {
+                type = "label",
+                caption = { "gui.label-cityblock-centerOnPlayer" },
+                style = "description_property_name_label"
+            }
+            trackerInfo.add {
+                type = "sprite-button",
+                name = "tlbe-tracker-cityblock-player",
+                tooltip = { "tooltip.tracker-area-player" },
+                sprite = "utility/show_player_names_in_map_view_black",
+                style = "tlbe_config_button"
             }
         end
     end
