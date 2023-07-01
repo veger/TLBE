@@ -597,51 +597,51 @@ function GUI.onTextChanged(event)
             GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
             GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
         end
-    elseif event.element.name == "tlbe-tracker-cityblock-size-x" then
+    elseif event.element.name == "tlbe-tracker-cityblock-size-x" and event.element.text ~= nil then
         local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         selectedTracker.cityBlock.blockSize.x = math.floor(tonumber(event.element.text))
         Tracker.recalculateCityBlock(selectedTracker)
 
         GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
         GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
-    elseif event.element.name == "tlbe-tracker-cityblock-size-y" then
+    elseif event.element.name == "tlbe-tracker-cityblock-size-y" and event.element.text ~= nil then
         local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         selectedTracker.cityBlock.blockSize.y = math.floor(tonumber(event.element.text))
         Tracker.recalculateCityBlock(selectedTracker)
 
         GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
         GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
-    elseif event.element.name == "tlbe-tracker-cityblock-offset-x" then
+    elseif event.element.name == "tlbe-tracker-cityblock-offset-x" and event.element.text ~= nil then
         local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         selectedTracker.cityBlock.blockOffset.x = math.floor(tonumber(event.element.text))
         Tracker.recalculateCityBlock(selectedTracker)
 
         GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
         GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
-    elseif event.element.name == "tlbe-tracker-cityblock-offset-y" then
+    elseif event.element.name == "tlbe-tracker-cityblock-offset-y" and event.element.text ~= nil then
         local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         selectedTracker.cityBlock.blockOffset.y = math.floor(tonumber(event.element.text))
         Tracker.recalculateCityBlock(selectedTracker)
 
         GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
         GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
-    elseif event.element.name == "tlbe-tracker-cityblock-currentblock-x" then
+    elseif event.element.name == "tlbe-tracker-cityblock-currentblock-x" and event.element.text ~= nil then
         local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         selectedTracker.cityBlock.currentBlock.x = math.floor(tonumber(event.element.text))
         Tracker.recalculateCityBlock(selectedTracker)
 
         GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
         GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
-    elseif event.element.name == "tlbe-tracker-cityblock-currentblock-y" then
+    elseif event.element.name == "tlbe-tracker-cityblock-currentblock-y" and event.element.text ~= nil then
         local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         selectedTracker.cityBlock.currentBlock.y = math.floor(tonumber(event.element.text))
         Tracker.recalculateCityBlock(selectedTracker)
 
         GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
         GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
-    elseif event.element.name == "tlbe-tracker-cityblock-blockScale" then
+    elseif event.element.name == "tlbe-tracker-cityblock-blockScale" and event.element.text ~= nil then
         local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
-        selectedTracker.cityBlock.blockScale = tonumber(event.element.text)
+        selectedTracker.cityBlock.blockScale = math.floor(tonumber(event.element.text) * 100)/100
         Tracker.recalculateCityBlock(selectedTracker)
 
         GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
