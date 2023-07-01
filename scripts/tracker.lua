@@ -85,7 +85,7 @@ function Tracker.newTracker(trackerType, trackerList)
     return newTracker
 end
 
----comment  find the city block containing the position and relocate to that one
+---find the city block containing the position and relocate to that one
 ---@param tracker Tracker.tracker
 ---@param pos MapPosition.0|MapPosition.1
 function Tracker.focusCityBlock(tracker, pos)
