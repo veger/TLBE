@@ -645,7 +645,8 @@ function GUI.onTextChanged(event)
         Tracker.recalculateCityBlock(selectedTracker)
 
         GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
-        GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)    end
+        GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+    end
 end
 
 function GUI.onStateChanged(event)
