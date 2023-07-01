@@ -1575,7 +1575,6 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
     GUI.updateTrackerInfo(trackerInfo, tracker)
 end
 
----comment
 ---@param trackerInfo any
 ---@param tracker Tracker.tracker
 function GUI.updateTrackerConfig(trackerInfo, tracker)
