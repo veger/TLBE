@@ -77,8 +77,6 @@ function Tracker.newTracker(trackerType, trackerList)
     elseif trackerType == "cityblock" then
         -- cityblock-specific data
         newTracker.cityBlock = Tracker.cityBlock:new()
-        newTracker.minPos = { x = -5, y = -5 }
-        newTracker.maxPos = { x = 5, y = 5 }
         Tracker.recalculateCityBlock(newTracker)
     end
 
@@ -134,7 +132,7 @@ function Tracker.recalculateCityBlock(tracker)
     local maxPosX = tracker.centerPos.x + widthRad
     local maxPosY = tracker.centerPos.y + heightRad
 
-    if minPosX ~= tracker.minPos.x or minPosY ~= tracker.minPos.y or maxPosX ~= tracker.maxPos.x or maxPosY ~= tracker.maxPos.y then
+    if tacker.minPos == nil or tracker.maxPos == nil or minPosX ~= tracker.minPos.x or minPosY ~= tracker.minPos.y or maxPosX ~= tracker.maxPos.x or maxPosY ~= tracker.maxPos.y then
         tracker.minPos = {
             x = minPosX,
             y = minPosY
