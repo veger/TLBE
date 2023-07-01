@@ -132,7 +132,7 @@ function Tracker.recalculateCityBlock(tracker)
     local maxPosX = tracker.centerPos.x + widthRad
     local maxPosY = tracker.centerPos.y + heightRad
 
-    if tacker.minPos == nil or tracker.maxPos == nil or minPosX ~= tracker.minPos.x or minPosY ~= tracker.minPos.y or maxPosX ~= tracker.maxPos.x or maxPosY ~= tracker.maxPos.y then
+    if tracker.minPos == nil or tracker.maxPos == nil or minPosX ~= tracker.minPos.x or minPosY ~= tracker.minPos.y or maxPosX ~= tracker.maxPos.x or maxPosY ~= tracker.maxPos.y then
         tracker.minPos = {
             x = minPosX,
             y = minPosY
