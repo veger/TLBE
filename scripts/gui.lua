@@ -1637,7 +1637,7 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
             blockFlow["tlbe-tracker-cityblock-currentblock-x"].text = string.format("%d", cityBlock.currentBlock.x)
             blockFlow["tlbe-tracker-cityblock-currentblock-y"].text = string.format("%d", cityBlock.currentBlock.y)
 
-            trackerInfo["tlbe-tracker-cityblock-blockScale"].text = string.format("%.1f", cityBlock.blockScale)
+            trackerInfo["tlbe-tracker-cityblock-blockScale"].text = string.format("%.2f", cityBlock.blockScale)
         end
     end
 end
