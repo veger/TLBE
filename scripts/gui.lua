@@ -1,12 +1,12 @@
 local GUI = {
-    allTrackers = { "area", "base", "player", "rocket", "cityblock" },
-    allTrackersLabels = { { "tracker-area" }, { "tracker-base" }, { "tracker-player" }, { "tracker-rocket" }, { "tracker-cityBlock" } },
+    allTrackers = { "area", "base", "cityblock", "player", "rocket" },
+    allTrackersLabels = { { "tracker-area" }, { "tracker-base" }, { "tracker-cityBlock" }, { "tracker-player" }, { "tracker-rocket" } },
     allTrackersLabelsMap = {
         area = { "tracker-area" },
         base = { "tracker-base" },
+        cityBlock = { "tracker-cityBlock" },
         player = { "tracker-player" },
         rocket = { "tracker-rocket" },
-        cityBlock = { "tracker-cityBlock" },
     }
 }
 
