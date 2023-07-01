@@ -657,7 +657,12 @@ function GUI.onTextChanged(event)
             GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
             GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
         end
-    elseif event.element.name == "tlbe-tracker-cityblock-blockScale-value" and event.element.text ~= nil then
+    end
+end
+
+function GUI.onGuiConfirmed(event)
+    local playerSettings = global.playerSettings[event.player_index]
+    if event.element.name == "tlbe-tracker-cityblock-blockScale-value" and event.element.text ~= nil then
         local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         local value = tonumber(event.element.text)
         if value ~= nil then
@@ -1572,6 +1577,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 style = "tlbe_config_half_width_textfield",
                 tooltip = { "tooltip.tracker-cityblock-blockScale-value" },
                 numeric = true,
+                allow_decimal = true,
                 allow_negative = false
             }
 
@@ -1669,7 +1675,7 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
             blockFlow["tlbe-tracker-cityblock-currentblock-x"].text = string.format("%d", cityBlock.currentBlock.x)
             blockFlow["tlbe-tracker-cityblock-currentblock-y"].text = string.format("%d", cityBlock.currentBlock.y)
 
-            trackerInfo["tlbe-tracker-cityblock-blockScale-value"].text = string.format("%.2f", cityBlock.blockScale)
+            trackerInfo["tlbe-tracker-cityblock-blockScale-value"].text = string.format("%g", cityBlock.blockScale)
         end
     end
 end
