@@ -600,7 +600,7 @@ function GUI.onTextChanged(event)
     elseif event.element.name == "tlbe-tracker-cityblock-size-x" and event.element.text ~= nil then
         local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         local value = tonumber(event.element.text)
-        if value ~= nil then
+        if value ~= nil and value >= 1 then
             selectedTracker.cityBlock.blockSize.x = math.floor(value)
             Tracker.recalculateCityBlock(selectedTracker)
 
@@ -610,7 +610,7 @@ function GUI.onTextChanged(event)
     elseif event.element.name == "tlbe-tracker-cityblock-size-y" and event.element.text ~= nil then
         local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         local value = tonumber(event.element.text)
-        if value ~= nil then
+        if value ~= nil and value >= 1 then
             selectedTracker.cityBlock.blockSize.y = math.floor(value)
             Tracker.recalculateCityBlock(selectedTracker)
 
