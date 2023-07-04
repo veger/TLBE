@@ -15,6 +15,8 @@ local targetBox = {
     nw = { name = "signal-target-north-west", type = "virtual" },
 }
 
+local Camera = {}
+
 --- @class Camera.camera
 --- @field centerPos table
 --- @field enabled boolean
@@ -40,8 +42,6 @@ local targetBox = {
 --- @field transitionPeriod number Time (in seconds) a transition should take
 --- @field transitionTicks number Time (in ticks) a transition should take (calculated from transitionPeriod)
 --- @field transitionData Camera.cameraTransition|nil When set, a transition is active
-
-local Camera = {}
 
 --- @class Camera.cameraTransition
 --- @field ticks integer Number of ticks (screenshots) the transitions takes
@@ -371,11 +371,11 @@ function Camera.recordingSensor(player)
     local cameraStatuses = {}
     for _, camera in pairs(playerSettings.cameras) do
         table.insert(cameraStatuses, ", ")
-        table.insert(cameraStatuses, camera.name .. ": ")
+        table.insert(cameraStatuses, camera.name .. " = ")
         if not camera.enabled then
             table.insert(cameraStatuses, { "stats.disabled" })
         elseif camera.transitionData ~= nil then
-            table.insert(cameraStatuses, { "stats.transition" })
+            table.insert(cameraStatuses, { "stats.transition", camera.transitionData.transitionTicksLeft })
         else
             table.insert(cameraStatuses, { "stats.recording" })
         end
