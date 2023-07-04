@@ -502,6 +502,7 @@ function GUI.onSelected(event)
 end
 
 function GUI.onTextChanged(event)
+    ---@type playerSettings
     local playerSettings = global.playerSettings[event.player_index]
     if event.element.name == "camera-name" then
         Camera.setName(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
@@ -550,7 +551,7 @@ function GUI.onTextChanged(event)
         Camera.setTransitionPeriod(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
     elseif event.element.name == "camera-transition-speed-gain" then
         Camera.setTransitionSpeedGain(playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
-            event.element.text)
+            event.element.text, playerSettings.sequentialNames)
     elseif event.element.name == "tlbe-tracker-top" then
         local value = tonumber(event.element.text)
         if value ~= nil then

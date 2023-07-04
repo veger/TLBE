@@ -319,10 +319,14 @@ end
 
 ---@param camera Camera.camera
 ---@param speedGain any
-function Camera.setTransitionSpeedGain(camera, speedGain)
+---@param allowStopMotion boolean
+function Camera.setTransitionSpeedGain(camera, speedGain, allowStopMotion)
     speedGain = tonumber(speedGain)
 
-    if speedGain == nil or speedGain < 1 then
+    if speedGain == nil then
+        speedGain = 0
+    end
+    if not allowStopMotion and speedGain == 0 then
         speedGain = 1
     end
 
