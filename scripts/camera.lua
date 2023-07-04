@@ -85,7 +85,8 @@ function Camera.newCamera(player, cameraList)
         height = 1080,
         frameRate = 25,
         speedGain = 60,
-        transitionPeriod = 1.5
+        transitionPeriod = 1.5,
+        transitionSpeedGain = 60
     }
 
     Camera.updateConfig(camera)
