@@ -354,6 +354,38 @@ function Camera.refreshChartTags(player, camera, iconSet, centerPos, zoom)
     end
 end
 
+--- @param player LuaPlayer
+function Camera.recordingSensor(player)
+    local playerSettings = global.playerSettings[player.index]
+    if playerSettings.pauseCameras == true then
+        return {
+            "stats.all-paused"
+        }
+    end
+
+    local cameraStatuses = {}
+    for _, camera in pairs(playerSettings.cameras) do
+        table.insert(cameraStatuses, ", ")
+        table.insert(cameraStatuses, camera.name .. ": ")
+        if not camera.enabled then
+            table.insert(cameraStatuses, { "stats.disabled" })
+        elseif camera.transitionData ~= nil then
+            table.insert(cameraStatuses, { "stats.transition" })
+        else
+            table.insert(cameraStatuses, { "stats.recording" })
+        end
+    end
+
+    if #cameraStatuses == 0 then
+        return nil
+    end
+
+    -- Get rid of first ',' and let Factorio localization concatenate the table
+    cameraStatuses[1] = ""
+
+    return cameraStatuses
+end
+
 --- @param camera Camera.camera
 function Camera.destroy(camera)
     for _, tag in pairs(camera.chartTags) do
