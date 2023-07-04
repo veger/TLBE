@@ -357,6 +357,11 @@ end
 --- @param player LuaPlayer
 function Camera.recordingSensor(player)
     local playerSettings = global.playerSettings[player.index]
+
+    if not playerSettings.showCameraStatus then
+        return nil
+    end
+
     if playerSettings.pauseCameras == true then
         return {
             "stats.all-paused"
