@@ -136,7 +136,8 @@ function TestTick:Setup()
     self.areaTracker = Tracker.newTracker "area"
     self.camera = global.playerSettings[1].cameras[1]
     self.camera.enabled = true
-    self.camera.screenshotInterval = 1 -- take screenshot every tick
+    self.camera.screenshotInterval = 1           -- take screenshot every tick
+    self.camera.screenshotIntervalTransition = 1 -- take screenshot every tick
     global.playerSettings[1].trackers = { self.areaTracker }
     self.camera.trackers = { self.areaTracker }
     global.playerSettings[1].sequentialNames = true
@@ -168,7 +169,7 @@ function TestTick:TestPause()
     self.camera.transitionTicks = 5  -- 10 ticks for a full transition
     self.areaTracker.centerPos.x = 5 -- move 10 tiles, so we'd expect one tile movement per tick
 
-    -- Let some ticks pass, while cmaera is paused (should not influence the result)
+    -- Let some ticks pass, while camera is paused (should not influence the result)
     self.tick()
     self.tick()
     self.tick()

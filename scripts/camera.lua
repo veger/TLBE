@@ -33,13 +33,15 @@ local Camera = {}
 --- @field screenshotNumber integer Number for the next screenshot (when sequentialNames is set in player settings)
 --- @field screenshotInterval number Interval (game ticks) between two screenshots  (calculated from speedGain and frameRate)
 --- @field screenshotIntervalRealtime number Interval (game ticks) between two screenshots for realtime transitions (calculated from frameRate)
---- @field speedGain number
+--- @field screenshotIntervalTransition number Interval (game ticks) between two screenshots during transitions (calculated from frameRate)
+--- @field speedGain number Amount (factor) that the timelapse movie should speed up.
 --- @field surfaceName string
 --- @field trackers Tracker.tracker[]
 --- @field chartTags table Chart tags used to render viewfinder boxes on the map
 --- @field width number
 --- @field zoom number
 --- @field transitionPeriod number Time (in seconds) a transition should take
+--- @field transitionSpeedGain number Amount (factor) that the timelapse movie should speed up during transitions.
 --- @field transitionTicks number Time (in ticks) a transition should take (calculated from transitionPeriod)
 --- @field transitionData Camera.cameraTransition|nil When set, a transition is active
 
@@ -83,7 +85,8 @@ function Camera.newCamera(player, cameraList)
         height = 1080,
         frameRate = 25,
         speedGain = 60,
-        transitionPeriod = 1.5
+        transitionPeriod = 1.5,
+        transitionSpeedGain = 60
     }
 
     Camera.updateConfig(camera)
@@ -96,6 +99,8 @@ end
 function Camera.updateConfig(camera)
     camera.screenshotInterval = math.max(math.floor((ticks_per_second * camera.speedGain) / camera.frameRate), 1)
     camera.screenshotIntervalRealtime = math.max(math.floor(ticks_per_second / camera.frameRate), 1)
+    camera.screenshotIntervalTransition = math.max(
+        math.floor((ticks_per_second * camera.transitionSpeedGain) / camera.frameRate), 1)
     camera.transitionTicks = math.max(math.floor(camera.frameRate * camera.transitionPeriod), 1)
 end
 
@@ -234,6 +239,19 @@ function Camera.zoom(camera, tracker)
     return math.min(zoomX, zoomY, maxZoom)
 end
 
+---@param camera Camera.camera
+---@param activeTracker Tracker.tracker
+function Camera.getScreenshotInterval(camera, activeTracker)
+    if camera.transitionData ~= nil then
+        return camera.screenshotIntervalTransition
+    end
+    if activeTracker.realtimeCamera then
+        return camera.screenshotIntervalRealtime
+    end
+
+    return camera.screenshotInterval
+end
+
 function Camera.setWidth(camera, width)
     width = tonumber(width)
 
@@ -286,6 +304,8 @@ function Camera.setFrameRate(camera, framerate)
     Camera.updateConfig(camera)
 end
 
+---@param camera Camera.camera
+---@param speedGain any
 function Camera.setSpeedGain(camera, speedGain)
     speedGain = tonumber(speedGain)
 
@@ -295,6 +315,23 @@ function Camera.setSpeedGain(camera, speedGain)
     end
 
     camera.speedGain = speedGain
+    Camera.updateConfig(camera)
+end
+
+---@param camera Camera.camera
+---@param speedGain any
+---@param allowStopMotion boolean
+function Camera.setTransitionSpeedGain(camera, speedGain, allowStopMotion)
+    speedGain = tonumber(speedGain)
+
+    if speedGain == nil then
+        speedGain = 0
+    end
+    if not allowStopMotion and speedGain == 0 then
+        speedGain = 1
+    end
+
+    camera.transitionSpeedGain = speedGain
     Camera.updateConfig(camera)
 end
 

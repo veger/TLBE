@@ -502,6 +502,7 @@ function GUI.onSelected(event)
 end
 
 function GUI.onTextChanged(event)
+    ---@type playerSettings
     local playerSettings = global.playerSettings[event.player_index]
     if event.element.name == "camera-name" then
         Camera.setName(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
@@ -548,6 +549,9 @@ function GUI.onTextChanged(event)
         Camera.setSpeedGain(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
     elseif event.element.name == "camera-transition-period" then
         Camera.setTransitionPeriod(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
+    elseif event.element.name == "camera-transition-speed-gain" then
+        Camera.setTransitionSpeedGain(playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
+            event.element.text, playerSettings.sequentialNames)
     elseif event.element.name == "tlbe-tracker-top" then
         local value = tonumber(event.element.text)
         if value ~= nil then
@@ -869,6 +873,20 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
         type = "textfield",
         name = "camera-transition-period",
         tooltip = { "tooltip.camera-transitionperiod" },
+        style = "tlbe_config_half_width_textfield",
+        numeric = true,
+        allow_decimal = true
+    }
+    playerGUI.cameraInfo.add {
+        type = "label",
+        caption = { "gui.label-transition-speedgain" },
+        tooltip = { "tooltip.camera-transition-speedgain" },
+        style = "description_property_name_label"
+    }
+    playerGUI.cameraInfo.add {
+        type = "textfield",
+        name = "camera-transition-speed-gain",
+        tooltip = { "tooltip.camera-transition-speedgain" },
         style = "tlbe_config_half_width_textfield",
         numeric = true,
         allow_decimal = true
@@ -1255,6 +1273,7 @@ function GUI.updateCameraConfig(cameraInfo, camera)
         cameraInfo["camera-frame-rate"].text = string.format("%d", camera.frameRate or 25)
         cameraInfo["camera-speed-gain"].text = string.format("%d", camera.speedGain or 60)
         cameraInfo["camera-transition-period"].text = string.format("%2.2f", camera.transitionPeriod or 1.5)
+        cameraInfo["camera-transition-speed-gain"].text = string.format("%d", camera.transitionSpeedGain or 60)
         cameraInfo["camera-entity-info"].state = camera.entityInfo
         cameraInfo["camera-show-gui"].state = camera.showGUI
         cameraInfo["camera-always-day"].state = camera.alwaysDay

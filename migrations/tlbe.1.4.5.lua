@@ -51,6 +51,7 @@ for player_index, player in pairs(game.players) do
             ---@diagnostic disable-next-line: undefined-field -- Renamed in v1.5.0
             camera.transitionPeriod = camera.zoomPeriod
             camera.changeId = 0 -- prevent initializing an 'empty' transition
+            camera.transitionSpeedGain = camera.speedGain
             Camera.updateConfig(camera)
 
             camera.zoomPeriod = nil
