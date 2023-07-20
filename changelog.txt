@@ -6,6 +6,7 @@ Version: 1.5.0
     - Add option to include GUI in screenshots (requires to have same camera resolution as game/screen resolution to make this look good)
     - Visualize capture regions on the map. (Thanks drdozer)
     - Add GUI setting to speedup transitions
+    - Show camera status (using Stats GUI mod)
 
   Changes:
     - Use 10 digits for screenshot numbers.

@@ -1,6 +1,13 @@
 data:extend(
     {
         {
+            type = "bool-setting",
+            name = "tlbe-show-stats",
+            setting_type = "runtime-per-user",
+            default_value = true,
+            order = "1"
+        },
+        {
             type = "string-setting",
             name = "tlbe-save-folder",
             setting_type = "runtime-per-user",
