@@ -56,13 +56,20 @@ function TestTrackerCityBlock:scale()
     self.cityblockTracker.cityBlock.blockSize.y = 32
     self.cityblockTracker.cityBlock.currentBlock.x = 0
     self.cityblockTracker.cityBlock.currentBlock.y = 0
+    TLBE.Tracker.recalculateCityBlock(self.cityblockTracker)
+    local oldCenterPos = {
+        x=self.cityblockTracker.centerPos.x,
+        y=self.cityblockTracker.centerPos.y
+    }
 
     
     self.cityblockTracker.cityBlock.blockScale = 1
     TLBE.Tracker.recalculateCityBlock(self.cityblockTracker)
     lu.assertEquals(self.cityblockTracker.size, {x=32,y=32}, "A blockScale of 1 should give a size matching the block size")
+    lu.assertEquals(self.cityblockTracker.centerPos, oldCenterPos, "Rescaling doesn't recenter")
 
     self.cityblockTracker.cityBlock.blockScale = 2
     TLBE.Tracker.recalculateCityBlock(self.cityblockTracker)
     lu.assertEquals(self.cityblockTracker.size, {x=64,y=64}, "A blockScale of 2 should give a size twice the block size")
+    lu.assertEquals(self.cityblockTracker.centerPos, oldCenterPos, "Rescaling doesn't recenter")
 end
