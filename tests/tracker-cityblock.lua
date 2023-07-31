@@ -49,3 +49,20 @@ function TestTrackerCityBlock:Focus()
     lu.assertEquals(self.cityblockTracker.cityBlock.currentBlock, {x=0,y=0}, "focus on tile {32,32} should be in the block {1,1}")
     lu.assertEquals(self.cityblockTracker.centerPos, {x=32+16,y=32+16}, "focus on tile {32,32} should center on the {1,1} chunk")
 end
+
+function TestTrackerCityBlock:scale()
+    -- zooming doesn't recenter, but does affect width and height
+    self.cityblockTracker.cityBlock.blockSize.x = 32
+    self.cityblockTracker.cityBlock.blockSize.y = 32
+    self.cityblockTracker.cityBlock.currentBlock.x = 0
+    self.cityblockTracker.cityBlock.currentBlock.y = 0
+
+    
+    self.cityblockTracker.cityBlock.blockScale = 1
+    TLBE.Tracker.recalculateCityBlock(self.cityblockTracker)
+    lu.assertEquals(self.cityblockTracker.size, {x=32,y=32}, "A blockScale of 1 should give a size matching the block size")
+
+    self.cityblockTracker.cityBlock.blockScale = 2
+    TLBE.Tracker.recalculateCityBlock(self.cityblockTracker)
+    lu.assertEquals(self.cityblockTracker.size, {x=64,y=64}, "A blockScale of 2 should give a size twice the block size")
+end
