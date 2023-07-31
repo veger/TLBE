@@ -29,11 +29,15 @@ function Main.tick()
             end
 
             -- Check if a screenshot needs to be taken
-            if activeTracker.realtimeCamera then
-                if game.tick % camera.screenshotIntervalRealtime ~= 0 then
-                    goto nextCamera
-                end
-            elseif game.tick % camera.screenshotInterval ~= 0 then
+            local screenshotInterval = Camera.getScreenshotInterval(camera, activeTracker)
+            while screenshotInterval == 0 do
+                -- Keep taking screenshots until the transition is done (this works because the other intervals can never be 0)
+                Main.takeScreenshot(player, playerSettings, camera, activeTracker, true)
+
+                screenshotInterval = Camera.getScreenshotInterval(camera, activeTracker)
+            end
+
+            if game.tick % screenshotInterval ~= 0 then
                 goto nextCamera
             end
 
@@ -137,7 +141,8 @@ end
 ---@param playerSettings playerSettings
 ---@param camera Camera.camera
 ---@param activeTracker Tracker.tracker|nil
-function Main.takeScreenshot(player, playerSettings, camera, activeTracker)
+---@param forceRender ?boolean
+function Main.takeScreenshot(player, playerSettings, camera, activeTracker, forceRender)
     if activeTracker ~= nil then
         -- Move to tracker
         Camera.followTracker(playerSettings, player, camera, activeTracker, false)
@@ -171,7 +176,8 @@ function Main.takeScreenshot(player, playerSettings, camera, activeTracker)
         show_entity_info = camera.entityInfo,
         show_gui = camera.showGUI,
         allow_in_replay = true,
-        daytime = alwaysDay
+        daytime = alwaysDay,
+        force_render = forceRender
     }
 end
 

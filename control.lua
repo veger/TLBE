@@ -1,9 +1,16 @@
 local TLBE = {
     Main = require("scripts.main"),
+    Camera = require("scripts.camera"),
     Config = require("scripts.config"),
     GUI = require("scripts.gui"),
     Tracker = require("scripts.tracker")
 }
+
+local function register_sensor()
+    if script.active_mods["StatsGui"] and remote.call("StatsGui", "version") == 1 then
+        remote.call("StatsGui", "add_sensor", "TLBE", "recording_sensor")
+    end
+end
 
 local function on_init()
     global.playerSettings = {}
@@ -27,6 +34,12 @@ local function on_init()
             TLBE.Tracker.updateCenterAndSize(baseTracker)
         end
     end
+
+    register_sensor()
+end
+
+local function on_load()
+    register_sensor()
 end
 
 -- A player got created (or joined the game)
@@ -41,12 +54,14 @@ local function on_player_created(event)
     TLBE.GUI.initialize(player, global.playerSettings[event.player_index])
 end
 
+
 local function on_tick()
     TLBE.Main.tick()
     TLBE.GUI.tick()
 end
 
 script.on_init(on_init)
+script.on_load(on_load)
 
 script.on_event(defines.events.on_gui_click, TLBE.GUI.onClick)
 script.on_event(defines.events.on_gui_selection_state_changed, TLBE.GUI.onSelected)
@@ -73,3 +88,8 @@ script.on_event("tlbe-take-screenshot", TLBE.GUI.takeScreenshot)
 script.on_event(defines.events.on_lua_shortcut, TLBE.GUI.onShortcut)
 
 script.on_event(defines.events.on_tick, on_tick)
+
+
+remote.add_interface("TLBE", {
+    recording_sensor = TLBE.Camera.recordingSensor
+})
