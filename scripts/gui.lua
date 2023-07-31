@@ -511,6 +511,8 @@ end
 function GUI.onTextChanged(event)
     ---@type playerSettings
     local playerSettings = global.playerSettings[event.player_index]
+    local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+
     if event.element.name == "camera-name" then
         Camera.setName(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
         GUI.updateCameraList(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
@@ -562,7 +564,6 @@ function GUI.onTextChanged(event)
     elseif event.element.name == "tlbe-tracker-top" then
         local value = tonumber(event.element.text)
         if value ~= nil then
-            local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
             -- Note that game origin is top-left, so top is min and bottom is max
             selectedTracker.minPos.y = value
             Tracker.areaUpdateCenterAndSize(selectedTracker)
@@ -573,7 +574,6 @@ function GUI.onTextChanged(event)
     elseif event.element.name == "tlbe-tracker-bottom" then
         local value = tonumber(event.element.text)
         if value ~= nil then
-            local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
             -- Note that game origin is top-left, so top is min and bottom is max
             selectedTracker.maxPos.y = value
             Tracker.areaUpdateCenterAndSize(selectedTracker)
@@ -584,7 +584,6 @@ function GUI.onTextChanged(event)
     elseif event.element.name == "tlbe-tracker-left" then
         local value = tonumber(event.element.text)
         if value ~= nil then
-            local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
             selectedTracker.minPos.x = value
             Tracker.areaUpdateCenterAndSize(selectedTracker)
 
@@ -594,7 +593,6 @@ function GUI.onTextChanged(event)
     elseif event.element.name == "tlbe-tracker-right" then
         local value = tonumber(event.element.text)
         if value ~= nil then
-            local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
             selectedTracker.maxPos.x = value
             Tracker.areaUpdateCenterAndSize(selectedTracker)
 
@@ -602,7 +600,6 @@ function GUI.onTextChanged(event)
             GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
         end
     elseif event.element.name == "tlbe-tracker-cityblock-size-x" and event.element.text ~= nil then
-        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         local value = tonumber(event.element.text)
         if value ~= nil and value >= 1 then
             selectedTracker.cityBlock.blockSize.x = math.floor(value)
@@ -612,7 +609,6 @@ function GUI.onTextChanged(event)
             GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
         end
     elseif event.element.name == "tlbe-tracker-cityblock-size-y" and event.element.text ~= nil then
-        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         local value = tonumber(event.element.text)
         if value ~= nil and value >= 1 then
             selectedTracker.cityBlock.blockSize.y = math.floor(value)
@@ -622,7 +618,6 @@ function GUI.onTextChanged(event)
             GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
         end
     elseif event.element.name == "tlbe-tracker-cityblock-offset-x" and event.element.text ~= nil then
-        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         local value = tonumber(event.element.text)
         if value ~= nil then
             selectedTracker.cityBlock.blockOffset.x = math.floor(value)
@@ -632,7 +627,6 @@ function GUI.onTextChanged(event)
             GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
         end
     elseif event.element.name == "tlbe-tracker-cityblock-offset-y" and event.element.text ~= nil then
-        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         local value = tonumber(event.element.text)
         if value ~= nil then
             selectedTracker.cityBlock.blockOffset.y = math.floor(value)
@@ -642,7 +636,6 @@ function GUI.onTextChanged(event)
             GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
         end
     elseif event.element.name == "tlbe-tracker-cityblock-currentblock-x" and event.element.text ~= nil then
-        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         local value = tonumber(event.element.text)
         if value ~= nil then
             selectedTracker.cityBlock.currentBlock.x = math.floor(value)
@@ -652,7 +645,6 @@ function GUI.onTextChanged(event)
             GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
         end
     elseif event.element.name == "tlbe-tracker-cityblock-currentblock-y" and event.element.text ~= nil then
-        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         local value = tonumber(event.element.text)
         if value ~= nil then
             selectedTracker.cityBlock.currentBlock.y = math.floor(value)
