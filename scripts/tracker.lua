@@ -17,6 +17,25 @@ local Tracker = {}
 --- @field size MapPosition.0 Size of the tracker area (Calculated from minPos and maxPos)
 --- @field minPos MapPosition.0 Bottom/Left of tracker area
 --- @field maxPos MapPosition.0 TopRight of tracker area
+--- @field cityBlock Tracker.cityBlock? City block vital statistics, used when type="cityblock"
+
+--- @class Tracker.cityBlock
+--- @field blockSize TilePosition The size of a single city block
+--- @field blockOffset TilePosition The offset where the "first" city block begins
+--- @field currentBlock TilePosition An abuse of the TilePosition type to number the blocks (1,4 is one block over and 4 blocks up)
+--- @field blockScale number How many blocks to hold in view (1=1 block, 1.5=1.5 blocks etc.)
+Tracker.cityBlock = {}
+
+---@return Tracker.cityBlock
+function Tracker.cityBlock:new()
+    local cityBlock = {}
+
+    cityBlock.blockSize    = { x=32, y=32 }
+    cityBlock.blockOffset  = { x=0,  y=0 }
+    cityBlock.currentBlock = { x=0,  y=0 }
+    cityBlock.blockScale   = 1.5
+    return cityBlock
+end
 
 --- Create and setup a new tracker
 --- @param trackerType string Type of the new tracker
@@ -55,10 +74,79 @@ function Tracker.newTracker(trackerType, trackerList)
         newTracker.userCanEnable = false
         newTracker.enabled = false
         newTracker.realtimeCamera = true
+    elseif trackerType == "cityblock" then
+        -- cityblock-specific data
+        newTracker.cityBlock = Tracker.cityBlock:new()
+        Tracker.recalculateCityBlock(newTracker)
     end
 
     return newTracker
 end
+
+---find the city block containing the position and relocate to that one
+---@param tracker Tracker.tracker
+---@param pos MapPosition.0|MapPosition.1
+function Tracker.focusCityBlock(tracker, pos)
+    local cityBlock = tracker.cityBlock
+    if cityBlock == nil then
+        return
+    end
+
+    cityBlock.currentBlock = {
+        x = math.floor((pos.x - cityBlock.blockOffset.x) / cityBlock.blockSize.x),
+        y = math.floor((pos.y - cityBlock.blockOffset.y) / cityBlock.blockSize.y),
+    }
+
+    Tracker.recalculateCityBlock(tracker)
+end
+
+--- recalculates the tracker vital stats from the city block vital stats
+---@param tracker Tracker.tracker
+function Tracker.recalculateCityBlock(tracker)
+    if tracker.type ~= "cityblock" then
+        return
+    end
+    
+    local cityBlock = tracker.cityBlock
+    if cityBlock == nil then
+        return
+    end
+
+
+    local width = cityBlock.blockSize.x
+    local height = cityBlock.blockSize.y
+    local widthDiam = width * cityBlock.blockScale
+    local heightDiam = height * cityBlock.blockScale
+    local widthRad = widthDiam / 2
+    local heightRad = heightDiam / 2
+
+    tracker.centerPos = {
+        x = cityBlock.blockOffset.x + cityBlock.currentBlock.x * width + width / 2,
+        y = cityBlock.blockOffset.y + cityBlock.currentBlock.y * height + height / 2
+    }
+
+    tracker.size = { x = widthDiam, y = heightDiam }
+
+    local minPosX = tracker.centerPos.x - widthRad
+    local minPosY = tracker.centerPos.y - heightRad
+    local maxPosX = tracker.centerPos.x + widthRad
+    local maxPosY = tracker.centerPos.y + heightRad
+
+    if tracker.minPos == nil or tracker.maxPos == nil or minPosX ~= tracker.minPos.x or minPosY ~= tracker.minPos.y or maxPosX ~= tracker.maxPos.x or maxPosY ~= tracker.maxPos.y then
+        tracker.minPos = {
+            x = minPosX,
+            y = minPosY
+        }
+    
+        tracker.maxPos = {
+            x = tracker.centerPos.x + widthRad,
+            y = tracker.centerPos.y + heightRad
+        }
+    
+        Tracker.changed(tracker)
+    end
+end
+
 
 -- Update tracker state (if needed)
 --- @param tracker Tracker.tracker

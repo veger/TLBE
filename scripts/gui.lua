@@ -1,11 +1,12 @@
 local GUI = {
-    allTrackers = { "area", "base", "player", "rocket" },
-    allTrackersLabels = { { "tracker-area" }, { "tracker-base" }, { "tracker-player" }, { "tracker-rocket" } },
+    allTrackers = { "area", "base", "cityblock", "player", "rocket" },
+    allTrackersLabels = { { "tracker-area" }, { "tracker-base" }, { "tracker-cityBlock" }, { "tracker-player" }, { "tracker-rocket" } },
     allTrackersLabelsMap = {
         area = { "tracker-area" },
         base = { "tracker-base" },
+        cityBlock = { "tracker-cityBlock" },
         player = { "tracker-player" },
-        rocket = { "tracker-rocket" }
+        rocket = { "tracker-rocket" },
     }
 }
 
@@ -212,6 +213,12 @@ function GUI.onClick(event)
             GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
             GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
         end
+    elseif event.element.name == "tlbe-tracker-cityblock-player" then
+        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+        Tracker.focusCityBlock(selectedTracker, player.position)
+
+        GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+        GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
     else
         local _, index
         _, _, index = event.element.name:find("^camera_tracker_(%d+)$")
@@ -504,6 +511,8 @@ end
 function GUI.onTextChanged(event)
     ---@type playerSettings
     local playerSettings = global.playerSettings[event.player_index]
+    local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+
     if event.element.name == "camera-name" then
         Camera.setName(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
         GUI.updateCameraList(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
@@ -555,7 +564,6 @@ function GUI.onTextChanged(event)
     elseif event.element.name == "tlbe-tracker-top" then
         local value = tonumber(event.element.text)
         if value ~= nil then
-            local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
             -- Note that game origin is top-left, so top is min and bottom is max
             selectedTracker.minPos.y = value
             Tracker.areaUpdateCenterAndSize(selectedTracker)
@@ -566,7 +574,6 @@ function GUI.onTextChanged(event)
     elseif event.element.name == "tlbe-tracker-bottom" then
         local value = tonumber(event.element.text)
         if value ~= nil then
-            local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
             -- Note that game origin is top-left, so top is min and bottom is max
             selectedTracker.maxPos.y = value
             Tracker.areaUpdateCenterAndSize(selectedTracker)
@@ -577,7 +584,6 @@ function GUI.onTextChanged(event)
     elseif event.element.name == "tlbe-tracker-left" then
         local value = tonumber(event.element.text)
         if value ~= nil then
-            local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
             selectedTracker.minPos.x = value
             Tracker.areaUpdateCenterAndSize(selectedTracker)
 
@@ -587,9 +593,77 @@ function GUI.onTextChanged(event)
     elseif event.element.name == "tlbe-tracker-right" then
         local value = tonumber(event.element.text)
         if value ~= nil then
-            local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
             selectedTracker.maxPos.x = value
             Tracker.areaUpdateCenterAndSize(selectedTracker)
+
+            GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+            GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+        end
+    elseif event.element.name == "tlbe-tracker-cityblock-size-x" and event.element.text ~= nil then
+        local value = tonumber(event.element.text)
+        if value ~= nil and value >= 1 then
+            selectedTracker.cityBlock.blockSize.x = math.floor(value)
+            Tracker.recalculateCityBlock(selectedTracker)
+
+            GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+            GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+        end
+    elseif event.element.name == "tlbe-tracker-cityblock-size-y" and event.element.text ~= nil then
+        local value = tonumber(event.element.text)
+        if value ~= nil and value >= 1 then
+            selectedTracker.cityBlock.blockSize.y = math.floor(value)
+            Tracker.recalculateCityBlock(selectedTracker)
+
+            GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+            GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+        end
+    elseif event.element.name == "tlbe-tracker-cityblock-offset-x" and event.element.text ~= nil then
+        local value = tonumber(event.element.text)
+        if value ~= nil then
+            selectedTracker.cityBlock.blockOffset.x = math.floor(value)
+            Tracker.recalculateCityBlock(selectedTracker)
+
+            GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+            GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+        end
+    elseif event.element.name == "tlbe-tracker-cityblock-offset-y" and event.element.text ~= nil then
+        local value = tonumber(event.element.text)
+        if value ~= nil then
+            selectedTracker.cityBlock.blockOffset.y = math.floor(value)
+            Tracker.recalculateCityBlock(selectedTracker)
+
+            GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+            GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+        end
+    elseif event.element.name == "tlbe-tracker-cityblock-currentblock-x" and event.element.text ~= nil then
+        local value = tonumber(event.element.text)
+        if value ~= nil then
+            selectedTracker.cityBlock.currentBlock.x = math.floor(value)
+            Tracker.recalculateCityBlock(selectedTracker)
+
+            GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+            GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+        end
+    elseif event.element.name == "tlbe-tracker-cityblock-currentblock-y" and event.element.text ~= nil then
+        local value = tonumber(event.element.text)
+        if value ~= nil then
+            selectedTracker.cityBlock.currentBlock.y = math.floor(value)
+            Tracker.recalculateCityBlock(selectedTracker)
+
+            GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+            GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+        end
+    end
+end
+
+function GUI.onGuiConfirmed(event)
+    local playerSettings = global.playerSettings[event.player_index]
+    if event.element.name == "tlbe-tracker-cityblock-blockScale-value" and event.element.text ~= nil then
+        local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
+        local value = tonumber(event.element.text)
+        if value ~= nil then
+            selectedTracker.cityBlock.blockScale = math.floor(value * 100)/100
+            Tracker.recalculateCityBlock(selectedTracker)
 
             GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
             GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
@@ -1426,6 +1500,110 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 tooltip = { "tooltip.tracker-until-build" },
                 state = tracker.untilBuild
             }
+        elseif tracker.type == "cityblock" then
+            trackerInfo.add { 
+                type = "label",
+                caption = { "gui.label-cityblock-size" },
+                tooltip = { "tooltip.tracker-cityblock-size" },
+                style = "description_property_name_label"
+            }
+            local sizeFlow = trackerInfo.add { type = "flow", name = "cityblock-size" }
+            sizeFlow.add {
+                type = "textfield",
+                name = "tlbe-tracker-cityblock-size-x",
+                style = "tlbe_config_half_width_textfield",
+                tooltip = { "tooltip.tracker-cityblock-size-x" },
+                numeric = true,
+                allow_negative = true
+            }
+            sizeFlow.add { type = "label", caption = "/", style = "tlbe_config_half_width_label" }
+            sizeFlow.add {
+                type = "textfield",
+                name = "tlbe-tracker-cityblock-size-y",
+                style = "tlbe_config_half_width_textfield",
+                tooltip = { "tooltip.tracker-cityblock-size-y" },
+                numeric = true,
+                allow_negative = true
+            }
+
+            trackerInfo.add { 
+                type = "label",
+                caption = { "gui.label-cityblock-offset" },
+                tooltip = { "tooltip.tracker-cityblock-offset" },
+                style = "description_property_name_label"
+            }
+            local offsetFlow = trackerInfo.add { type = "flow", name = "cityblock-offset" }
+            offsetFlow.add {
+                type = "textfield",
+                name = "tlbe-tracker-cityblock-offset-x",
+                style = "tlbe_config_half_width_textfield",
+                tooltip = { "tooltip.tracker-cityblock-offset-x" },
+                numeric = true,
+                allow_negative = true
+            }
+            offsetFlow.add { type = "label", caption = "/", style = "tlbe_config_half_width_label" }
+            offsetFlow.add {
+                type = "textfield",
+                name = "tlbe-tracker-cityblock-offset-y",
+                style = "tlbe_config_half_width_textfield",
+                tooltip = { "tooltip.tracker-cityblock-offset-y" },
+                numeric = true,
+                allow_negative = true
+            }
+
+            trackerInfo.add { 
+                type = "label",
+                caption = { "gui.label-cityblock-currentblock" },
+                tooltip = { "tooltip.tracker-cityblock-currentblock" },
+                style = "description_property_name_label"
+            }
+            local blockFlow = trackerInfo.add { type = "flow", name = "cityblock-block" }
+            blockFlow.add {
+                type = "textfield",
+                name = "tlbe-tracker-cityblock-currentblock-x",
+                style = "tlbe_config_half_width_textfield",
+                tooltip = { "tooltip.tracker-cityblock-currentblock-x" },
+                numeric = true,
+                allow_negative = true
+            }
+            blockFlow.add { type = "label", caption = "/", style = "tlbe_config_half_width_label" }
+            blockFlow.add {
+                type = "textfield",
+                name = "tlbe-tracker-cityblock-currentblock-y",
+                style = "tlbe_config_half_width_textfield",
+                tooltip = { "tooltip.tracker-cityblock-currentblock-y" },
+                numeric = true,
+                allow_negative = true
+            }
+
+            trackerInfo.add { 
+                type = "label",
+                caption = { "gui.label-cityblock-blockScale" },
+                tooltip = { "tooltip.tracker-cityblock-blockScale" },
+                style = "description_property_name_label"
+            }
+            trackerInfo.add {
+                type = "textfield",
+                name = "tlbe-tracker-cityblock-blockScale-value",
+                style = "tlbe_config_half_width_textfield",
+                tooltip = { "tooltip.tracker-cityblock-blockScale-value" },
+                numeric = true,
+                allow_decimal = true,
+                allow_negative = false
+            }
+
+            trackerInfo.add {
+                type = "label",
+                caption = { "gui.label-cityblock-centerOnPlayer" },
+                style = "description_property_name_label"
+            }
+            trackerInfo.add {
+                type = "sprite-button",
+                name = "tlbe-tracker-cityblock-player",
+                tooltip = { "tooltip.tracker-cityblock-player" },
+                sprite = "utility/show_player_names_in_map_view_black",
+                style = "tlbe_config_button"
+            }
         end
     end
 
@@ -1447,6 +1625,8 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
     GUI.updateTrackerInfo(trackerInfo, tracker)
 end
 
+---@param trackerInfo any
+---@param tracker Tracker.tracker
 function GUI.updateTrackerConfig(trackerInfo, tracker)
     if tracker == nil then
         trackerInfo["tracker-name"].enabled = false
@@ -1488,6 +1668,25 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
             blFlow["tlbe-tracker-left"].style = style
         elseif tracker.type == "player" then
             trackerInfo["tracker-untilbuild"].state = tracker.untilBuild
+        elseif tracker.type == "cityblock" then
+            local cityBlock = tracker.cityBlock
+            if cityBlock == nil then
+                return
+            end
+            
+            local sizeFlow = trackerInfo["cityblock-size"]
+            sizeFlow["tlbe-tracker-cityblock-size-x"].text = string.format("%d", cityBlock.blockSize.x)
+            sizeFlow["tlbe-tracker-cityblock-size-y"].text = string.format("%d", cityBlock.blockSize.y)
+
+            local offsetFlow = trackerInfo["cityblock-offset"]
+            offsetFlow["tlbe-tracker-cityblock-offset-x"].text = string.format("%d", cityBlock.blockOffset.x)
+            offsetFlow["tlbe-tracker-cityblock-offset-y"].text = string.format("%d", cityBlock.blockOffset.y)
+
+            local blockFlow = trackerInfo["cityblock-block"]
+            blockFlow["tlbe-tracker-cityblock-currentblock-x"].text = string.format("%d", cityBlock.currentBlock.x)
+            blockFlow["tlbe-tracker-cityblock-currentblock-y"].text = string.format("%d", cityBlock.currentBlock.y)
+
+            trackerInfo["tlbe-tracker-cityblock-blockScale-value"].text = string.format("%g", cityBlock.blockScale)
         end
     end
 end

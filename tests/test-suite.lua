@@ -11,6 +11,7 @@ require("tracker")
 require("tracker-base")
 require("tracker-player")
 require("tracker-rocket")
+require("tracker-cityblock")
 
 -- Integration tests
 require("camera")

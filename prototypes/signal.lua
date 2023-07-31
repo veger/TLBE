@@ -103,7 +103,6 @@ data:extend({
             }
         },
         icon_size = 32,
-        tint = { 0, 1, 0 },
         icon_mipmaps = 1,
         subgroup = "tlbe-virtual-signal",
         order = "g"
