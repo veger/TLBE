@@ -100,7 +100,7 @@ function Tracker.focusCityBlock(tracker, pos)
     Tracker.recalculateCityBlock(tracker)
 end
 
----comment recalculates the tracker vital stats from the city block vital stats
+--- recalculates the tracker vital stats from the city block vital stats
 ---@param tracker Tracker.tracker
 function Tracker.recalculateCityBlock(tracker)
     if tracker.type ~= "cityblock" then
