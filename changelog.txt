@@ -1,20 +1,21 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.0
-
+Date: 01-08-2023
   Features:
-    - Add toggle/shortcut to take a screenshot (on paused active camera)
-    - Add option to include GUI in screenshots (requires to have same camera resolution as game/screen resolution to make this look good)
+    - Add toggle/shortcut to take a screenshot (on paused active camera).
+    - Add option to include GUI in screenshots (requires to have same camera resolution as game/screen resolution to make this look good).
     - Visualize capture regions on the map. (Thanks drdozer)
-    - Add GUI setting to speedup transitions
-    - Show camera status (using Stats GUI mod)
+    - Add GUI setting to speedup transitions.
+    - Show camera status (using Stats GUI mod).
+    - Add City Block tracker. (Thanks drdozer)
 
   Changes:
     - Use 10 digits for screenshot numbers.
-    - Use 'transition' when mentioning camera movement (instead of zoom)
-    - Fix camera transition issue, caused when camera is paused during transition (active transitions will be BROKEN)
+    - Use 'transition' when mentioning camera movement (instead of zoom).
+    - Fix camera transition issue, caused when camera is paused during transition (active transitions will be BROKEN).
 
   Bugfixes:
-    - Recalculate base size for selected surface
+    - Recalculate base size for selected surface.
 
 ---------------------------------------------------------------------------------------------------
 Version: 1.4.5

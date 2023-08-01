@@ -6,13 +6,12 @@ Features:
 * Multiple camera support, each taking their own screenshots.
 * Trackers to tell the camera(s) where to look at
     * Follow player until the first entity is built.
-    * Follow rocket launch.
-    * Follow base growth.
-    * Keep focus on specified area.
+    * Follow base growth, keeping focus on specified area/city block or recenter automatically.
+    * And finally follow the rocket launch.
 * Camera use (ordered) tracker list, first enabled tracker is used.
-* Camera gradually (configurable period) recenters and zooms out.
-* Each camera has customizable resolution, frame rate and speed gain.
-* All screenshots are taken with full daylight and optionally show entity information.
+* Camera gradually (configurable period) recenters and zooms out, which can be recorded in a stop-motion fashion.
+* Each camera has customizable resolution, frame rate and speed gain, and show their recording area on the map.
+* All screenshots are taken with full daylight or follow day cycle, and optionally show entity information.
 * Configurable screenshot folder (e.g. to support multiple save files that are played in parallel).
 * Configurable screenshot numbering, either sequential (default, more suitable for Windows ffmpeg) or game tick (easier to synchronize multiple cameras).
 
