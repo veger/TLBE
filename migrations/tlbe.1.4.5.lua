@@ -54,9 +54,11 @@ for player_index, player in pairs(game.players) do
             camera.transitionSpeedGain = camera.speedGain
             Camera.updateConfig(camera)
 
+            ---@diagnostic disable: inject-field Clear old fields
             camera.zoomPeriod = nil
             camera.zoomTicks = nil
             camera.zoomTicksRealtime = nil
+            ---@diagnostic enable: inject-field
             camera.chartTags = {}
             camera.showGUI = false
         end
@@ -64,6 +66,7 @@ for player_index, player in pairs(game.players) do
 
     for _, tracker in pairs(playerSettings.trackers) do
         tracker.changeId = 0
+        ---@diagnostic disable-next-line: inject-field
         tracker.lastChange = nil
     end
 

@@ -1,3 +1,4 @@
+---@diagnostic disable: missing-fields When mocking a game state we don't care about unused/missing fields
 package.path = package.path .. ";../?.lua"
 local TLBE = { Camera = require("scripts.camera") }
 

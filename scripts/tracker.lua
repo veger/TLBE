@@ -11,10 +11,10 @@ local Tracker = {}
 --- @field type string
 --- @field untilBuild boolean
 --- @field userCanEnable boolean When true, the user can enabled/disable the tracker, otherwise the tracker is controlled by TBLE
---- @field moveToNextTracker boolean Disables the tracker after the cameras are processed (end of game tick)
+--- @field moveToNextTracker boolean|nil Disables the tracker after the cameras are processed (end of game tick)
 --- @field changeId integer Incremented on each position/size change of the tracker
---- @field centerPos MapPosition.0 Center position of the tracker area (Calculated from minPos and maxPos)
---- @field size MapPosition.0 Size of the tracker area (Calculated from minPos and maxPos)
+--- @field centerPos MapPosition.0|nil Center position of the tracker area (Calculated from minPos and maxPos)
+--- @field size MapPosition.0|nil Size of the tracker area (Calculated from minPos and maxPos)
 --- @field minPos MapPosition.0 Bottom/Left of tracker area
 --- @field maxPos MapPosition.0 TopRight of tracker area
 --- @field cityBlock Tracker.cityBlock? City block vital statistics, used when type="cityblock"
@@ -28,11 +28,11 @@ Tracker.cityBlock = {}
 
 ---@return Tracker.cityBlock
 function Tracker.cityBlock:new()
-    local cityBlock = {}
+    local cityBlock        = {}
 
-    cityBlock.blockSize    = { x=32, y=32 }
-    cityBlock.blockOffset  = { x=0,  y=0 }
-    cityBlock.currentBlock = { x=0,  y=0 }
+    cityBlock.blockSize    = { x = 32, y = 32 }
+    cityBlock.blockOffset  = { x = 0, y = 0 }
+    cityBlock.currentBlock = { x = 0, y = 0 }
     cityBlock.blockScale   = 1.5
     return cityBlock
 end
@@ -56,15 +56,17 @@ function Tracker.newTracker(trackerType, trackerList)
         surfaceName = game.surfaces[1].name,
         userCanEnable = true,
         enabled = true,
+        realtimeCamera = false,
         smooth = true,
         untilBuild = false,
-        changeId = 0
+        changeId = 0,
+        -- Set some sensible dafaults but will be most likely overwritten by the tracker specific implementations
+        minPos = { x = -5, y = -5 },
+        maxPos = { x = 5, y = 5 }
     }
 
     -- Add tracker specific details
     if trackerType == "area" then
-        newTracker.minPos = { x = -5, y = -5 }
-        newTracker.maxPos = { x = 5, y = 5 }
         Tracker.updateCenterAndSize(newTracker)
     elseif trackerType == "player" then
         newTracker.size = { x = 1, y = 1 }
@@ -106,7 +108,7 @@ function Tracker.recalculateCityBlock(tracker)
     if tracker.type ~= "cityblock" then
         return
     end
-    
+
     local cityBlock = tracker.cityBlock
     if cityBlock == nil then
         return
@@ -137,16 +139,15 @@ function Tracker.recalculateCityBlock(tracker)
             x = minPosX,
             y = minPosY
         }
-    
+
         tracker.maxPos = {
             x = tracker.centerPos.x + widthRad,
             y = tracker.centerPos.y + heightRad
         }
-    
+
         Tracker.changed(tracker)
     end
 end
-
 
 -- Update tracker state (if needed)
 --- @param tracker Tracker.tracker

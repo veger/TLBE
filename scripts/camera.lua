@@ -25,8 +25,8 @@ local Camera = {}
 --- @field alwaysDay boolean Render screenshot in daylight
 --- @field frameRate number
 --- @field height number
---- @field lastKnownActiveTracker Tracker.tracker
---- @field changeId integer Last known change ID of the tracker
+--- @field lastKnownActiveTracker Tracker.tracker|nil
+--- @field changeId integer|nil Last known change ID of the tracker
 --- @field name string
 --- @field saveFolder string
 --- @field saveName string
@@ -69,6 +69,7 @@ function Camera.newCamera(player, cameraList)
     end
 
     --- @type Camera.camera
+    --- @diagnostic disable-next-line: missing-fields The missing fields are set in updateConfig() and setName()
     local camera = {
         enabled = false,
         surfaceName = game.surfaces[1].name,

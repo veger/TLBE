@@ -6,11 +6,6 @@
     ],
     "hint.enable": false,
     "diagnostics.globals": [
-        "settings",
-        "script",
-        "defines",
-        "game",
-        "global",
         "os"
     ]
 }
