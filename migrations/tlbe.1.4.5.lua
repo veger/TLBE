@@ -30,8 +30,8 @@ for player_index, player in pairs(game.players) do
         if warned == false and activeTracker ~= nil then
             ---@diagnostic disable-next-line: undefined-field
             if activeTracker.lastChange ~= nil then
-                -- old transition code to determine ticksLeft
-                ---@diagnostic disable-next-line: undefined-field
+                -- Check if there is a transition going on
+                ---@diagnostic disable-next-line: undefined-field old transition code to determine ticksLeft
                 local ticksLeft = activeTracker.lastChange - game.tick
                 if activeTracker.realtimeCamera then
                     ---@diagnostic disable-next-line: undefined-field -- Renamed in v1.5.0
@@ -42,11 +42,16 @@ for player_index, player in pairs(game.players) do
                 end
 
                 if ticksLeft > 0 then
+                    -- warn player about side effects
                     player.print({ "migration-issue-transitiondata1" }, { r = 1, g = 0.5, b = 0 })
                     player.print({ "migration-issue-transitiondata2" }, { r = 1, g = 0.5, b = 0 })
                     warned = true
                 end
             end
+        end
+
+        if camera.zoomPeriod ~= nil then
+            -- Old camera, migrate to new format
 
             ---@diagnostic disable-next-line: undefined-field -- Renamed in v1.5.0
             camera.transitionPeriod = camera.zoomPeriod
