@@ -12,16 +12,25 @@ local function register_sensor()
     end
 end
 
+--- @param index string|integer Index of player in game.players dictionary
+--- @param player LuaPlayer
+local function init_new_player(index, player)
+    -- initialize player(s) when mod is loaded into existing game
+    player.print("init_new_player")
+    TLBE.Config.reload({ player_index = index })
+    TLBE.GUI.initialize(player, global.playerSettings[index])
+
+    player.print({ "mod-loaded" }, { r = 1, g = 0.5, b = 0 })
+    player.print({ "mod-loaded2" })
+end
+
 local function on_init()
     global.playerSettings = {}
 
     for index, player in pairs(game.players) do
         -- initialize player(s) when mod is loaded into existing game
-        TLBE.Config.reload({ player_index = index })
-        TLBE.GUI.initialize(player, global.playerSettings[index])
-
-        player.print({ "mod-loaded" }, { r = 1, g = 0.5, b = 0 })
-        player.print({ "mod-loaded2" })
+        player.print("on_init")
+        init_new_player(index, player)
     end
 
     local baseBBox = TLBE.Main.getBaseBBox(game.surfaces[1].name)
@@ -40,6 +49,19 @@ end
 
 local function on_load()
     register_sensor()
+end
+
+-- The game configuration got changed (e.g. a mod like ourselves is added)
+--- @param event ConfigurationChangedData
+local function on_configuration_changed(event)
+    -- Sometimes playerSettings does not seem to be present when upgrading
+    -- from older versions. We can just fix this issue here.
+    for index, player in pairs(game.players) do
+        if global.playerSettings[index] == nil then
+            player.print({ "migration-fix-missing-player-data" })
+            init_new_player(index, player)
+        end
+    end
 end
 
 -- A player got created (or joined the game)
@@ -62,6 +84,7 @@ end
 
 script.on_init(on_init)
 script.on_load(on_load)
+script.on_configuration_changed(on_configuration_changed)
 
 script.on_event(defines.events.on_gui_click, TLBE.GUI.onClick)
 script.on_event(defines.events.on_gui_selection_state_changed, TLBE.GUI.onSelected)

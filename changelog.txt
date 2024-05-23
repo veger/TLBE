@@ -1,6 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.2
 
+  Minor Features:
+    - Try to fix missing player data in order to be more flexible to unexpected situations.
   Bugfixes:
     - Fix optional dependency on StatsGui.
 

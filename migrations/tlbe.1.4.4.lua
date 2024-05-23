@@ -2,7 +2,7 @@ if global.playerSettings == nil then
     goto SkipMigration
 end
 
--- Set camera alwaysDay to true for backwards compability
+-- Set camera alwaysDay to true for backwards compatibility
 -- Make tracker untilBuild available for all trackers
 for player_index, _ in pairs(game.players) do
     local playerSettings = global.playerSettings[player_index]
