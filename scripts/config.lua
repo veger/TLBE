@@ -7,9 +7,11 @@ local Tracker = require("scripts.tracker")
 --- @field cameras Camera.camera[]
 --- @field trackers Tracker.tracker[]
 --- @field pauseCameras boolean When true, pause all player cameras
+--- @field pauseOnOpen boolean When true, pause cameras when the GUI is opened
 --- @field showCameraStatus boolean When true, the Stats GUI is used to show status of each camera
 --- @field saveFolder string
 --- @field sequentialNames boolean
+--- @field useInterval boolean When true, use interval (between frames) instead of speed gain
 --- @field noticeMaxZoom boolean When true the warning about the max zoom is already raised
 --- @field gui table Contains all (volatile) GUI elements
 --- @field guiPersist persistedGUISettings Contains all persisted (between saves) GUI details
@@ -37,10 +39,10 @@ function Config.reload(event)
 
     ---@diagnostic disable: assign-type-mismatch
     playerSettings.saveFolder = guiSettings["tlbe-save-folder"].value
-    ---@diagnostic disable: assign-type-mismatch
     playerSettings.sequentialNames = guiSettings["tlbe-sequential-names"].value
-    ---@diagnostic disable: assign-type-mismatch
     playerSettings.showCameraStatus = guiSettings["tlbe-show-stats"].value
+    playerSettings.useInterval = guiSettings["tlbe-use-interval"].value
+    ---@diagnostic enable: assign-type-mismatch
 end
 
 --- @return playerSettings

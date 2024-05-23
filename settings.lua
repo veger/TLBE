@@ -20,6 +20,13 @@ data:extend(
             setting_type = "runtime-per-user",
             default_value = true,
             order = "6"
+        },
+        {
+            type = "bool-setting",
+            name = "tlbe-use-interval",
+            setting_type = "runtime-per-user",
+            default_value = false,
+            order = "9"
         }
     }
 )

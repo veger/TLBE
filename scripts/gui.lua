@@ -119,6 +119,7 @@ function GUI.onClick(event)
         GUI.updateCameraList(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
         GUI.updateCameraActions(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
         GUI.updateCameraConfig(
+            playerSettings.useInterval,
             playerSettings.gui.cameraInfo,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         )
@@ -143,6 +144,7 @@ function GUI.onClick(event)
         GUI.updateCameraList(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
         GUI.updateCameraActions(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
         GUI.updateCameraConfig(
+            playerSettings.useInterval,
             playerSettings.gui.cameraInfo,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         )
@@ -164,6 +166,7 @@ function GUI.onClick(event)
         Camera.refreshConfig(playerSettings.cameras[playerSettings.guiPersist.selectedCamera])
 
         GUI.updateCameraConfig(
+            playerSettings.useInterval,
             playerSettings.gui.cameraInfo,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         )
@@ -421,6 +424,7 @@ function GUI.onSelected(event)
 
         GUI.updateCameraActions(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
         GUI.updateCameraConfig(
+            playerSettings.useInterval,
             playerSettings.gui.cameraInfo,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         )
@@ -556,10 +560,15 @@ function GUI.onTextChanged(event)
         Camera.setFrameRate(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
     elseif event.element.name == "camera-speed-gain" then
         Camera.setSpeedGain(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
+    elseif event.element.name == "camera-interval" then
+        Camera.setFrameInterval(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
     elseif event.element.name == "camera-transition-period" then
         Camera.setTransitionPeriod(playerSettings.cameras[playerSettings.guiPersist.selectedCamera], event.element.text)
     elseif event.element.name == "camera-transition-speed-gain" then
         Camera.setTransitionSpeedGain(playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
+            event.element.text, playerSettings.sequentialNames)
+    elseif event.element.name == "camera-transition-interval" then
+        Camera.setTransitionFrameInterval(playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
             event.element.text, playerSettings.sequentialNames)
     elseif event.element.name == "tlbe-tracker-top" then
         local value = tonumber(event.element.text)
@@ -662,7 +671,7 @@ function GUI.onGuiConfirmed(event)
         local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         local value = tonumber(event.element.text)
         if value ~= nil then
-            selectedTracker.cityBlock.blockScale = math.floor(value * 100)/100
+            selectedTracker.cityBlock.blockScale = math.floor(value * 100) / 100
             Tracker.recalculateCityBlock(selectedTracker)
 
             GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
@@ -718,6 +727,7 @@ function GUI.onSurfacesUpdated()
         local playerSettings = global.playerSettings[player.index]
         if playerSettings.gui ~= nil then
             GUI.updateCameraConfig(
+                playerSettings.useInterval,
                 playerSettings.gui.cameraInfo,
                 playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
             )
@@ -782,6 +792,7 @@ end
 
 function GUI.toggleMainWindow(event)
     local player = game.players[event.player_index]
+    ---@type playerSettings
     local playerSettings = global.playerSettings[event.player_index]
 
     local mainWindowOpen = player.gui.screen["tlbe-main-window"] ~= nil
@@ -837,6 +848,7 @@ function GUI.toggleMainWindow(event)
                 tabPane,
                 playerSettings.gui,
                 playerSettings.guiPersist,
+                playerSettings.useInterval,
                 playerSettings.cameras,
                 playerSettings.trackers
             )
@@ -858,7 +870,7 @@ function GUI.toggleMainWindow(event)
     end
 end
 
-function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, trackers)
+function GUI.createCameraSettings(parent, playerGUI, guiPersist, useInterval, cameras, trackers)
     local flow = parent.add { type = "flow", direction = "vertical" }
 
     -- Cameras
@@ -923,20 +935,39 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
         style = "tlbe_config_half_width_textfield",
         numeric = true
     }
-    playerGUI.cameraInfo.add {
-        type = "label",
-        caption = { "gui.label-speedgain" },
-        tooltip = { "tooltip.camera-speedgain" },
-        style = "description_property_name_label"
-    }
-    playerGUI.cameraInfo.add {
-        type = "textfield",
-        name = "camera-speed-gain",
-        tooltip = { "tooltip.camera-speedgain" },
-        style = "tlbe_config_half_width_textfield",
-        numeric = true,
-        allow_decimal = true
-    }
+    if useInterval then
+        playerGUI.cameraInfo.add {
+            type = "label",
+            caption = { "gui.label-interval" },
+            tooltip = { "tooltip.camera-interval" },
+            style = "description_property_name_label"
+        }
+
+        playerGUI.cameraInfo.add {
+            type = "textfield",
+            name = "camera-interval",
+            tooltip = { "tooltip.camera-interval" },
+            style = "tlbe_config_half_width_textfield",
+            numeric = true,
+            allow_decimal = true
+        }
+    else
+        playerGUI.cameraInfo.add {
+            type = "label",
+            caption = { "gui.label-speedgain" },
+            tooltip = { "tooltip.camera-speedgain" },
+            style = "description_property_name_label"
+        }
+
+        playerGUI.cameraInfo.add {
+            type = "textfield",
+            name = "camera-speed-gain",
+            tooltip = { "tooltip.camera-speedgain" },
+            style = "tlbe_config_half_width_textfield",
+            numeric = true,
+            allow_decimal = true
+        }
+    end
     playerGUI.cameraInfo.add {
         type = "label",
         caption = { "gui.label-transitionperiod" },
@@ -951,20 +982,37 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
         numeric = true,
         allow_decimal = true
     }
-    playerGUI.cameraInfo.add {
-        type = "label",
-        caption = { "gui.label-transition-speedgain" },
-        tooltip = { "tooltip.camera-transition-speedgain" },
-        style = "description_property_name_label"
-    }
-    playerGUI.cameraInfo.add {
-        type = "textfield",
-        name = "camera-transition-speed-gain",
-        tooltip = { "tooltip.camera-transition-speedgain" },
-        style = "tlbe_config_half_width_textfield",
-        numeric = true,
-        allow_decimal = true
-    }
+    if useInterval then
+        playerGUI.cameraInfo.add {
+            type = "label",
+            caption = { "gui.label-transition-interval" },
+            tooltip = { "tooltip.camera-transition-interval" },
+            style = "description_property_name_label"
+        }
+        playerGUI.cameraInfo.add {
+            type = "textfield",
+            name = "camera-transition-interval",
+            tooltip = { "tooltip.camera-transition-interval" },
+            style = "tlbe_config_half_width_textfield",
+            numeric = true,
+            allow_decimal = true
+        }
+    else
+        playerGUI.cameraInfo.add {
+            type = "label",
+            caption = { "gui.label-transition-speedgain" },
+            tooltip = { "tooltip.camera-transition-speedgain" },
+            style = "description_property_name_label"
+        }
+        playerGUI.cameraInfo.add {
+            type = "textfield",
+            name = "camera-transition-speed-gain",
+            tooltip = { "tooltip.camera-transition-speedgain" },
+            style = "tlbe_config_half_width_textfield",
+            numeric = true,
+            allow_decimal = true
+        }
+    end
     playerGUI.cameraInfo.add { type = "empty-widget" }
     playerGUI.cameraInfo.add {
         type = "checkbox",
@@ -998,7 +1046,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, cameras, tracke
     playerGUI.cameraInfo.add { type = "label", caption = { "gui.label-zoom" }, style = "description_property_name_label" }
     playerGUI.cameraInfo.add { type = "label", name = "camera-zoom" }
 
-    GUI.updateCameraConfig(playerGUI.cameraInfo, cameras[guiPersist.selectedCamera])
+    GUI.updateCameraConfig(useInterval, playerGUI.cameraInfo, cameras[guiPersist.selectedCamera])
     GUI.updateCameraInfo(playerGUI.cameraInfo, cameras[guiPersist.selectedCamera])
 
     -- Trackers
@@ -1337,17 +1385,24 @@ function GUI.updateCameraList(playerGUI, guiPersist, cameras)
     playerGUI.cameraSelector.selected_index = guiPersist.selectedCamera
 end
 
+---@param useInterval boolean
 ---@param cameraInfo table
 ---@param camera Camera.camera
-function GUI.updateCameraConfig(cameraInfo, camera)
+function GUI.updateCameraConfig(useInterval, cameraInfo, camera)
     -- Paranoia check
     if camera ~= nil then
         local resolutionFlow = cameraInfo["camera-resolution"]
         cameraInfo["camera-name"].text = camera.name
         cameraInfo["camera-frame-rate"].text = string.format("%d", camera.frameRate or 25)
-        cameraInfo["camera-speed-gain"].text = string.format("%d", camera.speedGain or 60)
+        if useInterval then
+            cameraInfo["camera-interval"].text = string.format("%d", Camera.calculateFrameInterval(camera) or 2400) -- same as speed gain of 60 for 25 fps
+            cameraInfo["camera-transition-interval"].text = string.format("%d",
+                Camera.calculateTransitionFrameInterval(camera) or 2400)                                            -- same as transition speed gain of 60 for 25 fps
+        else
+            cameraInfo["camera-speed-gain"].text = string.format("%d", camera.speedGain or 60)
+            cameraInfo["camera-transition-speed-gain"].text = string.format("%d", camera.transitionSpeedGain or 60)
+        end
         cameraInfo["camera-transition-period"].text = string.format("%2.2f", camera.transitionPeriod or 1.5)
-        cameraInfo["camera-transition-speed-gain"].text = string.format("%d", camera.transitionSpeedGain or 60)
         cameraInfo["camera-entity-info"].state = camera.entityInfo
         cameraInfo["camera-show-gui"].state = camera.showGUI
         cameraInfo["camera-always-day"].state = camera.alwaysDay
@@ -1501,7 +1556,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 state = tracker.untilBuild
             }
         elseif tracker.type == "cityblock" then
-            trackerInfo.add { 
+            trackerInfo.add {
                 type = "label",
                 caption = { "gui.label-cityblock-size" },
                 tooltip = { "tooltip.tracker-cityblock-size" },
@@ -1526,7 +1581,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 allow_negative = true
             }
 
-            trackerInfo.add { 
+            trackerInfo.add {
                 type = "label",
                 caption = { "gui.label-cityblock-offset" },
                 tooltip = { "tooltip.tracker-cityblock-offset" },
@@ -1551,7 +1606,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 allow_negative = true
             }
 
-            trackerInfo.add { 
+            trackerInfo.add {
                 type = "label",
                 caption = { "gui.label-cityblock-currentblock" },
                 tooltip = { "tooltip.tracker-cityblock-currentblock" },
@@ -1576,7 +1631,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 allow_negative = true
             }
 
-            trackerInfo.add { 
+            trackerInfo.add {
                 type = "label",
                 caption = { "gui.label-cityblock-blockScale" },
                 tooltip = { "tooltip.tracker-cityblock-blockScale" },
@@ -1673,7 +1728,7 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
             if cityBlock == nil then
                 return
             end
-            
+
             local sizeFlow = trackerInfo["cityblock-size"]
             sizeFlow["tlbe-tracker-cityblock-size-x"].text = string.format("%d", cityBlock.blockSize.x)
             sizeFlow["tlbe-tracker-cityblock-size-y"].text = string.format("%d", cityBlock.blockSize.y)

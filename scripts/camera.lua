@@ -31,10 +31,10 @@ local Camera = {}
 --- @field saveFolder string
 --- @field saveName string
 --- @field screenshotNumber integer Number for the next screenshot (when sequentialNames is set in player settings)
---- @field screenshotInterval number Interval (game ticks) between two screenshots  (calculated from speedGain and frameRate)
+--- @field screenshotInterval number Interval (game ticks) between two screenshots (calculated from speedGain and frameRate)
 --- @field screenshotIntervalRealtime number Interval (game ticks) between two screenshots for realtime transitions (calculated from frameRate)
 --- @field screenshotIntervalTransition number Interval (game ticks) between two screenshots during transitions (calculated from frameRate)
---- @field speedGain number Amount (factor) that the timelapse movie should speed up.
+--- @field speedGain number Amount (factor) that the timelapse movie should speed up compared to the game.
 --- @field surfaceName string
 --- @field trackers Tracker.tracker[]
 --- @field chartTags table Chart tags used to render viewfinder boxes on the map
@@ -57,6 +57,7 @@ Camera.CameraTransition = {}
 local maxZoom = 1
 local minZoom = 0.031250
 local ticks_per_second = 60
+local ms_per_tick = 1000 / ticks_per_second
 local tileSize = 32
 
 --- @return Camera.camera
@@ -320,6 +321,44 @@ function Camera.setSpeedGain(camera, speedGain)
 end
 
 ---@param camera Camera.camera
+---@param interval any
+function Camera.setFrameInterval(camera, interval)
+    interval = tonumber(interval)
+
+    if interval == nil or interval < ms_per_tick then
+        -- keep minimum interval
+        interval = ms_per_tick
+    end
+
+    local speedGain = (interval * camera.frameRate) / 1000
+    if speedGain < 1 then
+        -- keep minimum speed gain
+        speedGain = 1
+    end
+
+    camera.speedGain = speedGain
+    Camera.updateConfig(camera)
+end
+
+---@param camera Camera.camera
+---@return number|nil interval Camera interval
+function Camera.calculateFrameInterval(camera)
+    if camera.speedGain == nil or camera.frameRate == nil then
+        return nil
+    end
+
+
+    local interval = ((1000 * camera.speedGain) / camera.frameRate)
+
+    if interval < ms_per_tick then
+        -- keep minimum interval
+        interval = ms_per_tick
+    end
+
+    return interval
+end
+
+---@param camera Camera.camera
 ---@param speedGain any
 ---@param allowStopMotion boolean
 function Camera.setTransitionSpeedGain(camera, speedGain, allowStopMotion)
@@ -334,6 +373,48 @@ function Camera.setTransitionSpeedGain(camera, speedGain, allowStopMotion)
 
     camera.transitionSpeedGain = speedGain
     Camera.updateConfig(camera)
+end
+
+---@param camera Camera.camera
+---@param interval any
+---@param allowStopMotion boolean
+function Camera.setTransitionFrameInterval(camera, interval, allowStopMotion)
+    interval = tonumber(interval)
+
+    if interval == nil then
+        -- keep minimum interval
+        interval = ms_per_tick
+    end
+    if not allowStopMotion and interval == 0 then
+        interval = ms_per_tick
+    end
+
+    local speedGain = (interval * camera.frameRate) / 1000
+    if not allowStopMotion and speedGain < 1 then
+        -- keep minimum speed gain
+        speedGain = 1
+    end
+
+    camera.transitionSpeedGain = speedGain
+    Camera.updateConfig(camera)
+end
+
+---@param camera Camera.camera
+---@return number|nil interval Camera interval
+function Camera.calculateTransitionFrameInterval(camera)
+    if camera.transitionSpeedGain == nil or camera.frameRate == nil then
+        return nil
+    end
+
+
+    local interval = ((1000 * camera.transitionSpeedGain) / camera.frameRate)
+
+    if interval < ms_per_tick then
+        -- keep minimum interval
+        interval = ms_per_tick
+    end
+
+    return interval
 end
 
 --- @param camera Camera.camera
