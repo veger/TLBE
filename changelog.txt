@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.2
-
+Date: 21-10-204
   Minor Features:
     - Try to fix missing player data in order to be more flexible to unexpected situations.
     - Add (per player) setting to use intervals (milliseconds) between frames instead of speed gain (factor).
