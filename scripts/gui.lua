@@ -47,7 +47,7 @@ function GUI.tick()
 
     -- TODO performance: Use some kind of event system to update the GUI for
     for _, player in pairs(game.players) do
-        local playerSettings = global.playerSettings[player.index]
+        local playerSettings = storage.playerSettings[player.index]
         if playerSettings.gui ~= nil then
             if playerSettings.gui.cameraInfo.valid then
                 local camera = playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
@@ -97,7 +97,7 @@ end
 function GUI.onClick(event)
     local player = game.players[event.player_index]
     ---@type playerSettings
-    local playerSettings = global.playerSettings[event.player_index]
+    local playerSettings = storage.playerSettings[event.player_index]
 
     if event.element.name == "tlbe-main-window-close" then
         GUI.closeMainWindow(event)
@@ -416,7 +416,7 @@ end
 --- @param event  EventData.on_gui_selection_state_changed
 function GUI.onSelected(event)
     local player = game.players[event.player_index]
-    local playerSettings = global.playerSettings[event.player_index]
+    local playerSettings = storage.playerSettings[event.player_index]
 
     if event.element.name == "tlbe-cameras-list" then
         GUI.setSelectedCamera(player, playerSettings, event.element.selected_index)
@@ -514,7 +514,7 @@ end
 
 function GUI.onTextChanged(event)
     ---@type playerSettings
-    local playerSettings = global.playerSettings[event.player_index]
+    local playerSettings = storage.playerSettings[event.player_index]
     local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
 
     if event.element.name == "camera-name" then
@@ -666,7 +666,7 @@ function GUI.onTextChanged(event)
 end
 
 function GUI.onGuiConfirmed(event)
-    local playerSettings = global.playerSettings[event.player_index]
+    local playerSettings = storage.playerSettings[event.player_index]
     if event.element.name == "tlbe-tracker-cityblock-blockScale-value" and event.element.text ~= nil then
         local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
         local value = tonumber(event.element.text)
@@ -682,7 +682,7 @@ end
 
 function GUI.onStateChanged(event)
     ---@type playerSettings
-    local playerSettings = global.playerSettings[event.player_index]
+    local playerSettings = storage.playerSettings[event.player_index]
     if event.element.name == "camera-entity-info" then
         playerSettings.cameras[playerSettings.guiPersist.selectedCamera].entityInfo = event.element.state
     elseif event.element.name == "camera-show-gui" then
@@ -713,7 +713,7 @@ function GUI.takeScreenshot(event)
     local active = player.is_shortcut_available("tlbe-screenshot-shortcut")
     if active then
         ---@type playerSettings
-        local playerSettings = global.playerSettings[event.player_index]
+        local playerSettings = storage.playerSettings[event.player_index]
         local camera = playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         local _, activeTracker = Tracker.findActiveTracker(camera.trackers, camera.surfaceName)
 
@@ -724,7 +724,7 @@ end
 function GUI.onSurfacesUpdated()
     -- Surface list got updated so refresh GUI
     for _, player in pairs(game.players) do
-        local playerSettings = global.playerSettings[player.index]
+        local playerSettings = storage.playerSettings[player.index]
         if playerSettings.gui ~= nil then
             GUI.updateCameraConfig(
                 playerSettings.useInterval,
@@ -747,7 +747,7 @@ function GUI.onSurfaceChanged(event)
     end
 
     for _, player in pairs(game.players) do
-        local playerSettings = global.playerSettings[player.index]
+        local playerSettings = storage.playerSettings[player.index]
 
         for _, camera in pairs(playerSettings.cameras) do
             if camera.surfaceName == surfaceName then
@@ -777,7 +777,7 @@ end
 
 function GUI.togglePauseCameras(event)
     local player = game.players[event.player_index]
-    local playerSettings = global.playerSettings[event.player_index]
+    local playerSettings = storage.playerSettings[event.player_index]
 
     playerSettings.pauseCameras = playerSettings.pauseCameras ~= true
     player.set_shortcut_toggled("tlbe-pause-shortcut", playerSettings.pauseCameras)
@@ -793,7 +793,7 @@ end
 function GUI.toggleMainWindow(event)
     local player = game.players[event.player_index]
     ---@type playerSettings
-    local playerSettings = global.playerSettings[event.player_index]
+    local playerSettings = storage.playerSettings[event.player_index]
 
     local mainWindowOpen = player.gui.screen["tlbe-main-window"] ~= nil
     player.set_shortcut_toggled("tlbe-shortcut", not mainWindowOpen)
@@ -835,7 +835,7 @@ function GUI.toggleMainWindow(event)
         title_bar.add {
             type = "sprite-button",
             style = "frame_action_button",
-            sprite = "utility/close_white",
+            sprite = "utility/close",
             name = "tlbe-main-window-close"
         }
 
@@ -889,13 +889,13 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, useInterval, ca
 
     -- Camera info
     playerGUI.cameraInfo = cameraBox.add { type = "table", column_count = 2 }
-    playerGUI.cameraInfo.add { type = "label", caption = { "gui.label-name" }, style = "description_property_name_label" }
+    playerGUI.cameraInfo.add { type = "label", caption = { "gui.label-name" }, style = "bold_label" }
     playerGUI.cameraInfo.add { type = "textfield", name = "camera-name", style = "tlbe_config_textfield" }
     playerGUI.cameraInfo.add {
         type = "label",
         name = "camera-surface-label",
         caption = { "gui.label-surface" },
-        style = "description_property_name_label"
+        style = "bold_label"
     }
     playerGUI.cameraInfo.add {
         type = "drop-down",
@@ -906,7 +906,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, useInterval, ca
     playerGUI.cameraInfo.add {
         type = "label",
         caption = { "gui.label-resolution" },
-        style = "description_property_name_label"
+        style = "bold_label"
     }
     local resolutionFlow = playerGUI.cameraInfo.add { type = "flow", name = "camera-resolution" }
     resolutionFlow.add {
@@ -926,7 +926,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, useInterval, ca
         type = "label",
         caption = { "gui.label-framerate" },
         tooltip = { "tooltip.camera-framerate" },
-        style = "description_property_name_label"
+        style = "bold_label"
     }
     playerGUI.cameraInfo.add {
         type = "textfield",
@@ -940,7 +940,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, useInterval, ca
             type = "label",
             caption = { "gui.label-interval" },
             tooltip = { "tooltip.camera-interval" },
-            style = "description_property_name_label"
+            style = "bold_label"
         }
 
         playerGUI.cameraInfo.add {
@@ -956,7 +956,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, useInterval, ca
             type = "label",
             caption = { "gui.label-speedgain" },
             tooltip = { "tooltip.camera-speedgain" },
-            style = "description_property_name_label"
+            style = "bold_label"
         }
 
         playerGUI.cameraInfo.add {
@@ -972,7 +972,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, useInterval, ca
         type = "label",
         caption = { "gui.label-transitionperiod" },
         tooltip = { "tooltip.camera-transitionperiod" },
-        style = "description_property_name_label"
+        style = "bold_label"
     }
     playerGUI.cameraInfo.add {
         type = "textfield",
@@ -987,7 +987,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, useInterval, ca
             type = "label",
             caption = { "gui.label-transition-interval" },
             tooltip = { "tooltip.camera-transition-interval" },
-            style = "description_property_name_label"
+            style = "bold_label"
         }
         playerGUI.cameraInfo.add {
             type = "textfield",
@@ -1002,7 +1002,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, useInterval, ca
             type = "label",
             caption = { "gui.label-transition-speedgain" },
             tooltip = { "tooltip.camera-transition-speedgain" },
-            style = "description_property_name_label"
+            style = "bold_label"
         }
         playerGUI.cameraInfo.add {
             type = "textfield",
@@ -1040,10 +1040,10 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, useInterval, ca
     playerGUI.cameraInfo.add {
         type = "label",
         caption = { "gui.label-position" },
-        style = "description_property_name_label"
+        style = "bold_label"
     }
     playerGUI.cameraInfo.add { type = "label", name = "camera-position" }
-    playerGUI.cameraInfo.add { type = "label", caption = { "gui.label-zoom" }, style = "description_property_name_label" }
+    playerGUI.cameraInfo.add { type = "label", caption = { "gui.label-zoom" }, style = "bold_label" }
     playerGUI.cameraInfo.add { type = "label", name = "camera-zoom" }
 
     GUI.updateCameraConfig(useInterval, playerGUI.cameraInfo, cameras[guiPersist.selectedCamera])
@@ -1051,7 +1051,7 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, useInterval, ca
 
     -- Trackers
     flow.add { type = "line" }
-    flow.add { type = "label", caption = { "gui.label-camera-trackers" }, style = "description_property_name_label" }
+    flow.add { type = "label", caption = { "gui.label-camera-trackers" }, style = "bold_label" }
     local trackerBox = flow.add { type = "flow" }
     playerGUI.cameraTrackerListFlow = trackerBox.add { type = "flow", direction = "vertical",
         style = "tlbe_fancy_list_parent" }
@@ -1078,19 +1078,19 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, useInterval, ca
     playerGUI.cameraTrackerInfo.add {
         type = "label",
         caption = { "gui.label-type" },
-        style = "description_property_name_label"
+        style = "bold_label"
     }
     playerGUI.cameraTrackerInfo.add { type = "label", name = "tracker-type" }
     playerGUI.cameraTrackerInfo.add {
         type = "label",
         caption = { "gui.label-center" },
-        style = "description_property_name_label"
+        style = "bold_label"
     }
     playerGUI.cameraTrackerInfo.add { type = "label", name = "tracker-position" }
     playerGUI.cameraTrackerInfo.add {
         type = "label",
         caption = { "gui.label-size" },
-        style = "description_property_name_label"
+        style = "bold_label"
     }
     playerGUI.cameraTrackerInfo.add { type = "label", name = "tracker-size" }
     GUI.updateTrackerInfo(
@@ -1111,7 +1111,7 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, cameras, track
         selected_index = 1,
         name = "tlbe-tracker-add",
         items = { { "gui.item-new-tracker" }, table.unpack(GUI.allTrackersLabels) },
-        style = "tble_tracker_add_dropdown"
+        style = "tlbe_tracker_add_dropdown"
     }
 
     -- Trackers
@@ -1326,7 +1326,7 @@ function GUI.createCameraAddTracker(parent, allTrackers, camera)
             selected_index = 1,
             name = "tlbe-camera-add-tracker",
             items = { { "gui.item-add-tracker" }, table.unpack(availableTrackerNames) },
-            style = "tble_tracker_add_dropdown"
+            style = "tlbe_tracker_add_dropdown"
         }
     end
 end
@@ -1453,13 +1453,13 @@ end
 function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
     trackerInfo.clear()
 
-    trackerInfo.add { type = "label", caption = { "gui.label-name" }, style = "description_property_name_label" }
+    trackerInfo.add { type = "label", caption = { "gui.label-name" }, style = "bold_label" }
     trackerInfo.add { type = "textfield", name = "tracker-name", style = "tlbe_config_textfield" }
     trackerInfo.add {
         type = "label",
         name = "tracker-surface-label",
         caption = { "gui.label-surface" },
-        style = "description_property_name_label"
+        style = "bold_label"
     }
     trackerInfo.add {
         type = "drop-down",
@@ -1481,7 +1481,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
             trackerInfo.add {
                 type = "label",
                 caption = { "gui.label-top-right" },
-                style = "description_property_name_label"
+                style = "bold_label"
             }
             local trFlow = trackerInfo.add { type = "flow", name = "tracker-tr" }
             trFlow.add {
@@ -1515,7 +1515,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
             }
 
             trackerInfo.add { type = "label", caption = { "gui.label-bottom-left" },
-                style = "description_property_name_label" }
+                style = "bold_label" }
             local blFlow = trackerInfo.add { type = "flow", name = "tracker-bl" }
             blFlow.add {
                 type = "textfield",
@@ -1560,7 +1560,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 type = "label",
                 caption = { "gui.label-cityblock-size" },
                 tooltip = { "tooltip.tracker-cityblock-size" },
-                style = "description_property_name_label"
+                style = "bold_label"
             }
             local sizeFlow = trackerInfo.add { type = "flow", name = "cityblock-size" }
             sizeFlow.add {
@@ -1585,7 +1585,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 type = "label",
                 caption = { "gui.label-cityblock-offset" },
                 tooltip = { "tooltip.tracker-cityblock-offset" },
-                style = "description_property_name_label"
+                style = "bold_label"
             }
             local offsetFlow = trackerInfo.add { type = "flow", name = "cityblock-offset" }
             offsetFlow.add {
@@ -1610,7 +1610,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 type = "label",
                 caption = { "gui.label-cityblock-currentblock" },
                 tooltip = { "tooltip.tracker-cityblock-currentblock" },
-                style = "description_property_name_label"
+                style = "bold_label"
             }
             local blockFlow = trackerInfo.add { type = "flow", name = "cityblock-block" }
             blockFlow.add {
@@ -1635,7 +1635,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 type = "label",
                 caption = { "gui.label-cityblock-blockScale" },
                 tooltip = { "tooltip.tracker-cityblock-blockScale" },
-                style = "description_property_name_label"
+                style = "bold_label"
             }
             trackerInfo.add {
                 type = "textfield",
@@ -1650,7 +1650,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
             trackerInfo.add {
                 type = "label",
                 caption = { "gui.label-cityblock-centerOnPlayer" },
-                style = "description_property_name_label"
+                style = "bold_label"
             }
             trackerInfo.add {
                 type = "sprite-button",
@@ -1665,16 +1665,16 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
     trackerInfo.add {
         type = "label",
         caption = { "gui.label-type" },
-        style = "description_property_name_label"
+        style = "bold_label"
     }
     trackerInfo.add { type = "label", name = "tracker-type" }
     trackerInfo.add {
         type = "label",
         caption = { "gui.label-center" },
-        style = "description_property_name_label"
+        style = "bold_label"
     }
     trackerInfo.add { type = "label", name = "tracker-position" }
-    trackerInfo.add { type = "label", caption = { "gui.label-size" }, style = "description_property_name_label" }
+    trackerInfo.add { type = "label", caption = { "gui.label-size" }, style = "bold_label" }
     trackerInfo.add { type = "label", name = "tracker-size" }
     GUI.updateTrackerConfig(trackerInfo, tracker)
     GUI.updateTrackerInfo(trackerInfo, tracker)

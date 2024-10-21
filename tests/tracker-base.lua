@@ -12,18 +12,18 @@ TestTrackerBase = {}
 
 function TestTrackerBase:SetUp()
     -- mock Factorio provided globals
-    global = {}
+    storage = {}
     game = {
         surfaces = { { name = "nauvis" }, { name = "other-surface" } }
     }
 
     -- mock TLBE tables
-    global.playerSettings = {
+    storage.playerSettings = {
         TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 } })
     }
 
     -- Update base tracker with our test settings
-    self.baseTracker = global.playerSettings[1].trackers[3]
+    self.baseTracker = storage.playerSettings[1].trackers[3]
     for k, v in pairs(
         {
             changeId = 1
@@ -38,7 +38,7 @@ function TestTrackerBase:TestDisabledTracker()
     self.baseTracker.enabled = false
     TLBE.Main.entity_built(
         {
-            created_entity = {
+            entity = {
                 surface = game.surfaces[1],
                 bounding_box = {
                     left_top = { x = 1, y = 3 },
@@ -56,7 +56,7 @@ end
 function TestTrackerBase:TestBuildOnOtherSurface()
     TLBE.Main.entity_built(
         {
-            created_entity = {
+            entity = {
                 surface = game.surfaces[2],
                 bounding_box = {
                     left_top = { x = 1, y = 3 },
@@ -74,7 +74,7 @@ end
 function TestTrackerBase:TestSingleEntityBuilt()
     TLBE.Main.entity_built(
         {
-            created_entity = {
+            entity = {
                 surface = game.surfaces[1],
                 bounding_box = {
                     left_top = { x = 1, y = 3 },
@@ -102,7 +102,7 @@ end
 function TestTrackerBase:TestMultipleEntitiesBuilt()
     TLBE.Main.entity_built(
         {
-            created_entity = {
+            entity = {
                 surface = game.surfaces[1],
                 bounding_box = {
                     left_top = { x = 1, y = 3 },
@@ -116,7 +116,7 @@ function TestTrackerBase:TestMultipleEntitiesBuilt()
 
     TLBE.Main.entity_built(
         {
-            created_entity = {
+            entity = {
                 surface = game.surfaces[1],
                 bounding_box = {
                     left_top = { x = -2, y = 5 },

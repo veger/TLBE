@@ -6,7 +6,7 @@ local Utils = require("scripts.utils")
 
 function Main.tick()
     for _, player in pairs(game.players) do
-        local playerSettings = global.playerSettings[player.index]
+        local playerSettings = storage.playerSettings[player.index]
 
         if playerSettings.pauseCameras == true then
             -- Skip this player as the pause-cameras toggle is enabled
@@ -56,9 +56,9 @@ function Main.tick()
 end
 
 function Main.entity_built(event)
-    local newEntityBBox = Utils.entityBBox(event.created_entity)
+    local newEntityBBox = Utils.entityBBox(event.entity)
 
-    for _, playerSettings in pairs(global.playerSettings) do
+    for _, playerSettings in pairs(storage.playerSettings) do
         for _, tracker in pairs(playerSettings.trackers) do
             if not tracker.enabled then
                 goto nextTracker
@@ -67,7 +67,7 @@ function Main.entity_built(event)
             if tracker.untilBuild then
                 Tracker.moveToNextTracker(tracker)
             elseif tracker.type == "base" then
-                if tracker.surfaceName ~= event.created_entity.surface.name then
+                if tracker.surfaceName ~= event.entity.surface.name then
                     goto nextTracker
                 end
 
@@ -100,7 +100,7 @@ function Main.entity_built(event)
 end
 
 function Main.rocket_launch(event)
-    for _, playerSettings in pairs(global.playerSettings) do
+    for _, playerSettings in pairs(storage.playerSettings) do
         for _, tracker in pairs(playerSettings.trackers) do
             if tracker.type ~= "rocket" or tracker.surfaceName ~= event.rocket_silo.surface.name then
                 goto nextTracker
@@ -120,9 +120,9 @@ function Main.rocket_launch(event)
 end
 
 function Main.rocket_launched(event)
-    for _, playerSettings in pairs(global.playerSettings) do
+    for _, playerSettings in pairs(storage.playerSettings) do
         for _, tracker in pairs(playerSettings.trackers) do
-            if tracker.type ~= "rocket" or tracker.surfaceName ~= event.rocket_silo.surface.name then
+            if tracker.type ~= "rocket" or event.rocket_silo == nil or tracker.surfaceName ~= event.rocket_silo.surface.name then
                 goto nextTracker
             end
 

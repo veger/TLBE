@@ -6,6 +6,7 @@
     ],
     "hint.enable": false,
     "diagnostics.globals": [
-        "os"
+        "os",
+        "storage"
     ]
 }

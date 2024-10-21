@@ -127,20 +127,20 @@ function TestTick:Setup()
             self.screenshotTaken = true
         end
     }
-    global = {
+    storage = {
         playerSettings = {
             Config.newPlayerSettings(game.players[1])
         }
     }
 
     self.areaTracker = Tracker.newTracker "area"
-    self.camera = global.playerSettings[1].cameras[1]
+    self.camera = storage.playerSettings[1].cameras[1]
     self.camera.enabled = true
     self.camera.screenshotInterval = 1           -- take screenshot every tick
     self.camera.screenshotIntervalTransition = 1 -- take screenshot every tick
-    global.playerSettings[1].trackers = { self.areaTracker }
+    storage.playerSettings[1].trackers = { self.areaTracker }
     self.camera.trackers = { self.areaTracker }
-    global.playerSettings[1].sequentialNames = true
+    storage.playerSettings[1].sequentialNames = true
 
     Camera.SetActiveTracker(self.camera, self.areaTracker)
 end

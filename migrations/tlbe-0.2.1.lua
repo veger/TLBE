@@ -4,12 +4,12 @@ local Tracker = require("scripts.tracker")
 
 local ticks_per_second = 60
 
-if global.playerSettings == nil then
+if storage.playerSettings == nil then
     goto SkipMigration
 end
 
 for player_index, player in pairs(game.players) do
-    local playerSettings = global.playerSettings[player_index]
+    local playerSettings = storage.playerSettings[player_index]
     if playerSettings == nil or playerSettings.cameras == nil then
         goto NextPlayer
     end
@@ -68,7 +68,7 @@ for player_index, player in pairs(game.players) do
     playerSettings.trackers = { table.unpack(mainCamera.trackers) }
 
     -- Remove obsolete entries
-    global.rocketLaunching = nil
+    storage.rocketLaunching = nil
     playerSettings.enabled = nil
     playerSettings.noticesEnabled = nil
     playerSettings.followPlayer = nil

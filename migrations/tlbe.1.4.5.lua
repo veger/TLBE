@@ -1,4 +1,4 @@
-if global.playerSettings == nil then
+if storage.playerSettings == nil then
     goto SkipMigration
 end
 
@@ -8,7 +8,7 @@ local GUI = require("scripts.gui")
 -- Convert to new Camera transitionData
 for player_index, player in pairs(game.players) do
     ---@type playerSettings
-    local playerSettings = global.playerSettings[player_index]
+    local playerSettings = storage.playerSettings[player_index]
     if playerSettings == nil then
         goto NextPlayer
     end

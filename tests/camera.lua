@@ -56,8 +56,8 @@ local function nextTick()
 end
 
 function TestCamera:SetUp()
-    -- mock Factorio provided globals
-    global = {}
+    -- mock Factorio provided storage
+    storage = {}
     game = {
         tick = 0,
         surfaces = { { name = "nauvis" } },
@@ -66,7 +66,7 @@ function TestCamera:SetUp()
     }
 
     -- mock TLBE tables
-    global.playerSettings = {
+    storage.playerSettings = {
         TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 } }),
         TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 } })
     }
@@ -77,12 +77,12 @@ function TestCamera:SetUp()
     }
 
     -- Enable player1 camera
-    global.playerSettings[1].cameras[1].enabled = true
+    storage.playerSettings[1].cameras[1].enabled = true
 
     -- Make cameras easier to test
-    self.testCameraPlayer1 = global.playerSettings[1].cameras[1]
-    self.testCameraPlayer2 = global.playerSettings[2].cameras[1]
-    for _, playerSettings in pairs(global.playerSettings) do
+    self.testCameraPlayer1 = storage.playerSettings[1].cameras[1]
+    self.testCameraPlayer2 = storage.playerSettings[2].cameras[1]
+    for _, playerSettings in pairs(storage.playerSettings) do
         for _, camera in pairs(playerSettings.cameras) do
             for k, v in pairs(
                 {
@@ -113,7 +113,7 @@ function TestCamera:TestTransitionFromPlayerToBaseTracker()
     game.players[1].position = { x = 2, y = 2 }
     TLBE.Main.entity_built(
         {
-            created_entity = {
+            entity = {
                 surface = game.surfaces[1],
                 bounding_box = {
                     left_top = { x = 1, y = 3 },
@@ -141,7 +141,7 @@ function TestCamera:TestRocketLaunch1()
     -- Initialize base tracker
     TLBE.Main.entity_built(
         {
-            created_entity = {
+            entity = {
                 surface = game.surfaces[1],
                 bounding_box = {
                     left_top = { x = -1, y = -1 },
@@ -179,7 +179,7 @@ function TestCamera:TestResolutionChange()
 
     TLBE.Main.entity_built(
         {
-            created_entity = {
+            entity = {
                 surface = game.surfaces[1],
                 bounding_box = {
                     left_top = { x = -20, y = -20 },

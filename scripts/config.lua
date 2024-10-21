@@ -31,10 +31,10 @@ function Config.reload(event)
     local player = game.players[event.player_index]
     local guiSettings = settings.get_player_settings(player)
 
-    local playerSettings = global.playerSettings[event.player_index]
+    local playerSettings = storage.playerSettings[event.player_index]
     if playerSettings == nil then
         playerSettings = Config.newPlayerSettings(player)
-        global.playerSettings[event.player_index] = playerSettings
+        storage.playerSettings[event.player_index] = playerSettings
     end
 
     ---@diagnostic disable: assign-type-mismatch

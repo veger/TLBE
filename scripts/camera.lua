@@ -475,7 +475,7 @@ end
 
 --- @param player LuaPlayer
 function Camera.recordingSensor(player)
-    local playerSettings = global.playerSettings[player.index]
+    local playerSettings = storage.playerSettings[player.index]
 
     if not playerSettings.showCameraStatus then
         return nil

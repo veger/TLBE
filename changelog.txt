@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.0
+Date: 21-10-204
+  Features:
+    - Support Factorio 2.0 (I did not check with Space Age playthrough, so there might be bugs!)
+---------------------------------------------------------------------------------------------------
 Version: 1.5.2
 Date: 21-10-204
   Minor Features:

@@ -18,14 +18,14 @@ local function init_new_player(index, player)
     -- initialize player(s) when mod is loaded into existing game
     player.print("init_new_player")
     TLBE.Config.reload({ player_index = index })
-    TLBE.GUI.initialize(player, global.playerSettings[index])
+    TLBE.GUI.initialize(player, storage.playerSettings[index])
 
     player.print({ "mod-loaded" }, { r = 1, g = 0.5, b = 0 })
     player.print({ "mod-loaded2" })
 end
 
 local function on_init()
-    global.playerSettings = {}
+    storage.playerSettings = {}
 
     for index, player in pairs(game.players) do
         -- initialize player(s) when mod is loaded into existing game
@@ -37,7 +37,7 @@ local function on_init()
     if baseBBox ~= nil then
         -- Update base trackers of each player
         for index, _ in pairs(game.players) do
-            local baseTracker = global.playerSettings[index].trackers[3]
+            local baseTracker = storage.playerSettings[index].trackers[3]
             baseTracker.minPos = baseBBox.minPos
             baseTracker.maxPos = baseBBox.maxPos
             TLBE.Tracker.updateCenterAndSize(baseTracker)
@@ -57,7 +57,7 @@ local function on_configuration_changed(event)
     -- Sometimes playerSettings does not seem to be present when upgrading
     -- from older versions. We can just fix this issue here.
     for index, player in pairs(game.players) do
-        if global.playerSettings[index] == nil then
+        if storage.playerSettings[index] == nil then
             player.print({ "migration-fix-missing-player-data" })
             init_new_player(index, player)
         end
@@ -73,7 +73,7 @@ local function on_player_created(event)
     local player = game.players[event.player_index]
     player.print({ "mod-loaded2" }, { r = 1, g = 0.5, b = 0 })
 
-    TLBE.GUI.initialize(player, global.playerSettings[event.player_index])
+    TLBE.GUI.initialize(player, storage.playerSettings[event.player_index])
 end
 
 

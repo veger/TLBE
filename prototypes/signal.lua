@@ -14,13 +14,14 @@ data:extend({
         icons = {
             {
                 icon = "__TLBE__/graphics/box-north-west.png",
+                icon_size = 32,
                 tint = capture_tint
             }
         },
-        icon_size = 32,
-        icon_mipmaps = 1,
+        scale = 0.5,
         subgroup = "tlbe-virtual-signal",
-        order = "a"
+        order = "a",
+        hidden_in_factoriopedia = true
     },
     {
         type = "virtual-signal",
@@ -28,13 +29,14 @@ data:extend({
         icons = {
             {
                 icon = "__TLBE__/graphics/box-south-west.png",
+                icon_size = 32,
                 tint = capture_tint,
             }
         },
-        icon_size = 32,
-        icon_mipmaps = 1,
+        scale = 0.5,
         subgroup = "tlbe-virtual-signal",
-        order = "b"
+        order = "b",
+        hidden_in_factoriopedia = true
     },
     {
         type = "virtual-signal",
@@ -42,14 +44,15 @@ data:extend({
         icons = {
             {
                 icon = "__TLBE__/graphics/box-south-east.png",
+                icon_size = 32,
                 tint = capture_tint
             }
         },
-        icon_size = 32,
+        scale = 0.5,
         tint = { 0, 1, 0 },
-        icon_mipmaps = 1,
         subgroup = "tlbe-virtual-signal",
-        order = "c"
+        order = "c",
+        hidden_in_factoriopedia = true
     },
     {
         type = "virtual-signal",
@@ -57,13 +60,14 @@ data:extend({
         icons = {
             {
                 icon = "__TLBE__/graphics/box-north-east.png",
+                icon_size = 32,
                 tint = capture_tint,
             }
         },
-        icon_size = 32,
-        icon_mipmaps = 1,
+        scale = 0.5,
         subgroup = "tlbe-virtual-signal",
-        order = "d"
+        order = "d",
+        hidden_in_factoriopedia = true
     },
     {
         type = "virtual-signal",
@@ -71,13 +75,14 @@ data:extend({
         icons = {
             {
                 icon = "__TLBE__/graphics/box-north-west.png",
+                icon_size = 32,
                 tint = target_tint
             }
         },
-        icon_size = 32,
-        icon_mipmaps = 1,
+        scale = 0.5,
         subgroup = "tlbe-virtual-signal",
-        order = "e"
+        order = "e",
+        hidden_in_factoriopedia = true
     },
     {
         type = "virtual-signal",
@@ -85,13 +90,14 @@ data:extend({
         icons = {
             {
                 icon = "__TLBE__/graphics/box-south-west.png",
-                tint = target_tint,
+                icon_size = 32,
+                tint = target_tint
             }
         },
-        icon_size = 32,
-        icon_mipmaps = 1,
+        scale = 0.5,
         subgroup = "tlbe-virtual-signal",
-        order = "f"
+        order = "f",
+        hidden_in_factoriopedia = true
     },
     {
         type = "virtual-signal",
@@ -99,13 +105,14 @@ data:extend({
         icons = {
             {
                 icon = "__TLBE__/graphics/box-south-east.png",
+                icon_size = 32,
                 tint = target_tint
             }
         },
-        icon_size = 32,
-        icon_mipmaps = 1,
+        scale = 0.5,
         subgroup = "tlbe-virtual-signal",
-        order = "g"
+        order = "g",
+        hidden_in_factoriopedia = true
     },
     {
         type = "virtual-signal",
@@ -113,12 +120,13 @@ data:extend({
         icons = {
             {
                 icon = "__TLBE__/graphics/box-north-east.png",
+                icon_size = 32,
                 tint = target_tint,
             }
         },
-        icon_size = 32,
-        icon_mipmaps = 1,
+        scale = 0.5,
         subgroup = "tlbe-virtual-signal",
-        order = "h"
+        order = "h",
+        hidden_in_factoriopedia = true
     }
 })

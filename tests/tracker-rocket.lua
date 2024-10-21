@@ -11,18 +11,18 @@ TestTrackerRocket = {}
 
 function TestTrackerRocket:SetUp()
     -- mock Factorio provided globals
-    global = {}
+    storage = {}
     game = {
         surfaces = { { name = "nauvis" }, { name = "other-surface" } }
     }
 
     -- mock TLBE tables
-    global.playerSettings = {
+    storage.playerSettings = {
         TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 } })
     }
 
     -- Update rocket tracker with our test settings
-    self.rocketTracker = global.playerSettings[1].trackers[2]
+    self.rocketTracker = storage.playerSettings[1].trackers[2]
     for k, v in pairs(
         {
             centerPos = { x = 0, y = 0 },
@@ -62,7 +62,7 @@ end
 function TestTrackerRocket:TestRocketLaunched()
     self.rocketTracker.enabled = true
     TLBE.Main.rocket_launched({ rocket_silo = { surface = game.surfaces[1] } })
-    TLBE.Tracker.MoveToNextTrackerFinished(global.playerSettings[1].trackers)
+    TLBE.Tracker.MoveToNextTrackerFinished(storage.playerSettings[1].trackers)
 
     lu.assertIsFalse(self.rocketTracker.enabled, "expected be disabled after rocket launched")
 end
@@ -70,7 +70,7 @@ end
 function TestTrackerRocket:TestRocketLaunchedAlreadyInactive()
     self.rocketTracker.enabled = false
     TLBE.Main.rocket_launched({ rocket_silo = { surface = game.surfaces[1] } })
-    TLBE.Tracker.MoveToNextTrackerFinished(global.playerSettings[1].trackers)
+    TLBE.Tracker.MoveToNextTrackerFinished(storage.playerSettings[1].trackers)
 
     lu.assertIsFalse(self.rocketTracker.enabled, "expected be still disabled after rocket launched")
 end

@@ -11,17 +11,17 @@ TestTrackerPlayer = {}
 
 function TestTrackerPlayer:SetUp()
     -- mock Factorio provided globals
-    global = {}
+    storage = {}
     game = {
         surfaces = { { name = "nauvis" }, { name = "other-surface" } }
     }
 
     -- mock TLBE tables
-    global.playerSettings = {
+    storage.playerSettings = {
         TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 } })
     }
 
-    self.playerTracker = global.playerSettings[1].trackers[1]
+    self.playerTracker = storage.playerSettings[1].trackers[1]
 end
 
 -- luacheck: globals game

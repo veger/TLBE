@@ -10,7 +10,7 @@ TestSurfaceEvents = {}
 
 function TestSurfaceEvents:SetUp()
     -- mock Factorio provided globals
-    global = {}
+    storage = {}
     -- luacheck: globals game
     game = {
         tick = 0,
@@ -18,7 +18,7 @@ function TestSurfaceEvents:SetUp()
     }
 
     -- mock TLBE tables
-    global.playerSettings = {
+    storage.playerSettings = {
         TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 } }),
     }
 
@@ -27,7 +27,7 @@ function TestSurfaceEvents:SetUp()
     }
 
     -- Make camera easier to test
-    self.testCamera = global.playerSettings[1].cameras[1]
+    self.testCamera = storage.playerSettings[1].cameras[1]
     self.testCamera.surfaceName = "active-surface"
 end
 

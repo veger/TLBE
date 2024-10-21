@@ -48,7 +48,7 @@ default_gui["tlbe_fancy_list_box"] = {
 
 default_gui["tlbe_fancy_list_box_item"] = {
     type = "frame_style",
-    parent = "dark_frame",
+    parent = "shallow_frame",
     padding = 0,
     width = fancy_list_box_width
 }
@@ -153,7 +153,7 @@ default_gui["tlbe_tracker_list"] = {
     right_margin = camera_flow_left_side_margin
 }
 
-default_gui["tble_tracker_add_dropdown"] = {
+default_gui["tlbe_tracker_add_dropdown"] = {
     type = "dropdown_style",
     width = fancy_list_box_width,
     right_margin = camera_flow_left_side_margin

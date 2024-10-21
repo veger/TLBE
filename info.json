@@ -1,14 +1,14 @@
 {
     "name": "TLBE",
-    "version": "1.5.2",
+    "version": "2.0.0",
     "title": "Time Lapse Base Edition",
     "author": "veger",
     "contact": "",
     "homepage": "",
     "license": "MIT https://opensource.org/licenses/MIT",
-    "factorio_version": "1.1",
+    "factorio_version": "2.0",
     "dependencies": [
-        "base >= 1.0.0",
+        "base >= 2.0.0",
         "? StatsGui >= 1.1.0"
     ],
     "description": "Takes screenshots of your base at specified intervals."

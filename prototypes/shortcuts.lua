@@ -26,36 +26,10 @@ data:extend(
             action = "lua",
             localised_name = { "shortcut.tlbe" },
             associated_control_input = "tlbe-main-window-toggle",
-            icon = {
-                -- tlbe-logo
-                filename = "__TLBE__/graphics/logo.png",
-                priority = "extra-high-no-scale",
-                width = 64,
-                height = 50,
-                position = { 0, 0 },
-                scale = 1,
-                flags = { "icon" }
-            },
-            small_icon = {
-                -- tlbe-logo
-                filename = "__TLBE__/graphics/logo.png",
-                priority = "extra-high-no-scale",
-                width = 64,
-                height = 50,
-                position = { 0, 0 },
-                scale = 1,
-                flags = { "icon" }
-            },
-            disabled_small_icon = {
-                -- tlbe-logo-white
-                filename = "__TLBE__/graphics/logo.png",
-                priority = "extra-high-no-scale",
-                width = 64,
-                height = 50,
-                position = { 65, 0 },
-                scale = 1,
-                flags = { "icon" }
-            }
+            icon = "__TLBE__/graphics/logo-32.png",
+            icon_size = 32,
+            small_icon = "__TLBE__/graphics/logo-24.png",
+            small_icon_size = 24
         },
         {
             type = "shortcut",
@@ -65,36 +39,10 @@ data:extend(
             action = "lua",
             localised_name = { "shortcut.tlbe-pause" },
             associated_control_input = "tlbe-pause-cameras",
-            icon = {
-                -- tlbe-pause-camera
-                filename = "__TLBE__/graphics/pause-camera.png",
-                priority = "extra-high-no-scale",
-                width = 64,
-                height = 64,
-                position = { 0, 0 },
-                scale = 1,
-                flags = { "icon" }
-            },
-            small_icon = {
-                -- tlbe-pause-camera
-                filename = "__TLBE__/graphics/pause-camera.png",
-                priority = "extra-high-no-scale",
-                width = 64,
-                height = 64,
-                position = { 0, 0 },
-                scale = 1,
-                flags = { "icon" }
-            },
-            disabled_small_icon = {
-                -- tlbe-pause-camera-white
-                filename = "__TLBE__/graphics/pause-camera.png",
-                priority = "extra-high-no-scale",
-                width = 64,
-                height = 50,
-                position = { 65, 0 },
-                scale = 1,
-                flags = { "icon" }
-            }
+            icon = "__TLBE__/graphics/pause-camera-32.png",
+            icon_size = 32,
+            small_icon = "__TLBE__/graphics/pause-camera-24.png",
+            small_icon_size = 24
         },
         {
             type = "shortcut",
@@ -104,36 +52,10 @@ data:extend(
             action = "lua",
             localised_name = { "shortcut.tlbe-screenshot" },
             associated_control_input = "tlbe-take-screenshot",
-            icon = {
-                -- tlbe-take-screenshot
-                filename = "__TLBE__/graphics/take-screenshot.png",
-                priority = "extra-high-no-scale",
-                width = 64,
-                height = 64,
-                position = { 0, 0 },
-                scale = 1,
-                flags = { "icon" }
-            },
-            small_icon = {
-                -- tlbe-take-screenshot
-                filename = "__TLBE__/graphics/take-screenshot.png",
-                priority = "extra-high-no-scale",
-                width = 64,
-                height = 64,
-                position = { 0, 0 },
-                scale = 1,
-                flags = { "icon" }
-            },
-            disabled_small_icon = {
-                -- tlbe-take-screenshot-white
-                filename = "__TLBE__/graphics/take-screenshot.png",
-                priority = "extra-high-no-scale",
-                width = 64,
-                height = 50,
-                position = { 65, 0 },
-                scale = 1,
-                flags = { "icon" }
-            }
+            icon = "__TLBE__/graphics/take-screenshot-32.png",
+            icon_size = 32,
+            small_icon = "__TLBE__/graphics/take-screenshot-24.png",
+            small_icon_size = 24,
         }
     }
 )
