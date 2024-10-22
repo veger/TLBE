@@ -10,16 +10,16 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install lua5.2
       run: sudo apt-get install lua5.2
 
     - name: lint
-      uses: mrcjkb/lua-typecheck-action@v0.2.0
+      uses: mrcjkb/lua-typecheck-action@v1.0.0
       with:
         checkLevel: Error
-        configpath: ".luarc.json"
+        configPath: ".luarc.json"
     
     - name: unit test
       run: lua test-suite.lua -v
