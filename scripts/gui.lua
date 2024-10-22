@@ -500,13 +500,13 @@ function GUI.onSelected(event)
     elseif event.element.name == "camera-surface" then
         playerSettings.cameras[playerSettings.guiPersist.selectedCamera].surfaceName = event.element.get_item(event
             .element
-            .selected_index)
+            .selected_index) --[[@as SurfaceIdentification]]
 
         GUI.createCameraTrackerList(playerSettings)
     elseif event.element.name == "tracker-surface" then
         playerSettings.trackers[playerSettings.guiPersist.selectedTracker].surfaceName = event.element.get_item(event
             .element
-            .selected_index)
+            .selected_index) --[[@as SurfaceIdentification]]
 
         GUI.createCameraTrackerList(playerSettings)
     end

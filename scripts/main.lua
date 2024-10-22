@@ -185,7 +185,7 @@ end
 ---@field minPos MapPosition.0
 ---@field maxPos MapPosition.0
 
----@param surface string
+---@param surface SurfaceIdentification
 ---@return BaseBBox|nil
 function Main.getBaseBBox(surface)
     local entities = game.surfaces[surface].find_entities_filtered { force = "player" }

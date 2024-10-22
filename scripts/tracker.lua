@@ -7,10 +7,10 @@ local Tracker = {}
 --- @field name string
 --- @field realtimeCamera boolean
 --- @field smooth boolean When true, smooth transitions are enabled/required for this tracker
---- @field surfaceName string
+--- @field surfaceName SurfaceIdentification
 --- @field type string
 --- @field untilBuild boolean
---- @field userCanEnable boolean When true, the user can enabled/disable the tracker, otherwise the tracker is controlled by TBLE
+--- @field userCanEnable boolean When true, the user can enabled/disable the tracker, otherwise the tracker is controlled by TLBE
 --- @field moveToNextTracker boolean|nil Disables the tracker after the cameras are processed (end of game tick)
 --- @field changeId integer Incremented on each position/size change of the tracker
 --- @field centerPos MapPosition.0|nil Center position of the tracker area (Calculated from minPos and maxPos)
@@ -87,7 +87,7 @@ end
 
 ---find the city block containing the position and relocate to that one
 ---@param tracker Tracker.tracker
----@param pos MapPosition.0|MapPosition.1
+---@param pos MapPosition
 function Tracker.focusCityBlock(tracker, pos)
     local cityBlock = tracker.cityBlock
     if cityBlock == nil then

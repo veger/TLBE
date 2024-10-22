@@ -35,7 +35,7 @@ local Camera = {}
 --- @field screenshotIntervalRealtime number Interval (game ticks) between two screenshots for realtime transitions (calculated from frameRate)
 --- @field screenshotIntervalTransition number Interval (game ticks) between two screenshots during transitions (calculated from frameRate)
 --- @field speedGain number Amount (factor) that the timelapse movie should speed up compared to the game.
---- @field surfaceName string
+--- @field surfaceName SurfaceIdentification
 --- @field trackers Tracker.tracker[]
 --- @field chartTags table Chart tags used to render viewfinder boxes on the map
 --- @field width number
