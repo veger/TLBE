@@ -1503,7 +1503,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 type = "sprite-button",
                 name = "tlbe-tracker-tr-player",
                 tooltip = { "tooltip.tracker-area-player" },
-                sprite = "utility/show_player_names_in_map_view_black",
+                sprite = "utility/show_player_names_in_map_view",
                 style = "tlbe_config_button"
             }
             trFlow.add {
@@ -1536,7 +1536,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 type = "sprite-button",
                 name = "tlbe-tracker-bl-player",
                 tooltip = { "tooltip.tracker-area-player" },
-                sprite = "utility/show_player_names_in_map_view_black",
+                sprite = "utility/show_player_names_in_map_view",
                 style = "tlbe_config_button"
             }
             blFlow.add {
@@ -1656,7 +1656,7 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 type = "sprite-button",
                 name = "tlbe-tracker-cityblock-player",
                 tooltip = { "tooltip.tracker-cityblock-player" },
-                sprite = "utility/show_player_names_in_map_view_black",
+                sprite = "utility/show_player_names_in_map_view",
                 style = "tlbe_config_button"
             }
         end
