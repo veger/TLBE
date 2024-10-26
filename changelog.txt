@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.0.2
+
+  Bugfixes:
+    - Make sure camera zoom is not lower than minimal allowed zoom when smooth tracking is disabled.
+---------------------------------------------------------------------------------------------------
 Version: 2.0.1
 Date: 22-10-204
   Bugfixes:

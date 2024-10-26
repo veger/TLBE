@@ -82,6 +82,7 @@ function TestCamera:SetUp()
     -- Make cameras easier to test
     self.testCameraPlayer1 = storage.playerSettings[1].cameras[1]
     self.testCameraPlayer2 = storage.playerSettings[2].cameras[1]
+    self.testPlayer1 = storage.playerSettings[1]
     for _, playerSettings in pairs(storage.playerSettings) do
         for _, camera in pairs(playerSettings.cameras) do
             for k, v in pairs(
@@ -191,12 +192,14 @@ function TestCamera:TestResolutionChange()
 
     -- force set camera position and zoom
     ---@diagnostic disable-next-line: param-type-mismatch player(Data) can be nil when disableSmooth is true
-    TLBE.Camera.followTracker(nil, nil, self.testCameraPlayer1, baseTracker, true)
+    TLBE.Camera.followTracker(self.testPlayer1, nil, self.testCameraPlayer1, baseTracker, true)
     local oldZoom = self.testCameraPlayer1.zoom;
     local oldCenterPos = self.testCameraPlayer1.centerPos;
 
-    TLBE.Camera.setWidth(self.testCameraPlayer1, self.testCameraPlayer1.width * 2)
-    TLBE.Camera.setHeight(self.testCameraPlayer1, self.testCameraPlayer1.height * 2)
+    ---@diagnostic disable-next-line: param-type-mismatch player(Data) can be nil when minZoom is not reached
+    TLBE.Camera.setWidth(self.testPlayer1, nil, self.testCameraPlayer1, self.testCameraPlayer1.width * 2)
+    ---@diagnostic disable-next-line: param-type-mismatch player(Data) can be nil when minZoom is not reached
+    TLBE.Camera.setHeight(self.testPlayer1, nil, self.testCameraPlayer1, self.testCameraPlayer1.height * 2)
 
     lu.assertEquals(self.testCameraPlayer1.centerPos.x, oldCenterPos.x, "expected centerpos to be the same")
     lu.assertEquals(self.testCameraPlayer1.centerPos.y, oldCenterPos.y, "expected centerpos to be the same")

@@ -166,6 +166,7 @@ function Camera.followTracker(playerSettings, player, camera, tracker, disableSm
     else
         camera.centerPos = tracker.centerPos
         camera.zoom = Camera.zoom(camera, tracker)
+        Camera.sanitizeZoom(camera, playerSettings, player)
     end
 
     Camera.refreshChartTags(player, camera, captureBox, camera.centerPos, camera.zoom)
@@ -196,19 +197,7 @@ function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
         transitionData.transitionTicksLeft = transitionData.transitionTicksLeft - 1
 
         camera.centerPos, camera.zoom = Camera.CameraTransition.lerp(transitionData)
-
-        if camera.zoom < minZoom then
-            if playerSettings.noticeMaxZoom == nil then
-                player.print({ "max-zoom" }, { r = 1 })
-                player.print({ "msg-once" })
-                playerSettings.noticeMaxZoom = true
-            end
-
-            camera.zoom = minZoom
-        else
-            -- Max (min actually) zoom is not reached (anymore)
-            playerSettings.noticeMaxZoom = nil
-        end
+        Camera.sanitizeZoom(camera, playerSettings, player)
 
         if transitionData.transitionTicksLeft <= 0 then
             -- Transition finished
@@ -241,6 +230,25 @@ function Camera.zoom(camera, tracker)
     return math.min(zoomX, zoomY, maxZoom)
 end
 
+-- Check if the camera zoom is valid
+--- @param camera Camera.camera
+--- @param playerSettings playerSettings
+--- @param player LuaPlayer
+function Camera.sanitizeZoom(camera, playerSettings, player)
+    if camera.zoom < minZoom then
+        if playerSettings.noticeMaxZoom == nil then
+            player.print({ "max-zoom" }, { r = 1 })
+            player.print({ "msg-once" })
+            playerSettings.noticeMaxZoom = true
+        end
+
+        camera.zoom = minZoom
+    else
+        -- Max (min actually) zoom is not reached (anymore)
+        playerSettings.noticeMaxZoom = nil
+    end
+end
+
 ---@param camera Camera.camera
 ---@param activeTracker Tracker.tracker
 function Camera.getScreenshotInterval(camera, activeTracker)
@@ -254,7 +262,12 @@ function Camera.getScreenshotInterval(camera, activeTracker)
     return camera.screenshotInterval
 end
 
-function Camera.setWidth(camera, width)
+-- Set the camera (resolution) width
+--- @param playerSettings playerSettings
+--- @param player LuaPlayer
+--- @param camera Camera.camera
+--- @param width any Camera (resolution) width
+function Camera.setWidth(playerSettings, player, camera, width)
     width = tonumber(width)
 
     if width == nil or width < 320 then
@@ -268,13 +281,17 @@ function Camera.setWidth(camera, width)
         local _, activeTracker = Tracker.findActiveTracker(camera.trackers, camera.surfaceName)
         if activeTracker ~= nil then
             -- Force update zoom level to make sure the tracked area stays the same
-            ---@diagnostic disable-next-line: param-type-mismatch player(Data) can be nil when disableSmooth is true
-            Camera.followTracker(nil, nil, camera, activeTracker, true)
+            Camera.followTracker(playerSettings, player, camera, activeTracker, true)
         end
     end
 end
 
-function Camera.setHeight(camera, height)
+-- Set the camera (resolution) height
+--- @param playerSettings playerSettings
+--- @param player LuaPlayer
+--- @param camera Camera.camera
+--- @param height any Camera (resolution) height
+function Camera.setHeight(playerSettings, player, camera, height)
     height = tonumber(height)
 
     if height == nil or height < 240 then
@@ -288,8 +305,7 @@ function Camera.setHeight(camera, height)
         local _, activeTracker = Tracker.findActiveTracker(camera.trackers, camera.surfaceName)
         if activeTracker ~= nil then
             -- Force update zoom level to make sure the tracked area stays the same
-            ---@diagnostic disable-next-line: param-type-mismatch player(Data) can be nil when disableSmooth is true
-            Camera.followTracker(nil, nil, camera, activeTracker, true)
+            Camera.followTracker(playerSettings, player, camera, activeTracker, true)
         end
     end
 end

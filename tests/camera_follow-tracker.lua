@@ -97,6 +97,33 @@ function TestCameraFollowTracker:TestZoom()
     lu.assertEquals(self.testCamera.zoom, 0.5, "expected that zoom halved")
 end
 
+function TestCameraFollowTracker:TestMinZoom()
+    self.testTracker.smooth = false
+    self.testTracker.size = { -- Large enough to hit the minZoom
+        x = self.testCamera.width / tileSize * 2000,
+        y = self.testCamera.height / tileSize * 2000
+    }
+
+    local ticks = ConvergenceTester({}, { print = function() end }, self.testCamera, self.testTracker)
+
+    lu.assertEquals(ticks, 1, "expected to converge immediately")
+
+    lu.assertEquals(self.testCamera.zoom, 0.03125, "expected that zoom is at minZoom")
+end
+
+function TestCameraFollowTracker:TestMinZoomSmooth()
+    self.testTracker.size = { -- Large enough to hit the minZoom
+        x = self.testCamera.width / tileSize * 2000,
+        y = self.testCamera.height / tileSize * 2000
+    }
+
+    local ticks = ConvergenceTester({}, { print = function() end }, self.testCamera, self.testTracker)
+
+    lu.assertEquals(ticks, self.testCamera.transitionTicks, "couldn't converge in expected 14 ticks")
+
+    lu.assertEquals(self.testCamera.zoom, 0.03125, "expected that zoom is at minZoom")
+end
+
 function TestCameraFollowTracker:TestConvergenceDiagonal()
     self.testTracker.centerPos = { x = 10, y = 6 }
 
