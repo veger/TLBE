@@ -1,21 +1,21 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.2
-
+Date: 29-10-2024
   Bugfixes:
     - Make sure camera zoom is not lower than minimal allowed zoom when smooth tracking is disabled.
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.1
-Date: 22-10-204
+Date: 22-10-2024
   Bugfixes:
     - Replace missing sprite for Area and CityBlock trackers.
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.0
-Date: 21-10-204
+Date: 21-10-2024
   Features:
     - Support Factorio 2.0 (I did not check with Space Age playthrough, so there might be bugs!)
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.2
-Date: 21-10-204
+Date: 21-10-2024
   Minor Features:
     - Try to fix missing player data in order to be more flexible to unexpected situations.
     - Add (per player) setting to use intervals (milliseconds) between frames instead of speed gain (factor).
