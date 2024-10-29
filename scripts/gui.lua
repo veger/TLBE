@@ -515,6 +515,7 @@ end
 function GUI.onTextChanged(event)
     ---@type playerSettings
     local playerSettings = storage.playerSettings[event.player_index]
+    local player = game.players[event.player_index]
     local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
 
     if event.element.name == "camera-name" then
@@ -549,12 +550,12 @@ function GUI.onTextChanged(event)
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         )
     elseif event.element.name == "camera-resolution-x" then
-        Camera.setWidth(playerSettings, playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
+        Camera.setWidth(playerSettings, player, playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
             event.element.text)
         GUI.updateCameraInfo(playerSettings.gui.cameraInfo,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera])
     elseif event.element.name == "camera-resolution-y" then
-        Camera.setHeight(playerSettings, playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
+        Camera.setHeight(playerSettings, player, playerSettings.cameras[playerSettings.guiPersist.selectedCamera],
             event.element.text)
         GUI.updateCameraInfo(playerSettings.gui.cameraInfo,
             playerSettings.cameras[playerSettings.guiPersist.selectedCamera])
