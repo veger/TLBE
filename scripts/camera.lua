@@ -493,7 +493,7 @@ end
 function Camera.recordingSensor(player)
     local playerSettings = storage.playerSettings[player.index]
 
-    if not playerSettings.showCameraStatus then
+    if playerSettings == nil or not playerSettings.showCameraStatus then
         return nil
     end
 
