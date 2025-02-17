@@ -56,6 +56,7 @@ function Config.newPlayerSettings(player)
 
     local camera = Camera.newCamera(player, {})
     camera.name = "main"
+    camera.enabled = guiSettings["tlbe-auto-record"].value
     camera.trackers = { trackers[1], trackers[2], trackers[3] }
 
     return {

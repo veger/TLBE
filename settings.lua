@@ -27,6 +27,13 @@ data:extend(
             setting_type = "runtime-per-user",
             default_value = false,
             order = "9"
+        },
+        {
+            type = "bool-setting",
+            name = "tlbe-auto-record",
+            setting_type = "runtime-per-user",
+            default_value = false,
+            order = "12"
         }
     }
 )
