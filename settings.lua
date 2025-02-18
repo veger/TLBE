@@ -33,14 +33,14 @@ data:extend(
             name = "tlbe-auto-record",
             setting_type = "runtime-per-user",
             default_value = false,
-            order = "12"
+            order = "13"
         },
         {
             type = "bool-setting",
             name = "tlbe-seed-subfolder",
             setting_type = "runtime-per-user",
             default_value = false,
-            order = "15"
+            order = "4"
         },
         {
             type = "string-setting",
@@ -48,7 +48,7 @@ data:extend(
             setting_type = "runtime-per-user",
             default_value = "png",
             allowed_values = { "png", "jpg" },
-            order = "18"
+            order = "2"
         }
     }
 )
