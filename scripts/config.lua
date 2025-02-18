@@ -34,6 +34,7 @@ function Config.reload(event)
     local playerSettings = storage.playerSettings[event.player_index]
     if playerSettings == nil then
         playerSettings = Config.newPlayerSettings(player)
+        playerSettings.cameras[1] = guiSettings["tlbe-auto-record"].value
         storage.playerSettings[event.player_index] = playerSettings
     end
 
@@ -57,7 +58,6 @@ function Config.newPlayerSettings(player)
 
     local camera = Camera.newCamera(player, {})
     Camera.setName(camera, "main")
-    camera.enabled = settings.get_player_settings(player)["tlbe-auto-record"].value
     camera.trackers = { trackers[1], trackers[2], trackers[3] }
 
     return {
