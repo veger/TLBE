@@ -34,6 +34,13 @@ data:extend(
             setting_type = "runtime-per-user",
             default_value = false,
             order = "12"
+        },
+        {
+            type = "bool-setting",
+            name = "tlbe-seed-subfolder",
+            setting_type = "runtime-per-user",
+            default_value = false,
+            order = "15"
         }
     }
 )

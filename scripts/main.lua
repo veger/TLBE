@@ -165,14 +165,32 @@ function Main.takeScreenshot(player, playerSettings, camera, activeTracker, forc
         alwaysDay = nil
     end
 
+    local savePath
+    if playerSettings.seedSubfolder then
+        savePath = string.format(
+            "%s/%s/%d/%010d-%s.png",
+            playerSettings.saveFolder,
+            camera.saveFolder,
+            game.default_map_gen_settings.seed,
+            screenshotNumber, camera.saveName
+        )
+    else
+        savePath = string.format(
+            "%s/%s/%010d-%s.png",
+            playerSettings.saveFolder,
+            camera.saveFolder,
+            screenshotNumber,
+            camera.saveName
+        )
+    end
+
     game.take_screenshot {
         by_player = player,
         surface = camera.surfaceName or game.surfaces[1],
         position = camera.centerPos,
         resolution = { camera.width, camera.height },
         zoom = camera.zoom,
-        path = string.format("%s/%s/%010d-%s.png", playerSettings.saveFolder, camera.saveFolder, screenshotNumber
-        , camera.saveName),
+        path = savePath,
         show_entity_info = camera.entityInfo,
         show_gui = camera.showGUI,
         allow_in_replay = true,
