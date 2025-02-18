@@ -42,6 +42,7 @@ function Config.reload(event)
     playerSettings.sequentialNames = guiSettings["tlbe-sequential-names"].value
     playerSettings.showCameraStatus = guiSettings["tlbe-show-stats"].value
     playerSettings.useInterval = guiSettings["tlbe-use-interval"].value
+    playerSettings.seedSubfolder = guiSettings["tlbe-seed-subfolder"].value
     ---@diagnostic enable: assign-type-mismatch
 end
 
