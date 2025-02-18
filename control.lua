@@ -21,7 +21,9 @@ local function init_new_player(index, player)
     TLBE.GUI.initialize(player, storage.playerSettings[index])
 
     player.print({ "mod-loaded" }, { r = 1, g = 0.5, b = 0 })
-    player.print({ "mod-loaded2" })
+    if not player.autoRecord then
+        player.print({ "mod-loaded2" })
+    end
 end
 
 local function on_init()
@@ -71,7 +73,9 @@ local function on_player_created(event)
     TLBE.Config.reload(event)
 
     local player = game.players[event.player_index]
-    player.print({ "mod-loaded2" }, { r = 1, g = 0.5, b = 0 })
+    if not player.autoRecord then
+        player.print({ "mod-loaded2" }, { r = 1, g = 0.5, b = 0 })
+    end
 
     TLBE.GUI.initialize(player, storage.playerSettings[event.player_index])
 end
