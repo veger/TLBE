@@ -168,19 +168,22 @@ function Main.takeScreenshot(player, playerSettings, camera, activeTracker, forc
     local savePath
     if playerSettings.seedSubfolder then
         savePath = string.format(
-            "%s/%s/%d/%010d-%s.png",
+            "%s/%s/%d/%010d-%s.%s",
             playerSettings.saveFolder,
             camera.saveFolder,
             game.default_map_gen_settings.seed,
-            screenshotNumber, camera.saveName
+            screenshotNumber,
+            camera.saveName,
+            playerSettings.saveFormat
         )
     else
         savePath = string.format(
-            "%s/%s/%010d-%s.png",
+            "%s/%s/%010d-%s.%s",
             playerSettings.saveFolder,
             camera.saveFolder,
             screenshotNumber,
-            camera.saveName
+            camera.saveName,
+            playerSettings.saveFormat
         )
     end
 

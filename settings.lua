@@ -41,6 +41,14 @@ data:extend(
             setting_type = "runtime-per-user",
             default_value = false,
             order = "15"
+        },
+        {
+            type = "string-setting",
+            name = "tlbe-save-format",
+            setting_type = "runtime-per-user",
+            default_value = "png",
+            allowed_values = { "png", "jpg" },
+            order = "18"
         }
     }
 )

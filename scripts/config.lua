@@ -44,6 +44,7 @@ function Config.reload(event)
     playerSettings.showCameraStatus = guiSettings["tlbe-show-stats"].value
     playerSettings.useInterval = guiSettings["tlbe-use-interval"].value
     playerSettings.seedSubfolder = guiSettings["tlbe-seed-subfolder"].value
+    playerSettings.saveFormat = guiSettings["tlbe-save-format"].value
     ---@diagnostic enable: assign-type-mismatch
 end
 
