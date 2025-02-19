@@ -34,6 +34,7 @@ function Config.reload(event)
     local playerSettings = storage.playerSettings[event.player_index]
     if playerSettings == nil then
         playerSettings = Config.newPlayerSettings(player)
+        playerSettings.cameras[playerSettings.guiPersist.selectedCamera].enabled = guiSettings["tlbe-auto-record"].value
         storage.playerSettings[event.player_index] = playerSettings
     end
 
@@ -42,6 +43,9 @@ function Config.reload(event)
     playerSettings.sequentialNames = guiSettings["tlbe-sequential-names"].value
     playerSettings.showCameraStatus = guiSettings["tlbe-show-stats"].value
     playerSettings.useInterval = guiSettings["tlbe-use-interval"].value
+    playerSettings.autoRecord = guiSettings["tlbe-auto-record"].value
+    playerSettings.seedSubfolder = guiSettings["tlbe-seed-subfolder"].value
+    playerSettings.saveFormat = guiSettings["tlbe-save-format"].value
     ---@diagnostic enable: assign-type-mismatch
 end
 
@@ -55,7 +59,7 @@ function Config.newPlayerSettings(player)
     }
 
     local camera = Camera.newCamera(player, {})
-    camera.name = "main"
+    Camera.setName(camera, "main")
     camera.trackers = { trackers[1], trackers[2], trackers[3] }
 
     return {

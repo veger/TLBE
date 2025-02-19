@@ -27,6 +27,28 @@ data:extend(
             setting_type = "runtime-per-user",
             default_value = false,
             order = "9"
+        },
+        {
+            type = "bool-setting",
+            name = "tlbe-auto-record",
+            setting_type = "runtime-per-user",
+            default_value = false,
+            order = "13"
+        },
+        {
+            type = "bool-setting",
+            name = "tlbe-seed-subfolder",
+            setting_type = "runtime-per-user",
+            default_value = false,
+            order = "4"
+        },
+        {
+            type = "string-setting",
+            name = "tlbe-save-format",
+            setting_type = "runtime-per-user",
+            default_value = "png",
+            allowed_values = { "png", "jpg" },
+            order = "2"
         }
     }
 )
