@@ -16,7 +16,6 @@ end
 --- @param player LuaPlayer
 local function init_new_player(index, player)
     -- initialize player(s) when mod is loaded into existing game
-    player.print("init_new_player")
     TLBE.Config.reload({ player_index = index })
     TLBE.GUI.initialize(player, storage.playerSettings[index])
 
@@ -33,7 +32,6 @@ local function on_init()
 
     for index, player in pairs(game.players) do
         -- initialize player(s) when mod is loaded into existing game
-        player.print("on_init")
         init_new_player(index, player)
     end
 
