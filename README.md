@@ -12,8 +12,12 @@ Features:
 * Camera gradually (configurable period) recenters and zooms out, which can be recorded in a stop-motion fashion.
 * Each camera has customizable resolution, frame rate and speed gain, and show their recording area on the map.
 * All screenshots are taken with full daylight or follow day cycle, and optionally show entity information.
-* Configurable screenshot folder (e.g. to support multiple save files that are played in parallel).
-* Configurable screenshot numbering, either sequential (default, more suitable for Windows ffmpeg) or game tick (easier to synchronize multiple cameras).
+* Flexible save options:
+    * Configurable screenshot folder (e.g. to support multiple save files that are played in parallel).
+    * Include map seed in path (extra measure to prevent overlaps when having multiple save files)
+    * Configurable screenshot numbering, either sequential (default, more suitable for Windows ffmpeg) or game tick (easier to synchronize multiple cameras).
+    * Configurable image formats (PNG or JPG).
+* Optionally start recording on game start to not miss the crash in the timnelapse.
 
 Open the TLBE settings from shortcut bar or CTRL-T (default key binding) to configure your camera(s) and trackers.
 
