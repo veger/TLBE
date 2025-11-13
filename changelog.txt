@@ -7,12 +7,12 @@ Date:
 Version: 2.1.0
 Date: 19-02-2025
   Features:
-    - Add (per player) setting to automatically activate recording with main camera on new game (Thanks thephluxer)
-    - Add (per player) setting to save screenshots in map seed named subdirectories (Thanks thephluxer)
-    - Add (per player) setting to change screenshot format (png/jpg) (Thanks thephluxer) 
+    - Add (per player) setting to automatically activate recording with main camera on new game. (Thanks thephluxer)
+    - Add (per player) setting to save screenshots in map seed named subdirectories. (Thanks thephluxer)
+    - Add (per player) setting to change screenshot format (png/jpg). (Thanks thephluxer)
   Bugfixes:
-    - Fix main camera producing screenshot files with wrong camera name (Thanks thephluxer)
-    - Remove left-over debug messages
+    - Fix main camera producing screenshot files with wrong camera name. (Thanks thephluxer)
+    - Remove left-over debug messages.
 ---------------------------------------------------------------------------------------------------
 Version: 2.0.4
 Date: 07-11-2024
@@ -37,7 +37,7 @@ Date: 22-10-2024
 Version: 2.0.0
 Date: 21-10-2024
   Features:
-    - Support Factorio 2.0 (I did not check with Space Age playthrough, so there might be bugs!)
+    - Support Factorio 2.0
 ---------------------------------------------------------------------------------------------------
 Version: 1.5.2
 Date: 21-10-2024
