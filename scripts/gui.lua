@@ -190,7 +190,8 @@ function GUI.onClick(event)
         GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
     elseif event.element.name == "tlbe-tracker-tr-map" then
         local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
-        local tag = Utils.findChartTag(player.force.find_chart_tags(game.surfaces[1]), selectedTracker.name .. "-tr")
+        local tag = Utils.findChartTag(player.force.find_chart_tags(selectedTracker.surfaceName),
+            selectedTracker.name .. "-tr")
         if tag == nil then
             player.print({ "tag-not-found", selectedTracker.name .. "-tr" })
         else
@@ -204,7 +205,8 @@ function GUI.onClick(event)
         end
     elseif event.element.name == "tlbe-tracker-bl-map" then
         local selectedTracker = playerSettings.trackers[playerSettings.guiPersist.selectedTracker]
-        local tag = Utils.findChartTag(player.force.find_chart_tags(game.surfaces[1]), selectedTracker.name .. "-bl")
+        local tag = Utils.findChartTag(player.force.find_chart_tags(selectedTracker.surfaceName),
+            selectedTracker.name .. "-bl")
         if tag == nil then
             player.print({ "tag-not-found", selectedTracker.name .. "-bl" })
         else
