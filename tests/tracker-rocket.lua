@@ -18,7 +18,7 @@ function TestTrackerRocket:SetUp()
 
     -- mock TLBE tables
     storage.playerSettings = {
-        TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 } })
+        TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 }, surface = game.surfaces[1] })
     }
 
     -- Update rocket tracker with our test settings

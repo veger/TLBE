@@ -60,6 +60,8 @@ local ticks_per_second = 60
 local ms_per_tick = 1000 / ticks_per_second
 local tileSize = 32
 
+--- @param player LuaPlayer
+--- @param cameraList Camera.camera[]
 --- @return Camera.camera
 function Camera.newCamera(player, cameraList)
     local nameIndex = 1
@@ -73,7 +75,7 @@ function Camera.newCamera(player, cameraList)
     --- @diagnostic disable-next-line: missing-fields The missing fields are set in updateConfig() and setName()
     local camera = {
         enabled = false,
-        surfaceName = game.surfaces[1].name,
+        surfaceName = player.surface.name,
         entityInfo = false,
         showGUI = false,
         alwaysDay = true,

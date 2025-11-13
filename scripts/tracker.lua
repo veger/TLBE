@@ -38,10 +38,11 @@ function Tracker.cityBlock:new()
 end
 
 --- Create and setup a new tracker
+--- @param player LuaPlayer
 --- @param trackerType string Type of the new tracker
 --- @param trackerList Tracker.tracker[]|nil When provided the generated name will be unique
 --- @return Tracker.tracker
-function Tracker.newTracker(trackerType, trackerList)
+function Tracker.newTracker(player, trackerType, trackerList)
     local nameIndex = 1
     local trackerName = trackerType
     while trackerList ~= nil and not Utils.uniqueName(trackerList, trackerName) do
@@ -53,14 +54,14 @@ function Tracker.newTracker(trackerType, trackerList)
     local newTracker = {
         name = trackerName,
         type = trackerType,
-        surfaceName = game.surfaces[1].name,
+        surfaceName = player.surface.name,
         userCanEnable = true,
         enabled = true,
         realtimeCamera = false,
         smooth = true,
         untilBuild = false,
         changeId = 0,
-        -- Set some sensible dafaults but will be most likely overwritten by the tracker specific implementations
+        -- Set some sensible defaults but will be most likely overwritten by the tracker specific implementations
         minPos = { x = -5, y = -5 },
         maxPos = { x = 5, y = 5 }
     }

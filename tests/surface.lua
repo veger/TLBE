@@ -19,7 +19,7 @@ function TestSurfaceEvents:SetUp()
 
     -- mock TLBE tables
     storage.playerSettings = {
-        TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 } }),
+        TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 }, surface = game.surfaces[2] }),
     }
 
     game.players = {
@@ -28,7 +28,6 @@ function TestSurfaceEvents:SetUp()
 
     -- Make camera easier to test
     self.testCamera = storage.playerSettings[1].cameras[1]
-    self.testCamera.surfaceName = "active-surface"
 end
 
 function TestSurfaceEvents:TestDeleteUnusedSurface()

@@ -18,13 +18,13 @@ function TestNewCamera:SetUp()
 end
 
 function TestNewCamera.TestUniqueName()
-    local camera1 = TLBE.Camera.newCamera({ position = { 0, 0 } }, {})
+    local camera1 = TLBE.Camera.newCamera({ position = { 0, 0 }, surface = game.surfaces[1] }, {})
     lu.assertEquals(camera1.name, "new camera", "with empty list no index is needed")
 
-    local camera2 = TLBE.Camera.newCamera({ position = { 0, 0 } }, { camera1 })
+    local camera2 = TLBE.Camera.newCamera({ position = { 0, 0 }, surface = game.surfaces[1] }, { camera1 })
     lu.assertEquals(camera2.name, "new camera-2", "with camera 'new camera' already in the list, add '-2' to the name")
 
-    local camera3 = TLBE.Camera.newCamera({ position = { 0, 0 } }, { camera1, camera2 })
+    local camera3 = TLBE.Camera.newCamera({ position = { 0, 0 }, surface = game.surfaces[1] }, { camera1, camera2 })
     lu.assertEquals(
         camera3.name,
         "new camera-3",
@@ -33,7 +33,7 @@ function TestNewCamera.TestUniqueName()
 end
 
 function TestNewCamera.TestConfig()
-    local camera = TLBE.Camera.newCamera({ position = { 0, 0 } }, {})
+    local camera = TLBE.Camera.newCamera({ position = { 0, 0 }, surface = game.surfaces[1] }, {})
 
     camera.frameRate = 10       -- 10 frames / second
     camera.transitionPeriod = 2 -- 2 seconds
@@ -67,8 +67,8 @@ function TestCamera:SetUp()
 
     -- mock TLBE tables
     storage.playerSettings = {
-        TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 } }),
-        TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 } })
+        TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 }, surface = game.surfaces[1] }),
+        TLBE.Config.newPlayerSettings({ position = { x = 0, y = 0 }, surface = game.surfaces[1] })
     }
 
     game.players = {

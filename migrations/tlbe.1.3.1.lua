@@ -10,11 +10,11 @@ for player_index, _ in pairs(game.players) do
     end
 
     for _, camera in pairs(playerSettings.cameras) do
-        camera.surfaceName = game.surfaces[1].name
+        camera.surfaceName = camera.surfaceName or game.surfaces[1].name
     end
 
     for _, tracker in pairs(playerSettings.trackers) do
-        tracker.surfaceName = game.surfaces[1].name
+        tracker.surfaceName = tracker.surfaceName or game.surfaces[1].name
     end
 
     ::NextPlayer::

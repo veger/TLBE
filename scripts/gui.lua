@@ -446,7 +446,7 @@ function GUI.onSelected(event)
         end
         event.element.selected_index = 1
 
-        local newTracker = Tracker.newTracker(GUI.allTrackers[trackerIndex], playerSettings.trackers)
+        local newTracker = Tracker.newTracker(player, GUI.allTrackers[trackerIndex], playerSettings.trackers)
         table.insert(playerSettings.trackers, newTracker)
         playerSettings.guiPersist.selectedTracker = #playerSettings.trackers
 

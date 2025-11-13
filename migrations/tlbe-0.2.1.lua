@@ -42,9 +42,9 @@ for player_index, player in pairs(game.players) do
     Camera.refreshConfig(mainCamera)
 
     mainCamera.trackers = {
-        Tracker.newTracker "player",
-        Tracker.newTracker "rocket",
-        Tracker.newTracker "base"
+        Tracker.newTracker(player, "player"),
+        Tracker.newTracker(player, "rocket"),
+        Tracker.newTracker(player, "base")
     }
     mainCamera.enabled = playerSettings.enabled
 

@@ -12,7 +12,12 @@ function TestTrackerCityBlock:Setup()
     -- mock Factorio provided globals
     storage = {}
     game = {
-        surfaces = { { name = "nauvis" }, { name = "other-surface" } }
+        surfaces = { { name = "nauvis" }, { name = "other-surface" } },
+        players = {
+            surface = {
+                name = "other-surface",
+            }
+        }
     }
 
     -- mock TLBE tables
@@ -21,7 +26,8 @@ function TestTrackerCityBlock:Setup()
     }
 
     -- Create city block tracker
-    self.cityblockTracker = TLBE.Tracker.newTracker("cityblock", storage.playerSettings[1].trackers)
+    self.cityblockTracker = TLBE.Tracker.newTracker(game.players[1].surface, "cityblock",
+        storage.playerSettings[1].trackers)
     for k, v in pairs(
         {
             changeId = 1

@@ -133,7 +133,7 @@ function TestTick:Setup()
         }
     }
 
-    self.areaTracker = Tracker.newTracker "area"
+    self.areaTracker = Tracker.newTracker(game.players[1], "area")
     self.camera = storage.playerSettings[1].cameras[1]
     self.camera.enabled = true
     self.camera.screenshotInterval = 1           -- take screenshot every tick
