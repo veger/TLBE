@@ -26,3 +26,7 @@ Screenshots are stored in the [script-output](https://wiki.factorio.com/Applicat
 ## Check demo movie on Youtube
 
 [![youtube](https://i.imgur.com/vX9LnBo.jpg)](https://www.youtube.com/watch?v=rJWjhw73ML8)
+
+When you got inspired to make you own timelapse video after watching it, Bigfoot made an exellent video on how to approach making timelapse videos:
+
+[![youtube](https://i.imgur.com/yrpay1E.jpg)](https://www.youtube.com/watch?v=cAcba1zo5mg)
