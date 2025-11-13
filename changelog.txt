@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.1.1
-Date:
+Date: 13-11-2025
   Bugfixes:
     - New cameras/trackers will use player surface instead of hardcoded first surface.
     - Area markers are now searched for on the set surface of the Area Tracker
