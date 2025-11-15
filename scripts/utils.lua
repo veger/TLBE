@@ -68,4 +68,8 @@ function Utils.clamp(min, value, max)
     return math.max(min, math.min(max, value))
 end
 
+function Utils.isUltracubeAvailable()
+    return script.active_mods["Ultracube"] ~= nil
+end
+
 return Utils

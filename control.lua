@@ -3,7 +3,8 @@ local TLBE = {
     Camera = require("scripts.camera"),
     Config = require("scripts.config"),
     GUI = require("scripts.gui"),
-    Tracker = require("scripts.tracker")
+    Tracker = require("scripts.tracker"),
+    Utils = require("scripts.utils")
 }
 
 local function register_sensor()
@@ -62,6 +63,19 @@ local function on_configuration_changed(event)
         if storage.playerSettings[index] == nil then
             player.print({ "migration-fix-missing-player-data" })
             init_new_player(index, player)
+        end
+    end
+
+    local hasUltracube = TLBE.Utils.isUltracubeAvailable()
+    for index, _ in pairs(game.players) do
+        local playerSettings = storage.playerSettings[index]
+        if playerSettings ~= nil and playerSettings.trackers ~= nil then
+            for _, tracker in pairs(playerSettings.trackers) do
+                if tracker.type == "cube" then
+                    tracker.enabled = hasUltracube
+                    tracker.userCanEnable = hasUltracube
+                end
+            end
         end
     end
 end

@@ -1,10 +1,18 @@
 local GUI = {
-    allTrackers = { "area", "base", "cityblock", "player", "rocket" },
-    allTrackersLabels = { { "tracker-area" }, { "tracker-base" }, { "tracker-cityBlock" }, { "tracker-player" }, { "tracker-rocket" } },
+    allTrackers = { "area", "base", "cityblock", "cube", "player", "rocket" },
+    allTrackersLabels = {
+        { "tracker-area" },
+        { "tracker-base" },
+        { "tracker-cityBlock" },
+        { "tracker-cube" },
+        { "tracker-player" },
+        { "tracker-rocket" },
+    },
     allTrackersLabelsMap = {
         area = { "tracker-area" },
         base = { "tracker-base" },
         cityBlock = { "tracker-cityBlock" },
+        cube = { "tracker-cube" },
         player = { "tracker-player" },
         rocket = { "tracker-rocket" },
     }
@@ -14,6 +22,21 @@ local Camera = require("scripts.camera")
 local Main = require("scripts.main")
 local Tracker = require("scripts.tracker")
 local Utils = require("scripts.utils")
+
+local function getAvailableTrackerTypes()
+    local trackerTypes = {}
+    local trackerLabels = {}
+
+    local ultracubeAvailable = Utils.isUltracubeAvailable()
+    for index, trackerType in ipairs(GUI.allTrackers) do
+        if trackerType ~= "cube" or ultracubeAvailable then
+            table.insert(trackerTypes, trackerType)
+            table.insert(trackerLabels, GUI.allTrackersLabels[index])
+        end
+    end
+
+    return trackerTypes, trackerLabels
+end
 
 local ticks_per_half_second = 30
 
@@ -448,7 +471,9 @@ function GUI.onSelected(event)
         end
         event.element.selected_index = 1
 
-        local newTracker = Tracker.newTracker(player, GUI.allTrackers[trackerIndex], playerSettings.trackers)
+        local availableTrackerTypes = getAvailableTrackerTypes()
+        local trackerType = availableTrackerTypes[trackerIndex]
+        local newTracker = Tracker.newTracker(player, trackerType, playerSettings.trackers)
         table.insert(playerSettings.trackers, newTracker)
         playerSettings.guiPersist.selectedTracker = #playerSettings.trackers
 
@@ -1111,11 +1136,13 @@ function GUI.createTrackerSettings(parent, playerGUI, guiPersist, cameras, track
     local trackersFlow = flow.add { type = "flow", direction = "vertical", style = "tlbe_fancy_list_parent" }
 
     -- New tracker GUI
+    local availableTrackerTypes, availableTrackerLabels = getAvailableTrackerTypes()
+    playerGUI.availableTrackerTypes = availableTrackerTypes
     trackersFlow.add {
         type = "drop-down",
         selected_index = 1,
         name = "tlbe-tracker-add",
-        items = { { "gui.item-new-tracker" }, table.unpack(GUI.allTrackersLabels) },
+        items = { { "gui.item-new-tracker" }, table.unpack(availableTrackerLabels) },
         style = "tlbe_tracker_add_dropdown"
     }
 
@@ -1235,7 +1262,7 @@ function GUI.addCameraTrackerButtons(index, selectedCamera, _, trackers, tracker
         style = "tlbe_tracker_remove_button"
     }
 
-    if isActiveTracker then
+    if isActiveTracker and tracker.enabled then
         trackerRow.add {
             type = "sprite",
             sprite = "utility/play",
@@ -1247,6 +1274,13 @@ function GUI.addCameraTrackerButtons(index, selectedCamera, _, trackers, tracker
             sprite = "utility/warning_icon",
             style = "tlbe_fancy_list_box_image_reduce_size",
             tooltip = { "tooltip.tracker-wrong-surface" }
+        }
+    elseif tracker.type == "cube" and not Utils.isUltracubeAvailable() then
+        trackerRow.add {
+            type = "sprite",
+            sprite = "utility/warning_icon",
+            style = "tlbe_fancy_list_box_image_reduce_size",
+            tooltip = { "tooltip.tracker-cube-not-available" }
         }
     else
         trackerRow.add {

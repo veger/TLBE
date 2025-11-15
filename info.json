@@ -9,7 +9,8 @@
     "factorio_version": "2.0",
     "dependencies": [
         "base >= 2.0.0",
-        "? StatsGui >= 1.1.0"
+        "? StatsGui >= 1.1.0",
+        "? Ultracube >= 0.5.2"
     ],
     "description": "Takes screenshots of your base at specified intervals."
 }

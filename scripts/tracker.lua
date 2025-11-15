@@ -77,6 +77,10 @@ function Tracker.newTracker(player, trackerType, trackerList)
         newTracker.userCanEnable = false
         newTracker.enabled = false
         newTracker.realtimeCamera = true
+    elseif trackerType == "cube" then
+        newTracker.size = { x = 1, y = 1 }
+        newTracker.enabled = Utils.isUltracubeAvailable()
+        newTracker.userCanEnable = Utils.isUltracubeAvailable()
     elseif trackerType == "cityblock" then
         -- cityblock-specific data
         newTracker.cityBlock = Tracker.cityBlock:new()
@@ -165,6 +169,55 @@ function Tracker.tick(tracker, player)
             x = player.position.x,
             y = player.position.y
         }
+    elseif tracker.type == "cube" then
+        local ok, info = pcall(remote.call, "Ultracube", "cube_info")
+        if ok and info ~= nil then
+            local minPos = info.min_position
+            local maxPos = info.max_position
+            local centerPos
+            local size
+
+            if minPos ~= nil and maxPos ~= nil then
+                local sizeX = maxPos.x - minPos.x
+                local sizeY = maxPos.y - minPos.y
+
+                if sizeX == 0 then
+                    sizeX = 1
+                end
+                if sizeY == 0 then
+                    sizeY = 1
+                end
+
+                size = {
+                    x = sizeX,
+                    y = sizeY
+                }
+                centerPos = {
+                    x = minPos.x + size.x / 2,
+                    y = minPos.y + size.y / 2
+                }
+            elseif info.position ~= nil then
+                centerPos = {
+                    x = info.position.x,
+                    y = info.position.y
+                }
+                size = tracker.size or { x = 1, y = 1 }
+            else
+                return
+            end
+
+            if tracker.centerPos == nil or tracker.size == nil or
+                centerPos.x ~= tracker.centerPos.x or
+                centerPos.y ~= tracker.centerPos.y or
+                size.x ~= tracker.size.x or
+                size.y ~= tracker.size.y
+            then
+                Tracker.changed(tracker)
+            end
+
+            tracker.centerPos = centerPos
+            tracker.size = size
+        end
     end
 end
 
