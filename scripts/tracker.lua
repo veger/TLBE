@@ -13,6 +13,7 @@ local Tracker = {}
 --- @field userCanEnable boolean When true, the user can enabled/disable the tracker, otherwise the tracker is controlled by TLBE
 --- @field moveToNextTracker boolean|nil Disables the tracker after the cameras are processed (end of game tick)
 --- @field changeId integer Incremented on each position/size change of the tracker
+--- @field cubePadding number Padding (in tiles) applied around the cube area when multiple cubes are present
 --- @field centerPos MapPosition.0|nil Center position of the tracker area (Calculated from minPos and maxPos)
 --- @field size MapPosition.0|nil Size of the tracker area (Calculated from minPos and maxPos)
 --- @field minPos MapPosition.0 Bottom/Left of tracker area
@@ -61,9 +62,10 @@ function Tracker.newTracker(player, trackerType, trackerList)
         smooth = true,
         untilBuild = false,
         changeId = 0,
+        cubePadding = 0,
         -- Set some sensible defaults but will be most likely overwritten by the tracker specific implementations
         minPos = { x = -5, y = -5 },
-        maxPos = { x = 5, y = 5 }
+        maxPos = { x = 5, y = 5 },
     }
 
     -- Add tracker specific details
@@ -178,23 +180,23 @@ function Tracker.tick(tracker, player)
             local size
 
             if minPos ~= nil and maxPos ~= nil then
-                local sizeX = maxPos.x - minPos.x
-                local sizeY = maxPos.y - minPos.y
+                local baseSizeX = maxPos.x - minPos.x
+                local baseSizeY = maxPos.y - minPos.y
 
-                if sizeX == 0 then
-                    sizeX = 1
+                if baseSizeX == 0 then
+                    baseSizeX = 1
                 end
-                if sizeY == 0 then
-                    sizeY = 1
+                if baseSizeY == 0 then
+                    baseSizeY = 1
                 end
 
                 size = {
-                    x = sizeX,
-                    y = sizeY
+                    x = baseSizeX + 2 * tracker.cubePadding,
+                    y = baseSizeY + 2 * tracker.cubePadding
                 }
                 centerPos = {
-                    x = minPos.x + size.x / 2,
-                    y = minPos.y + size.y / 2
+                    x = minPos.x + baseSizeX / 2,
+                    y = minPos.y + baseSizeY / 2
                 }
             elseif info.position ~= nil then
                 centerPos = {

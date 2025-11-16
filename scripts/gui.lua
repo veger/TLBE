@@ -638,6 +638,17 @@ function GUI.onTextChanged(event)
             GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
             GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
         end
+    elseif event.element.name == "tlbe-tracker-cube-padding" and event.element.text ~= nil then
+        local value = tonumber(event.element.text)
+        if value ~= nil then
+            if value < 0 then
+                value = 0
+            end
+            selectedTracker.cubePadding = value
+
+            GUI.updateTrackerConfig(playerSettings.gui.trackerInfo, selectedTracker)
+            GUI.updateTrackerInfo(playerSettings.gui.trackerInfo, selectedTracker)
+        end
     elseif event.element.name == "tlbe-tracker-cityblock-size-x" and event.element.text ~= nil then
         local value = tonumber(event.element.text)
         if value ~= nil and value >= 1 then
@@ -1594,6 +1605,20 @@ function GUI.createTrackerConfigAndInfo(trackerInfo, tracker)
                 tooltip = { "tooltip.tracker-until-build" },
                 state = tracker.untilBuild
             }
+        elseif tracker.type == "cube" then
+            trackerInfo.add {
+                type = "label",
+                caption = { "gui.label-cube-padding" },
+                tooltip = { "tooltip.tracker-cube-padding" },
+                style = "bold_label"
+            }
+            trackerInfo.add {
+                type = "textfield",
+                name = "tlbe-tracker-cube-padding",
+                style = "tlbe_config_half_width_textfield",
+                numeric = true,
+                allow_negative = false
+            }
         elseif tracker.type == "cityblock" then
             trackerInfo.add {
                 type = "label",
@@ -1762,6 +1787,8 @@ function GUI.updateTrackerConfig(trackerInfo, tracker)
             blFlow["tlbe-tracker-left"].style = style
         elseif tracker.type == "player" then
             trackerInfo["tracker-untilbuild"].state = tracker.untilBuild
+        elseif tracker.type == "cube" then
+            trackerInfo["tlbe-tracker-cube-padding"].text = string.format("%d", tracker.cubePadding)
         elseif tracker.type == "cityblock" then
             local cityBlock = tracker.cityBlock
             if cityBlock == nil then
