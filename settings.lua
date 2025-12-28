@@ -23,6 +23,13 @@ data:extend(
         },
         {
             type = "bool-setting",
+            name = "tlbe-save-name-first",
+            setting_type = "runtime-per-user",
+            default_value = false,
+            order = "7"
+        },
+        {
+            type = "bool-setting",
             name = "tlbe-use-interval",
             setting_type = "runtime-per-user",
             default_value = false,

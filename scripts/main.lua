@@ -166,25 +166,19 @@ function Main.takeScreenshot(player, playerSettings, camera, activeTracker, forc
     end
 
     local savePath
-    if playerSettings.seedSubfolder then
-        savePath = string.format(
-            "%s/%s/%d/%010d-%s.%s",
-            playerSettings.saveFolder,
-            camera.saveFolder,
-            game.default_map_gen_settings.seed,
-            screenshotNumber,
-            camera.saveName,
-            playerSettings.saveFormat
-        )
+    local basePath = string.format("%s/%s", playerSettings.saveFolder, camera.saveFolder)
+    local filename
+
+    if playerSettings.saveNameFirst then
+        filename = string.format("%s-%010d.%s", camera.saveName, screenshotNumber, playerSettings.saveFormat)
     else
-        savePath = string.format(
-            "%s/%s/%010d-%s.%s",
-            playerSettings.saveFolder,
-            camera.saveFolder,
-            screenshotNumber,
-            camera.saveName,
-            playerSettings.saveFormat
-        )
+        filename = string.format("%010d-%s.%s", screenshotNumber, camera.saveName, playerSettings.saveFormat)
+    end
+
+    if playerSettings.seedSubfolder then
+        savePath = string.format("%s/%d/%s", basePath, game.default_map_gen_settings.seed, filename)
+    else
+        savePath = string.format("%s/%s", basePath, filename)
     end
 
     game.take_screenshot {

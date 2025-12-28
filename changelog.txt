@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 2.2.1
+
+  Minor Features:
+    - Optionally switch name and sequence number in screenshot filenames (player settings).
+---------------------------------------------------------------------------------------------------
 Version: 2.2.0
 Date: 17-11-2025
   Features:

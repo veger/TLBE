@@ -13,6 +13,7 @@ local Tracker = require("scripts.tracker")
 --- @field saveFolder string
 --- @field seedSubfolder boolean When true, the seed is used as an additional subfolder
 --- @field saveFormat string File format/extension of the screenshots
+--- @field saveNameFirst boolean When true, save files have the camera name before the sequence number
 --- @field sequentialNames boolean
 --- @field useInterval boolean When true, use interval (between frames) instead of speed gain
 --- @field noticeMaxZoom boolean When true the warning about the max zoom is already raised
@@ -47,6 +48,7 @@ function Config.reload(event)
 
     ---@diagnostic disable: assign-type-mismatch
     playerSettings.saveFolder = guiSettings["tlbe-save-folder"].value
+    playerSettings.saveNameFirst = guiSettings["tlbe-save-name-first"].value
     playerSettings.sequentialNames = guiSettings["tlbe-sequential-names"].value
     playerSettings.showCameraStatus = guiSettings["tlbe-show-stats"].value
     playerSettings.useInterval = guiSettings["tlbe-use-interval"].value
