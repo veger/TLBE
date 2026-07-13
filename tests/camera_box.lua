@@ -51,8 +51,11 @@ function TestCameraBox:SetUp()
     self.player = { force = {} }
     self.camera = {
         name = "cam1",
+        enabled = true,
         surfaceName = "nauvis",
         renderBoxes = {},
+        centerPos = { x = 0, y = 0 },
+        zoom = 1,
         width = 20 * tileSize,  -- 640px -> 20 tiles wide
         height = 15 * tileSize, -- 480px -> 15 tiles tall
     }
@@ -128,6 +131,55 @@ function TestCameraBox:TestLabelFollowsRename()
 
     lu.assertEquals(label(self.camera).text, "renamed", "label should reflect the current camera name")
     lu.assertEquals(drawCount.text, 1, "label should be reused, not recreated")
+end
+
+function TestCameraBox:TestDisabledRecoloursBox()
+    TLBE.Camera.refreshBox(self.player, self.camera, captureBox, { x = 0, y = 0 }, 1, false)
+    TLBE.Camera.updateBoxColor(self.camera) -- enabled
+    local enabledColor = box(self.camera).color
+
+    self.camera.enabled = false
+    TLBE.Camera.updateBoxColor(self.camera)
+    lu.assertNotEquals(box(self.camera).color, enabledColor, "disabled box should change colour")
+
+    self.camera.enabled = true
+    TLBE.Camera.updateBoxColor(self.camera)
+    lu.assertEquals(box(self.camera).color, enabledColor, "re-enabled box should restore colour")
+end
+
+function TestCameraBox:TestUpdateBoxColorWithoutBoxIsSafe()
+    -- a camera that never recorded has no box; recolouring must not error
+    self.camera.enabled = false
+    TLBE.Camera.updateBoxColor(self.camera)
+    lu.assertIsNil(box(self.camera))
+end
+
+function TestCameraBox:TestRenderDisabledDrawsDimmedBox()
+    self.camera.enabled = false
+    TLBE.Camera.refreshCameraBox(self.player, self.camera, true, false)
+
+    lu.assertNotIsNil(box(self.camera), "a disabled camera should get a box when rendering is on")
+    local dimmed = box(self.camera).color
+
+    self.camera.enabled = true
+    TLBE.Camera.refreshCameraBox(self.player, self.camera, true, false)
+    lu.assertNotEquals(box(self.camera).color, dimmed, "an enabled camera's box should not use the disabled colour")
+end
+
+function TestCameraBox:TestRenderDisabledOffRemovesBox()
+    self.camera.enabled = false
+    TLBE.Camera.refreshCameraBox(self.player, self.camera, true, false) -- shown
+    lu.assertNotIsNil(box(self.camera))
+
+    TLBE.Camera.refreshCameraBox(self.player, self.camera, false, false) -- setting off
+    lu.assertIsNil(box(self.camera), "a disabled camera's box should be removed when rendering is off")
+end
+
+function TestCameraBox:TestEnabledCameraGetsBoxImmediately()
+    -- enabling a camera should draw its box right away, even when disabled cameras are hidden
+    self.camera.enabled = true
+    TLBE.Camera.refreshCameraBox(self.player, self.camera, false, false)
+    lu.assertNotIsNil(box(self.camera), "an enabled camera should get its box immediately")
 end
 
 function TestCameraBox:TestLabelHiddenWhenNotShown()

@@ -16,6 +16,7 @@ local Tracker = require("scripts.tracker")
 --- @field saveNameFirst boolean When true, save files have the camera name before the sequence number
 --- @field sequentialNames boolean
 --- @field useInterval boolean When true, use interval (between frames) instead of speed gain
+--- @field renderDisabledCameras boolean When true, disabled cameras also show a (dimmed) viewfinder on the map
 --- @field noticeMaxZoom boolean When true the warning about the max zoom is already raised
 --- @field gui table Contains all (volatile) GUI elements
 --- @field guiPersist persistedGUISettings Contains all persisted (between saves) GUI details
@@ -55,7 +56,11 @@ function Config.reload(event)
     playerSettings.autoRecord = guiSettings["tlbe-auto-record"].value
     playerSettings.seedSubfolder = guiSettings["tlbe-seed-subfolder"].value
     playerSettings.saveFormat = guiSettings["tlbe-save-format"].value
+    playerSettings.renderDisabledCameras = guiSettings["tlbe-render-disabled-cameras"].value
     ---@diagnostic enable: assign-type-mismatch
+
+    -- Apply the (possibly changed) "render disabled cameras" setting to the map
+    Camera.refreshAllBoxes(player, playerSettings)
 end
 
 --- @param player LuaPlayer

@@ -6,6 +6,9 @@ local Tracker = require("scripts.tracker")
 -- signals (see prototypes/signal.lua).
 local captureBox = { key = "capture", color = { r = 0.9, g = 0.9, b = 0.9 } }
 local targetBox = { key = "target", color = { r = 0.1, g = 0.6, b = 0.2 } }
+-- Capture-box colour for a disabled camera (dimmed grey). Applied from GUI/config
+-- events (Camera.updateBoxColor / refreshCameraBox), never from tick().
+local disabledColor = { r = 0.5, g = 0.5, b = 0.5 }
 
 local Camera = {}
 
@@ -573,6 +576,47 @@ function Camera.recordingSensor(player)
     cameraStatuses[1] = ""
 
     return cameraStatuses
+end
+
+--- Recolour a camera's existing viewfinder box (and its name label) to reflect its
+--- enabled state. Called from the GUI/config, so the state is not re-checked every tick.
+--- @param camera Camera.camera
+function Camera.updateBoxColor(camera)
+    local color = camera.enabled and captureBox.color or disabledColor
+    for _, key in pairs({ captureBox.key, captureBox.key .. ":name" }) do
+        local object = camera.renderBoxes[key]
+        if object and object.valid then
+            object.color = color
+        end
+    end
+end
+
+--- Show, hide or recolour a camera's viewfinder box in response to a GUI/config event
+--- (never from tick()). Enabled cameras always show a box (drawn right away, then kept
+--- up to date by the recording loop); disabled cameras show a dimmed box only when
+--- `render` is set, otherwise their box is removed.
+--- @param player LuaPlayer
+--- @param camera Camera.camera
+--- @param render boolean whether disabled cameras should be shown on the map
+--- @param showName boolean whether to label the box with the camera name
+function Camera.refreshCameraBox(player, camera, render, showName)
+    if camera.enabled or render then
+        Camera.refreshBox(player, camera, captureBox, camera.centerPos, camera.zoom, showName)
+        Camera.updateBoxColor(camera) -- enabled: keep the normal colour, disabled: dim to grey
+    else
+        Camera.refreshBox(player, camera, captureBox, nil, nil) -- disabled and hidden: remove
+    end
+end
+
+--- Refresh every camera's viewfinder box for a player, e.g. after the "render disabled
+--- cameras" setting changed or a camera was added/removed.
+--- @param player LuaPlayer
+--- @param playerSettings playerSettings
+function Camera.refreshAllBoxes(player, playerSettings)
+    local showName = #playerSettings.cameras > 1
+    for _, camera in pairs(playerSettings.cameras) do
+        Camera.refreshCameraBox(player, camera, playerSettings.renderDisabledCameras, showName)
+    end
 end
 
 --- @param camera Camera.camera

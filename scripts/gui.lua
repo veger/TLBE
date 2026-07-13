@@ -132,12 +132,16 @@ function GUI.onClick(event)
     elseif event.element.name == "tlbe_camera_enable" then
         local selectedCamera = playerSettings.cameras[playerSettings.guiPersist.selectedCamera]
         selectedCamera.enabled = not selectedCamera.enabled
+        Camera.refreshCameraBox(player, selectedCamera, playerSettings.renderDisabledCameras,
+            #playerSettings.cameras > 1)
 
         GUI.updateCameraActions(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
         GUI.updateTakeScreenshotButton(player, playerSettings)
     elseif event.element.name == "tlbe_camera_add" then
         table.insert(playerSettings.cameras, Camera.newCamera(player, playerSettings.cameras))
         GUI.setSelectedCamera(player, playerSettings, #playerSettings.cameras)
+        -- Draw the new (disabled) camera's box and refresh name labels for the new count
+        Camera.refreshAllBoxes(player, playerSettings)
 
         GUI.updateCameraList(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
         GUI.updateCameraActions(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
@@ -159,6 +163,8 @@ function GUI.onClick(event)
 
         local deadCamera = table.remove(playerSettings.cameras, playerSettings.guiPersist.selectedCamera)
         Camera.destroy(deadCamera)
+        -- Refresh remaining boxes (their name labels depend on the camera count)
+        Camera.refreshAllBoxes(player, playerSettings)
 
         if playerSettings.guiPersist.selectedCamera > #playerSettings.cameras then
             GUI.setSelectedCamera(player, playerSettings, #playerSettings.cameras)

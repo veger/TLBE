@@ -56,6 +56,13 @@ data:extend(
             default_value = "png",
             allowed_values = { "png", "jpg" },
             order = "2"
+        },
+        {
+            type = "bool-setting",
+            name = "tlbe-render-disabled-cameras",
+            setting_type = "runtime-per-user",
+            default_value = true,
+            order = "14"
         }
     }
 )
