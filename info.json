@@ -1,14 +1,14 @@
 {
     "name": "TLBE",
-    "version": "2.3.0",
+    "version": "2.4.0",
     "title": "Time Lapse Base Edition",
     "author": "veger",
     "contact": "",
     "homepage": "",
     "license": "MIT https://opensource.org/licenses/MIT",
-    "factorio_version": "2.0",
+    "factorio_version": "2.1",
     "dependencies": [
-        "base >= 2.0.56",
+        "base >= 2.1.0",
         "? StatsGui >= 1.1.0",
         "? Ultracube >= 0.5.2"
     ],
