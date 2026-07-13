@@ -1,6 +1,6 @@
 ---------------------------------------------------------------------------------------------------
 Version: 2.3.0
-
+Date: 13-07-2026
   Features:
     - Show the camera viewfinder (and transition target) as a colored rectangle on the map instead of corner markers.
       Note: the virtual signals are cleaned up as a result.
