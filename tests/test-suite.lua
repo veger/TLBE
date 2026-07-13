@@ -5,6 +5,7 @@ local lu = require("luaunit")
 -- Unit tests
 require("utils")
 require("camera_follow-tracker")
+require("camera_box")
 require("main")
 require("surface")
 require("tracker")

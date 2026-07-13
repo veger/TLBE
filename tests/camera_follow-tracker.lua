@@ -7,6 +7,10 @@ local lu = require("luaunit")
 local tileSize = 32
 local MAX_TICKS = 100
 
+-- These tests only exercise the camera math; the render/label path early-returns on the
+-- empty player. `cameras` just needs to exist for followTracker's ">1 cameras" label check.
+local playerSettingsWithCameras = { cameras = {} }
+
 -- luacheck: globals game
 local function ConvergenceTester(playerSettings, player, camera, tracker)
     local tick = 0
@@ -56,7 +60,7 @@ end
 function TestCameraFollowTracker:TestInitialUpRight()
     self.testTracker.centerPos = { x = 1, y = 1 }
 
-    TLBE.Camera.followTracker({}, {}, self.testCamera, self.testTracker)
+    TLBE.Camera.followTracker(playerSettingsWithCameras, {}, self.testCamera, self.testTracker)
 
     lu.assertIsTrue(self.testCamera.centerPos.x > 0, "expected that centerPos.x moved right")
     lu.assertIsTrue(self.testCamera.centerPos.y > 0, "expected that centerPos.y moved up")
@@ -66,7 +70,7 @@ end
 function TestCameraFollowTracker:TestInitialBottomLeft()
     self.testTracker.centerPos = { x = -1, y = -1 }
 
-    TLBE.Camera.followTracker({}, {}, self.testCamera, self.testTracker)
+    TLBE.Camera.followTracker(playerSettingsWithCameras, {}, self.testCamera, self.testTracker)
 
     lu.assertIsTrue(self.testCamera.centerPos.x < 0, "expected that centerPos.x moved left")
     lu.assertIsTrue(self.testCamera.centerPos.y < 0, "expected that centerPos.y moved down")
@@ -77,7 +81,7 @@ function TestCameraFollowTracker:TestNotSmooth()
     self.testTracker.smooth = false
     self.testTracker.centerPos = { x = 10, y = 6 }
 
-    local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
+    local ticks = ConvergenceTester(playerSettingsWithCameras, {}, self.testCamera, self.testTracker)
 
     lu.assertEquals(ticks, 1, "couldn't converge immediately")
 
@@ -88,7 +92,7 @@ end
 function TestCameraFollowTracker:TestZoom()
     self.testTracker.size = { x = self.testCamera.width / tileSize * 2, y = self.testCamera.height / tileSize * 2 }
 
-    local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
+    local ticks = ConvergenceTester(playerSettingsWithCameras, {}, self.testCamera, self.testTracker)
 
     lu.assertEquals(ticks, self.testCamera.transitionTicks, "couldn't converge in expected 14 ticks")
 
@@ -104,7 +108,7 @@ function TestCameraFollowTracker:TestMinZoom()
         y = self.testCamera.height / tileSize * 2000
     }
 
-    local ticks = ConvergenceTester({}, { print = function() end }, self.testCamera, self.testTracker)
+    local ticks = ConvergenceTester(playerSettingsWithCameras, { print = function() end }, self.testCamera, self.testTracker)
 
     lu.assertEquals(ticks, 1, "expected to converge immediately")
 
@@ -117,7 +121,7 @@ function TestCameraFollowTracker:TestMinZoomSmooth()
         y = self.testCamera.height / tileSize * 2000
     }
 
-    local ticks = ConvergenceTester({}, { print = function() end }, self.testCamera, self.testTracker)
+    local ticks = ConvergenceTester(playerSettingsWithCameras, { print = function() end }, self.testCamera, self.testTracker)
 
     lu.assertEquals(ticks, self.testCamera.transitionTicks, "couldn't converge in expected 14 ticks")
 
@@ -127,7 +131,7 @@ end
 function TestCameraFollowTracker:TestConvergenceDiagonal()
     self.testTracker.centerPos = { x = 10, y = 6 }
 
-    local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
+    local ticks = ConvergenceTester(playerSettingsWithCameras, {}, self.testCamera, self.testTracker)
 
     lu.assertEquals(ticks, self.testCamera.transitionTicks, "couldn't converge in expected 14 ticks")
 
@@ -139,7 +143,7 @@ function TestCameraFollowTracker:TestConvergenceHorizontal()
     self.testTracker.centerPos.x = 10
     self.testTracker.size.x = 14
 
-    local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
+    local ticks = ConvergenceTester(playerSettingsWithCameras, {}, self.testCamera, self.testTracker)
 
     lu.assertEquals(ticks, self.testCamera.transitionTicks, "couldn't converge in expected 14 ticks")
 
@@ -152,7 +156,7 @@ function TestCameraFollowTracker:TestConvergenceHorizontalBigJump()
     self.testTracker.centerPos.x = 123
     self.testTracker.size.x = 127
 
-    local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
+    local ticks = ConvergenceTester(playerSettingsWithCameras, {}, self.testCamera, self.testTracker)
 
     lu.assertEquals(ticks, self.testCamera.transitionTicks, "couldn't converge in expected 14 ticks")
 
@@ -165,7 +169,7 @@ function TestCameraFollowTracker:TestConvergenceVertical()
     self.testTracker.centerPos.y = 10
     self.testTracker.size.y = 14
 
-    local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
+    local ticks = ConvergenceTester(playerSettingsWithCameras, {}, self.testCamera, self.testTracker)
 
     lu.assertEquals(ticks, self.testCamera.transitionTicks, "couldn't converge in expected 14 ticks")
 
@@ -178,7 +182,7 @@ function TestCameraFollowTracker:TestConvergenceVerticalBigJump()
     self.testTracker.centerPos.y = 142
     self.testTracker.size.y = 146
 
-    local ticks = ConvergenceTester({}, {}, self.testCamera, self.testTracker)
+    local ticks = ConvergenceTester(playerSettingsWithCameras, {}, self.testCamera, self.testTracker)
 
     lu.assertEquals(ticks, self.testCamera.transitionTicks, "couldn't converge in expected 14 ticks")
 

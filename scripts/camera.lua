@@ -1,19 +1,11 @@
 local Utils = require("scripts.utils")
 local Tracker = require("scripts.tracker")
 
-local captureBox = {
-    ne = { name = "signal-capture-north-east", type = "virtual" },
-    se = { name = "signal-capture-south-east", type = "virtual" },
-    sw = { name = "signal-capture-south-west", type = "virtual" },
-    nw = { name = "signal-capture-north-west", type = "virtual" },
-}
-
-local targetBox = {
-    ne = { name = "signal-target-north-east", type = "virtual" },
-    se = { name = "signal-target-south-east", type = "virtual" },
-    sw = { name = "signal-target-south-west", type = "virtual" },
-    nw = { name = "signal-target-north-west", type = "virtual" },
-}
+-- Viewfinder boxes drawn on the map (chart) view. `key` identifies the render
+-- object on the camera, `color` matches the tints previously used for the corner
+-- signals (see prototypes/signal.lua).
+local captureBox = { key = "capture", color = { r = 0.9, g = 0.9, b = 0.9 } }
+local targetBox = { key = "target", color = { r = 0.1, g = 0.6, b = 0.2 } }
 
 local Camera = {}
 
@@ -37,7 +29,7 @@ local Camera = {}
 --- @field speedGain number Amount (factor) that the timelapse movie should speed up compared to the game.
 --- @field surfaceName SurfaceIdentification
 --- @field trackers Tracker.tracker[]
---- @field chartTags table Chart tags used to render viewfinder boxes on the map
+--- @field renderBoxes table<string, LuaRenderObject> Render objects (chart mode) showing the viewfinder boxes on the map, keyed by box (see captureBox/targetBox)
 --- @field width number
 --- @field zoom number
 --- @field transitionPeriod number Time (in seconds) a transition should take
@@ -83,7 +75,7 @@ function Camera.newCamera(player, cameraList)
         centerPos = player.position,
         zoom = 1,
         screenshotNumber = 1,
-        chartTags = {},
+        renderBoxes = {},
         -- settings/defaults
         width = 1920,
         height = 1080,
@@ -171,7 +163,10 @@ function Camera.followTracker(playerSettings, player, camera, tracker, disableSm
         Camera.sanitizeZoom(camera, playerSettings, player)
     end
 
-    Camera.refreshChartTags(player, camera, captureBox, camera.centerPos, camera.zoom)
+    -- Label the box with the camera name when the player has more than one camera,
+    -- so overlapping viewfinders on the map can be told apart.
+    local showName = #playerSettings.cameras > 1
+    Camera.refreshBox(player, camera, captureBox, camera.centerPos, camera.zoom, showName)
 end
 
 --- @param playerSettings playerSettings
@@ -189,8 +184,8 @@ function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
             transitionTicksLeft = camera.transitionTicks
         }
         camera.changeId = tracker.changeId
-        -- new transition target, so new tags
-        Camera.refreshChartTags(player, camera, targetBox, camera.transitionData.endPosition,
+        -- new transition target, so draw the target box
+        Camera.refreshBox(player, camera, targetBox, camera.transitionData.endPosition,
             camera.transitionData.endZoom)
     end
 
@@ -204,8 +199,8 @@ function Camera.followTrackerSmooth(playerSettings, player, camera, tracker)
         if transitionData.transitionTicksLeft <= 0 then
             -- Transition finished
             camera.transitionData = nil
-            -- delete target tags
-            Camera.refreshChartTags(player, camera, targetBox, nil, nil)
+            -- remove the target box
+            Camera.refreshBox(player, camera, targetBox, nil, nil)
         end
     end
 end
@@ -449,45 +444,97 @@ function Camera.setTransitionPeriod(camera, transitionPeriod)
     Camera.updateConfig(camera)
 end
 
+--- Destroy and forget the render object stored under `key`, if any.
+--- @param renderBoxes table<string, LuaRenderObject>
+--- @param key string
+local function removeRenderBox(renderBoxes, key)
+    if renderBoxes[key] then
+        renderBoxes[key].destroy() -- does not error when already invalid
+        renderBoxes[key] = nil
+    end
+end
+
+--- Whether a render object is present, valid, and still on the given surface.
+--- Render objects are bound to their creation surface (surface is read-only), so
+--- one can only be reused while the camera still points at that surface.
+--- @param object LuaRenderObject?
+--- @param surfaceName SurfaceIdentification
+--- @return boolean
+local function onSurface(object, surfaceName)
+    return object ~= nil and object.valid and object.surface.name == surfaceName
+end
+
+--- Draw, update or remove a viewfinder box on the map (chart) view.
+--- Uses a chart-mode render object, so the box is only visible on the map and
+--- never ends up in the (game view) screenshots taken by the camera.
 --- @param player       LuaPlayer
 --- @param camera       Camera.camera   the camera this box is for
---- @param iconSet      table           corner icons
---- @param centerPos    table?          x,y pair giving the center of the box, nil if deleting tags
---- @param zoom         number?         zoom factor for the box, ignored if deleting tags
-function Camera.refreshChartTags(player, camera, iconSet, centerPos, zoom)
+--- @param box          table           box descriptor (see captureBox/targetBox)
+--- @param centerPos    table?          x,y pair giving the center of the box, nil to remove the box
+--- @param zoom         number?         zoom factor for the box, ignored when removing
+--- @param showName     boolean?        whether to label the box with the camera name
+function Camera.refreshBox(player, camera, box, centerPos, zoom, showName)
     -- we can't do this without a player or force
     if not player or not player.force then
         return
     end
 
-    local chartTags = camera.chartTags
-    local function createTag(icon, pos)
-        camera.chartTags[icon.name] = player.force.add_chart_tag(
-            camera.surfaceName,
-            { position = pos, icon = icon })
+    local renderBoxes = camera.renderBoxes
+    local labelKey = box.key .. ":name"
+    local existing = renderBoxes[box.key]
+    local existingLabel = renderBoxes[labelKey]
+
+    -- no position means: remove the box (e.g. finished transition)
+    if not centerPos then
+        removeRenderBox(renderBoxes, box.key)
+        removeRenderBox(renderBoxes, labelKey)
+        return
     end
 
-    -- remove all the old tags
-    for _, icon in pairs(iconSet) do
-        if chartTags[icon.name] then
-            chartTags[icon.name].destroy()
-            chartTags[icon.name] = nil
+    local half_width = camera.width / (tileSize * zoom) / 2
+    local half_height = camera.height / (tileSize * zoom) / 2
+    local left_top = { centerPos.x - half_width, centerPos.y - half_height }
+    local right_bottom = { centerPos.x + half_width, centerPos.y + half_height }
+
+    if onSurface(existing, camera.surfaceName) then
+        -- move/resize the existing box instead of recreating it
+        existing.left_top = left_top
+        existing.right_bottom = right_bottom
+    else
+        removeRenderBox(renderBoxes, box.key) -- clean up a stale box left on a previous surface
+        renderBoxes[box.key] = rendering.draw_rectangle {
+            color = box.color,
+            width = 2,
+            filled = false,
+            left_top = left_top,
+            right_bottom = right_bottom,
+            surface = camera.surfaceName,
+            players = { player },
+            render_mode = "chart",
+        }
+    end
+
+    -- optional camera name label, anchored just above the top-left corner
+    if showName then
+        if onSurface(existingLabel, camera.surfaceName) then
+            existingLabel.target = left_top
+            existingLabel.text = camera.name
+        else
+            removeRenderBox(renderBoxes, labelKey) -- clean up a stale label left on a previous surface
+            renderBoxes[labelKey] = rendering.draw_text {
+                text = camera.name,
+                color = box.color,
+                surface = camera.surfaceName,
+                target = left_top,
+                players = { player },
+                render_mode = "chart",
+                scale = 1,
+                scale_with_zoom = true,
+                vertical_alignment = "bottom",
+            }
         end
-    end
-
-    -- add new ones if we are given data
-    if centerPos then
-        local x = centerPos.x
-        local y = centerPos.y
-        local width = camera.width / (tileSize * zoom)
-        local height = camera.height / (tileSize * zoom)
-        local half_width = width / 2
-        local half_height = height / 2
-
-        createTag(iconSet.ne, { x + half_width, y - half_height })
-        createTag(iconSet.se, { x + half_width, y + half_height })
-        createTag(iconSet.sw, { x - half_width, y + half_height })
-        createTag(iconSet.nw, { x - half_width, y - half_height })
+    else
+        removeRenderBox(renderBoxes, labelKey)
     end
 end
 
@@ -530,8 +577,8 @@ end
 
 --- @param camera Camera.camera
 function Camera.destroy(camera)
-    for _, tag in pairs(camera.chartTags) do
-        tag.destroy()
+    for _, box in pairs(camera.renderBoxes) do
+        box.destroy() -- does not error when already invalid
     end
 end
 
