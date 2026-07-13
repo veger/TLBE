@@ -319,3 +319,30 @@ default_gui["tlbe_config_half_width_label"] = {
     horizontal_align = "center",
     vertical_align = "center"
 }
+
+-- Small square colour chip: a value=1 progressbar (the only element with a runtime-
+-- settable colour). Used for the camera-tab chip and every colour preset, so they match.
+default_gui["tlbe_color_chip"] = {
+    type = "progressbar_style",
+    parent = "progressbar", -- inherit the bar / bar_background graphics
+    width = 28,
+    height = 28,
+    bar_width = 28          -- fills the height so value 1 renders a solid square
+}
+
+-- Larger version of the chip, used as the live preview next to the sliders.
+default_gui["tlbe_color_preview_chip"] = {
+    type = "progressbar_style",
+    parent = "tlbe_color_chip",
+    width = 56,
+    height = 56,
+    bar_width = 56
+}
+
+-- Borderless, clickable wrapper around a preset chip. The chip is ignored_by_interaction
+-- so clicks land on this frame; being invisible, the preset looks like a bare chip.
+default_gui["tlbe_color_preset_frame"] = {
+    type = "frame_style",
+    parent = "invisible_frame",
+    padding = 0
+}

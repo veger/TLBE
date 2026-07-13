@@ -20,6 +20,7 @@ local GUI = {
 
 local Camera = require("scripts.camera")
 local Main = require("scripts.main")
+local Picker = require("scripts.gui_picker")
 local Tracker = require("scripts.tracker")
 local Utils = require("scripts.utils")
 
@@ -121,6 +122,10 @@ function GUI.onClick(event)
     local player = game.players[event.player_index]
     ---@type playerSettings
     local playerSettings = storage.playerSettings[event.player_index]
+
+    if Picker.onClick(event, player, playerSettings) then
+        return
+    end
 
     if event.element.name == "tlbe-main-window-close" then
         GUI.closeMainWindow(event)
@@ -453,6 +458,7 @@ function GUI.onSelected(event)
         GUI.setSelectedCamera(player, playerSettings, event.element.selected_index)
         playerSettings.guiPersist.selectedCameraTracker = 1
 
+        Picker.refreshWindow(playerSettings)
         GUI.updateCameraActions(playerSettings.gui, playerSettings.guiPersist, playerSettings.cameras)
         GUI.updateCameraConfig(
             playerSettings.useInterval,
@@ -851,6 +857,7 @@ function GUI.toggleMainWindow(event)
 
     if mainWindowOpen then
         player.gui.screen["tlbe-main-window"].destroy()
+        Picker.destroyWindow(player)
         playerSettings.gui = nil
     else
         -- Create frame without caption (we have our own title_bar)
@@ -1084,6 +1091,35 @@ function GUI.createCameraSettings(parent, playerGUI, guiPersist, useInterval, ca
         tooltip = { "tooltip.camera-always-day" },
         state = true
     }
+    playerGUI.cameraInfo.add {
+        type = "label",
+        caption = { "gui.label-box-color" },
+        tooltip = { "tooltip.camera-box-color" },
+        style = "bold_label"
+    }
+    -- Colour-picker (eyedropper) button + a small colour chip, like the vanilla
+    -- character/train colour picker. The button opens the popup; the chip shows the
+    -- current colour (a value=1 progressbar, the only runtime-colourable element).
+    local boxColorCell = playerGUI.cameraInfo.add {
+        type = "flow",
+        name = "camera-box-color-cell",
+        direction = "horizontal"
+    }
+    boxColorCell.style.vertical_align = "center"
+    boxColorCell.add {
+        type = "sprite-button",
+        name = "camera-box-color",
+        sprite = "utility/color_picker",
+        tooltip = { "tooltip.camera-box-color" },
+        style = "tool_button"
+    }
+    local boxColorChip = boxColorCell.add {
+        type = "progressbar",
+        name = "camera-box-color-swatch",
+        style = "tlbe_color_chip",
+        ignored_by_interaction = true
+    }
+    boxColorChip.style.left_margin = 6
     playerGUI.cameraInfo.add {
         type = "label",
         caption = { "gui.label-position" },
@@ -1462,6 +1498,7 @@ function GUI.updateCameraConfig(useInterval, cameraInfo, camera)
         cameraInfo["camera-entity-info"].state = camera.entityInfo
         cameraInfo["camera-show-gui"].state = camera.showGUI
         cameraInfo["camera-always-day"].state = camera.alwaysDay
+        Picker.paintCameraSwatch(cameraInfo, camera.boxColor or Camera.defaultBoxColor)
         resolutionFlow["camera-resolution-x"].text = string.format("%d", camera.width or 1920)
         resolutionFlow["camera-resolution-y"].text = string.format("%d", camera.height or 1080)
 

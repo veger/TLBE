@@ -2,9 +2,9 @@
 Version: 2.3.0
 
   Features:
-    - Show the camera viewfinder (and transition target) as a rectangle on the map instead of corner markers.
+    - Show the camera viewfinder (and transition target) as a colored rectangle on the map instead of corner markers.
       Note: the virtual signals are cleaned up as a result.
-    - Show disabled cameras' viewfinders (dimmed) on the map. Can be turned off with a per-player setting.
+    - Show disabled cameras' viewfinders (dashed outline) on the map. Can be turned off with a per-player setting.
   Minor Features:
     - Optionally switch name and sequence number in screenshot filenames (player settings).
 ---------------------------------------------------------------------------------------------------

@@ -2,15 +2,29 @@ local Utils = require("scripts.utils")
 local Tracker = require("scripts.tracker")
 
 -- Viewfinder boxes drawn on the map (chart) view. `key` identifies the render
--- object on the camera, `color` matches the tints previously used for the corner
+-- object on the camera. The capture box uses the camera's own colour (see
+-- Camera.boxColorFor); `captureBox.color` is only the default/fallback tint. The
+-- target box keeps a fixed green, matching the tints previously used for the corner
 -- signals (see prototypes/signal.lua).
-local captureBox = { key = "capture", color = { r = 0.9, g = 0.9, b = 0.9 } }
+-- Default matches the first colour preset (white) so "default" and that preset are the
+-- same thing -- no separate reset needed.
+local defaultBoxColor = { r = 1, g = 1, b = 1 }
+local captureBox = { key = "capture", color = defaultBoxColor }
 local targetBox = { key = "target", color = { r = 0.1, g = 0.6, b = 0.2 } }
--- Capture-box colour for a disabled camera (dimmed grey). Applied from GUI/config
--- events (Camera.updateBoxColor / refreshCameraBox), never from tick().
-local disabledColor = { r = 0.5, g = 0.5, b = 0.5 }
+-- A disabled camera's capture box is drawn with a dashed outline (in the camera's own
+-- colour) so "disabled" is obvious regardless of the chosen colour -- colour-based dimming
+-- alone was too subtle. Lengths are in tiles. Applied from GUI/config events, never from
+-- tick(). Each box side is a separate draw_line (draw_rectangle cannot dash).
+local dashLength = 4
+local gapLength = 4
+-- The four sides of a box, in a fixed order; each is its own render object keyed
+-- "<box.key>:<side>" in camera.renderBoxes.
+local boxSides = { "top", "right", "bottom", "left" }
 
 local Camera = {}
+
+-- Default viewfinder colour (also the first colour preset), exposed to the GUI.
+Camera.defaultBoxColor = defaultBoxColor
 
 --- @class Camera.camera
 --- @field centerPos table
@@ -33,6 +47,7 @@ local Camera = {}
 --- @field surfaceName SurfaceIdentification
 --- @field trackers Tracker.tracker[]
 --- @field renderBoxes table<string, LuaRenderObject> Render objects (chart mode) showing the viewfinder boxes on the map, keyed by box (see captureBox/targetBox)
+--- @field boxColor Color|nil Custom viewfinder box colour (r,g,b in 0-1); nil uses Camera.defaultBoxColor
 --- @field width number
 --- @field zoom number
 --- @field transitionPeriod number Time (in seconds) a transition should take
@@ -467,6 +482,56 @@ local function onSurface(object, surfaceName)
     return object ~= nil and object.valid and object.surface.name == surfaceName
 end
 
+--- Resolve the colour a camera's capture box (and name label) is drawn with: the camera's
+--- custom colour, or the default. Enabled/disabled is shown by the dash pattern (see
+--- boxDash), not the colour. The target box is not passed here; it keeps its fixed colour.
+--- @param camera Camera.camera
+--- @return Color
+function Camera.boxColorFor(camera)
+    local base = camera.boxColor or defaultBoxColor
+    return { r = base.r, g = base.g, b = base.b }
+end
+
+-- Colour a box is drawn with: the capture box uses the camera's (custom) colour, other
+-- boxes their fixed descriptor colour.
+--- @param box table
+--- @param camera Camera.camera
+--- @return Color
+local function drawColor(box, camera)
+    if box.key == captureBox.key then
+        return Camera.boxColorFor(camera)
+    end
+    return box.color
+end
+
+-- Dash pattern (tiles) for a box: a disabled camera's capture box is dashed; everything
+-- else (enabled capture box, target box) is solid. dash_length is kept positive at all
+-- times because Factorio requires dash_length > 0 whenever gap_length > 0 and validates
+-- this on every individual property write (in any order); a solid line is therefore
+-- expressed purely as gap_length = 0, which ignores dash_length.
+--- @param box table
+--- @param camera Camera.camera
+--- @return number dash_length, number gap_length
+local function boxDash(box, camera)
+    local dashed = box.key == captureBox.key and not camera.enabled
+    return dashLength, dashed and gapLength or 0
+end
+
+-- The from/to endpoints of each of the four sides of a box.
+--- @param left_top number[]     {x, y} top-left corner
+--- @param right_bottom number[] {x, y} bottom-right corner
+--- @return table<string, table> keyed by side (see boxSides)
+local function boxSegments(left_top, right_bottom)
+    local lx, ty = left_top[1], left_top[2]
+    local rx, by = right_bottom[1], right_bottom[2]
+    return {
+        top    = { from = { lx, ty }, to = { rx, ty } },
+        right  = { from = { rx, ty }, to = { rx, by } },
+        bottom = { from = { lx, by }, to = { rx, by } },
+        left   = { from = { lx, ty }, to = { lx, by } },
+    }
+end
+
 --- Draw, update or remove a viewfinder box on the map (chart) view.
 --- Uses a chart-mode render object, so the box is only visible on the map and
 --- never ends up in the (game view) screenshots taken by the camera.
@@ -476,7 +541,10 @@ end
 --- @param centerPos    table?          x,y pair giving the center of the box, nil to remove the box
 --- @param zoom         number?         zoom factor for the box, ignored when removing
 --- @param showName     boolean?        whether to label the box with the camera name
-function Camera.refreshBox(player, camera, box, centerPos, zoom, showName)
+--- @param recreate     boolean?        force redrawing the lines (used when the dash
+---                                     pattern changes; see refreshCameraBox) instead of
+---                                     reusing/moving the existing ones
+function Camera.refreshBox(player, camera, box, centerPos, zoom, showName, recreate)
     -- we can't do this without a player or force
     if not player or not player.force then
         return
@@ -484,12 +552,12 @@ function Camera.refreshBox(player, camera, box, centerPos, zoom, showName)
 
     local renderBoxes = camera.renderBoxes
     local labelKey = box.key .. ":name"
-    local existing = renderBoxes[box.key]
-    local existingLabel = renderBoxes[labelKey]
 
     -- no position means: remove the box (e.g. finished transition)
     if not centerPos then
-        removeRenderBox(renderBoxes, box.key)
+        for _, side in ipairs(boxSides) do
+            removeRenderBox(renderBoxes, box.key .. ":" .. side)
+        end
         removeRenderBox(renderBoxes, labelKey)
         return
     end
@@ -499,26 +567,38 @@ function Camera.refreshBox(player, camera, box, centerPos, zoom, showName)
     local left_top = { centerPos.x - half_width, centerPos.y - half_height }
     local right_bottom = { centerPos.x + half_width, centerPos.y + half_height }
 
-    if onSurface(existing, camera.surfaceName) then
-        -- move/resize the existing box instead of recreating it
-        existing.left_top = left_top
-        existing.right_bottom = right_bottom
-    else
-        removeRenderBox(renderBoxes, box.key) -- clean up a stale box left on a previous surface
-        renderBoxes[box.key] = rendering.draw_rectangle {
-            color = box.color,
-            width = 2,
-            filled = false,
-            left_top = left_top,
-            right_bottom = right_bottom,
-            surface = camera.surfaceName,
-            players = { player },
-            render_mode = "chart",
-        }
+    -- The box is four separate lines so its outline can be dashed (draw_rectangle cannot).
+    -- Recording just moves the endpoints (cheap); the dash pattern is only (re)applied when
+    -- a line is created, so a dash change is requested via `recreate` (see refreshCameraBox)
+    -- rather than by mutating dash_length/gap_length on a live line, which is unreliable.
+    local segments = boxSegments(left_top, right_bottom)
+    for _, side in ipairs(boxSides) do
+        local seg = segments[side]
+        local key = box.key .. ":" .. side
+        local existing = renderBoxes[key]
+        if not recreate and onSurface(existing, camera.surfaceName) then
+            existing.from = seg.from
+            existing.to = seg.to
+        else
+            removeRenderBox(renderBoxes, key) -- clean up an existing/stale line first
+            local dash, gap = boxDash(box, camera)
+            renderBoxes[key] = rendering.draw_line {
+                color = drawColor(box, camera),
+                width = 2,
+                from = seg.from,
+                to = seg.to,
+                dash_length = dash,
+                gap_length = gap,
+                surface = camera.surfaceName,
+                players = { player },
+                render_mode = "chart",
+            }
+        end
     end
 
     -- optional camera name label, anchored just above the top-left corner
     if showName then
+        local existingLabel = renderBoxes[labelKey]
         if onSurface(existingLabel, camera.surfaceName) then
             existingLabel.target = left_top
             existingLabel.text = camera.name
@@ -526,7 +606,7 @@ function Camera.refreshBox(player, camera, box, centerPos, zoom, showName)
             removeRenderBox(renderBoxes, labelKey) -- clean up a stale label left on a previous surface
             renderBoxes[labelKey] = rendering.draw_text {
                 text = camera.name,
-                color = box.color,
+                color = drawColor(box, camera),
                 surface = camera.surfaceName,
                 target = left_top,
                 players = { player },
@@ -578,22 +658,41 @@ function Camera.recordingSensor(player)
     return cameraStatuses
 end
 
---- Recolour a camera's existing viewfinder box (and its name label) to reflect its
---- enabled state. Called from the GUI/config, so the state is not re-checked every tick.
+--- Recolour a camera's existing capture box (its four sides and name label). Only the
+--- colour is changed here (e.g. from the colour picker); the dash pattern is applied when
+--- the box is (re)created (see refreshCameraBox), because toggling dash_length/gap_length
+--- on a live line is unreliable -- Factorio ignores dash_length while gap_length is 0, so a
+--- later gap_length > 0 would fail the "dash_length must be > 0" check.
 --- @param camera Camera.camera
 function Camera.updateBoxColor(camera)
-    local color = camera.enabled and captureBox.color or disabledColor
-    for _, key in pairs({ captureBox.key, captureBox.key .. ":name" }) do
-        local object = camera.renderBoxes[key]
-        if object and object.valid then
-            object.color = color
+    local color = Camera.boxColorFor(camera)
+    for _, side in ipairs(boxSides) do
+        local line = camera.renderBoxes[captureBox.key .. ":" .. side]
+        if line and line.valid then
+            line.color = color
         end
+    end
+    local label = camera.renderBoxes[captureBox.key .. ":name"]
+    if label and label.valid then
+        label.color = color
     end
 end
 
---- Show, hide or recolour a camera's viewfinder box in response to a GUI/config event
+--- Set (or clear) a camera's custom viewfinder colour and recolour its box on the map.
+--- @param camera Camera.camera
+--- @param color Color|nil r,g,b (0-1); nil resets to Camera.defaultBoxColor
+function Camera.setBoxColor(camera, color)
+    if color == nil then
+        camera.boxColor = nil
+    else
+        camera.boxColor = { r = color.r, g = color.g, b = color.b }
+    end
+    Camera.updateBoxColor(camera)
+end
+
+--- Show, hide or restyle a camera's viewfinder box in response to a GUI/config event
 --- (never from tick()). Enabled cameras always show a box (drawn right away, then kept
---- up to date by the recording loop); disabled cameras show a dimmed box only when
+--- up to date by the recording loop); disabled cameras show a dashed box only when
 --- `render` is set, otherwise their box is removed.
 --- @param player LuaPlayer
 --- @param camera Camera.camera
@@ -601,8 +700,10 @@ end
 --- @param showName boolean whether to label the box with the camera name
 function Camera.refreshCameraBox(player, camera, render, showName)
     if camera.enabled or render then
-        Camera.refreshBox(player, camera, captureBox, camera.centerPos, camera.zoom, showName)
-        Camera.updateBoxColor(camera) -- enabled: keep the normal colour, disabled: dim to grey
+        -- recreate=true so the dash pattern (solid when enabled, dashed when disabled) is
+        -- applied atomically by draw_line -- mutating dash/gap on a live line is unreliable.
+        -- Only runs on GUI/config events; the per-frame recording path reuses instead.
+        Camera.refreshBox(player, camera, captureBox, camera.centerPos, camera.zoom, showName, true)
     else
         Camera.refreshBox(player, camera, captureBox, nil, nil) -- disabled and hidden: remove
     end
